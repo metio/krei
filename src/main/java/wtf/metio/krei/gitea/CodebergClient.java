@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.immutables.value.Value;
 import wtf.metio.hcf4j.HttpClient;
 
+/**
+ * @see <a href="https://codeberg.org/api/swagger#">OpenAPI documentation</a>
+ */
 @Value.Immutable
 public interface CodebergClient extends GiteaClient {
 

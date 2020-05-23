@@ -1,6 +1,6 @@
 # krei
 
-Project creation & setup tool.
+Project-as-code approach for project creation & setup.
 
 ## Usage
 

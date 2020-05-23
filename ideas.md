@@ -2,6 +2,7 @@
 ## Ideas
 
 - mixins or rather includes? Could use special markers like <!-- krei-managed: unit-id --> in a pom.xml
+- JavaFX desktop app https://openjfx.io/openjfx-docs/#maven
 
 ### systemd
 

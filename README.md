@@ -8,7 +8,10 @@ TBD
 
 ## Alternatives
 
-- TBD
+- https://github.com/kowainik/summoner (Haskell)
+- https://github.com/martinklepsch/tenzing (ClojureScript)
+- https://github.com/bit101/ProjectMaker (Sublime)
+- https://github.com/generate/generate (NPM)
 
 ## License
 

@@ -1,5 +1,6 @@
 package wtf.metio.krei.unit.git;
 
+import wtf.metio.krei.model.Shell;
 import wtf.metio.krei.model.Unit;
 
 import java.nio.file.Path;

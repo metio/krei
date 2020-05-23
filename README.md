@@ -4,7 +4,15 @@ Project-as-code approach for project creation & setup.
 
 ## Usage
 
-TBD
+```java
+var projectDirectory = Paths.get("/some/folder");
+var license = projectDirectory.resolve("LICENSE");
+
+var project = Project.builder(projectDirectory)
+    .addUnits(GitUnits.initializeRepository(projectDirectory))
+    .addUnits(LicenseUnits.createLicense(license, License.CC0))
+    .build();
+```
 
 ## Alternatives
 

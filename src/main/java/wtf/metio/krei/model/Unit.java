@@ -5,6 +5,7 @@ import org.immutables.value.Value;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 /**
  * Units are the lowest level building blocks for project creation.
@@ -42,6 +43,8 @@ public interface Unit {
      * Whether {@link #exec()} should be taken as-is (true), or whitespace delimited (false/default)
      */
     Optional<Boolean> execRaw();
+
+    Optional<Action> action();
 
     /**
      * Units that are started as soon as this unit is started. Whether those units succeed does not affect the result of

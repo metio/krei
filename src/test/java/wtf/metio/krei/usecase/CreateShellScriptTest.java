@@ -46,7 +46,7 @@ class CreateShellScriptTest {
 
     static Stream<Arguments> shellScripts() {
         return Stream.of(
-                of("metio.sh", METIO),
+                // of("metio.sh", METIO),
                 of("empty-git.sh", EMPTY_GIT)
         );
     }

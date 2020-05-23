@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import wtf.metio.hcf4j.okhttp3.OkHttp3HttpClientFactory;
-import wtf.metio.krei.gitea.GiteaClient;
+import wtf.metio.krei.gitea.CodebergClient;
 import wtf.metio.krei.model.Action;
 
 class GiteaUnitsTest {
@@ -13,14 +13,12 @@ class GiteaUnitsTest {
     @Test
     @Disabled
     void shouldCreateRepository() {
-        final var giteaClient = GiteaClient.client("https://codeberg.org/api/v1",
-                "123")
+        final var client = CodebergClient.client("123")
                 .httpClient(new OkHttp3HttpClientFactory().build())
                 .objectMapper(new ObjectMapper())
                 .build();
-        final var gitea = GiteaUnits.of(giteaClient);
-        Assertions.assertEquals(201, gitea
-                .createRepository("metio.wtf", "krei")
+        Assertions.assertEquals(201, GiteaUnits.of(client)
+                .createRepository("metio.wtf", "test")
                 .action()
                 .map(Action::call)
                 .orElse(0));

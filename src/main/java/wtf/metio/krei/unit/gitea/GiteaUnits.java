@@ -1,6 +1,7 @@
 package wtf.metio.krei.unit.gitea;
 
 import org.immutables.value.Value;
+import wtf.metio.krei.gitea.CreateLabelOption;
 import wtf.metio.krei.gitea.GiteaClient;
 import wtf.metio.krei.model.Unit;
 
@@ -18,6 +19,16 @@ public interface GiteaUnits {
         return Unit.builder()
                 .id("urn:krei:gitea:repo:create")
                 .action(() -> client().createRepositoryInOrganization(projectName, organization))
+                .build();
+    }
+
+    default Unit addLabel(
+            final String organization,
+            final String projectName,
+            final CreateLabelOption label) {
+        return Unit.builder()
+                .id("urn:krei:gitea:label:add:" + label.name())
+                .action(() -> client().createLabel(projectName, organization, label))
                 .build();
     }
     //endregion

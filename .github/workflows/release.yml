@@ -1,0 +1,53 @@
+name: Perform Release
+on:
+  push:
+    branches: [ master ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Create release version
+        id: release
+        run: echo "::set-output name=version::$(date +'%Y.%m.%d-%H%M%S')"
+      - name: Set release version
+        run: mvn --batch-mode versions:set -DnewVersion=${{steps.release.outputs.version}} -DgenerateBackupPoms=false
+      - name: Verify Project
+        run: mvn --batch-mode verify
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to GitHub Packages Apache Maven
+        run: mvn --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{steps.release.outputs.version}}
+          release_name: Release ${{steps.release.outputs.version}}
+          draft: false
+          prerelease: false
+          body: |
+            Automated release, see [commits](https://github.com/metio/krei/commits/${{steps.release.outputs.version}}) for changes.
+
+            Include this project as a dependency:
+            ```xml
+            <dependency>
+              <groupId>wtf.metio.krei</groupId>
+              <artifactId>krei</artifactId>
+              <version>${{steps.release.outputs.version}}</version>
+            </dependency>
+            ```

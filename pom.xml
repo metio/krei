@@ -65,6 +65,31 @@
         <project.build.outputTimestamp>2020</project.build.outputTimestamp>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>maven-build-process</id>
+            <name>GitHub maven-build-process Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/metio/maven-build-process</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>hcf4j</id>
+            <name>GitHub hcf4j Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/metio/hcf4j</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!--                               DEPENDENCIES                              -->
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -79,17 +104,22 @@
         <dependency>
             <groupId>wtf.metio.hcf4j</groupId>
             <artifactId>hcf4j-api</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>2020.05.24-181034</version>
         </dependency>
         <dependency>
             <groupId>wtf.metio.hcf4j</groupId>
             <artifactId>hcf4j-okhttp3</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>2020.05.24-181034</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${version.jackson}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.65</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

@@ -1,4 +1,4 @@
-package wtf.metio.krei.gitea;
+package wtf.metio.krei.action.gitea;
 
 public interface GiteaClient {
 

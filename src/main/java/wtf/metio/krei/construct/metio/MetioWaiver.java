@@ -1,7 +1,7 @@
 package wtf.metio.krei.construct.metio;
 
+import wtf.metio.krei.model.License;
 import wtf.metio.krei.model.Unit;
-import wtf.metio.krei.model.Waiver;
 import wtf.metio.krei.unit.file.FileUnits;
 import wtf.metio.krei.unit.file.LicenseUnits;
 
@@ -22,7 +22,7 @@ public final class MetioWaiver {
         return Unit.builder()
                 .id("urn:krei:metio:waiver")
                 .addRequires(FileUnits.createDirectory(authorDirectory))
-                .addRequires(LicenseUnits.createWaver(waiver, Waiver.METIO, projectName))
+                .addRequires(LicenseUnits.createWaver(waiver, License.CC0, projectName))
                 .addRequires(LicenseUnits.signWaiver(waiver))
                 .addRequires(FileUnits.moveFile(signedWaiver, authorWaiver))
                 .build();

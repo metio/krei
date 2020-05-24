@@ -1,8 +1,9 @@
 package wtf.metio.krei.unit.file;
 
+import wtf.metio.krei.action.file.FileActions;
+import wtf.metio.krei.io.Licenses;
 import wtf.metio.krei.model.License;
 import wtf.metio.krei.model.Unit;
-import wtf.metio.krei.model.Waiver;
 
 import java.nio.file.Path;
 
@@ -11,17 +12,15 @@ public final class LicenseUnits {
     public static Unit createLicense(final Path path, final License license) {
         return Unit.builder()
                 .id("urn:krei:license:file:" + license.id())
-                .addExec("cat", ">", path.toAbsolutePath().toString(), "<<", "EOL\n", license.text() + "\n", "EOL")
-                .execRaw(true)
+                .action(FileActions.appendFile(path, Licenses.license(license)))
                 .build();
     }
 
-    public static Unit createWaver(Path path, final Waiver waiver, final String projectName) {
-        final var text = String.format(waiver.text(), projectName);
+    public static Unit createWaver(final Path path, final License license, final String projectName) {
+        final var text = String.format(Licenses.waiver(license), projectName);
         return Unit.builder()
-                .id("urn:krei:license:waiver:" + waiver.id())
-                .addExec("cat", ">", path.toAbsolutePath().toString(), "<<", "EOL\n", text + "\n", "EOL")
-                .execRaw(true)
+                .id("urn:krei:license:waiver:" + license.id())
+                .action(FileActions.appendFile(path, text))
                 .build();
     }
 
@@ -33,7 +32,7 @@ public final class LicenseUnits {
     }
 
     public static Unit readmeSection(final Path readme, final License license) {
-        return FileUnits.appendFile(readme, license.readme());
+        return FileUnits.appendFile(readme, Licenses.readme(license));
     }
 
     private LicenseUnits() {

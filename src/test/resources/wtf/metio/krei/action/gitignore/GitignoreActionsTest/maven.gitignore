@@ -1,0 +1,4 @@
+# default maven build output folder
+target/
+# force downloading of maven wrapper on first access
+.mvn/wrapper/maven-wrapper.jar

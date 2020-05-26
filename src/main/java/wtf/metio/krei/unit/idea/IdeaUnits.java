@@ -9,8 +9,19 @@ import wtf.metio.krei.template.LicenseTemplates;
 import java.nio.file.Path;
 import java.util.stream.IntStream;
 
+/**
+ * Units that interact with Jetbrains Idea.
+ *
+ * @see <a href="https://www.jetbrains.com/idea/">Jetbrains Idea</a>
+ */
 public final class IdeaUnits {
 
+    /**
+     * Configures the <code>.gitignore</code> file inside the <code>.idea</code> directory.
+     *
+     * @param ideaDirectory The .idea directory to use.
+     * @return A unit which will configure the .gitignore file.
+     */
     public static Unit configureGitignore(final Path ideaDirectory) {
         final var text = IdeaTemplates.gitignore();
         final var file = ideaDirectory.resolve(".gitignore");

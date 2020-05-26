@@ -16,6 +16,7 @@ public final class MetioIdea {
         return Unit.builder()
                 .id("urn:krei:metio:idea")
                 .addRequires(FileUnits.createDirectory(copyrightDirectory))
+                .addRequires(IdeaUnits.configureGitignore(ideaDirectory))
                 .addRequires(IdeaUnits.configureCopyrightProfile(copyrightDirectory, projectName))
                 .addRequires(IdeaUnits.configureCopyright(copyrightDirectory, projectName, License.CC0))
                 .build();

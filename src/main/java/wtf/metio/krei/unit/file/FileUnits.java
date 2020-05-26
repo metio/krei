@@ -1,5 +1,6 @@
 package wtf.metio.krei.unit.file;
 
+import wtf.metio.krei.action.file.FileActions;
 import wtf.metio.krei.model.Unit;
 
 import java.nio.file.Path;
@@ -9,29 +10,21 @@ public final class FileUnits {
     public static Unit createDirectory(final Path directory) {
         return Unit.builder()
                 .id("urn:krei:file:directory:create")
-                .addExec("mkdir", "--parents", directory.toAbsolutePath().toString())
+                .action(FileActions.createDirectory(directory))
                 .build();
     }
 
-    public static Unit changeDirectory(final Path directory) {
-        return Unit.builder()
-                .id("urn:krei:file:directory:change")
-                .addExec("cd", directory.toAbsolutePath().toString())
-                .build();
-    }
-
-    public static Unit moveFile(final Path source, final Path target) {
+    public static Unit move(final Path source, final Path target) {
         return Unit.builder()
                 .id("urn:krei:file:move:" + source.toAbsolutePath().toString())
-                .addExec("mv", source.toAbsolutePath().toString(), target.toAbsolutePath().toString())
+                .action(FileActions.move(source, target))
                 .build();
     }
 
     public static Unit appendFile(final Path path, final String content) {
         return Unit.builder()
                 .id("urn:krei:file:append:" + content.hashCode())
-                .addExec("cat", ">>", path.toAbsolutePath().toString(), "<<", "EOL\n", content + "\n", "EOL")
-                .execRaw(true)
+                .action(FileActions.appendFile(path, content))
                 .build();
     }
 

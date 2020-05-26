@@ -16,6 +16,14 @@ public final class FileActions {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileActions.class);
 
+    public static Action createDirectory(final Path directory) {
+        return append(() -> Files.createDirectories(directory));
+    }
+
+    public static Action move(final Path source, final Path target) {
+        return append(() -> Files.move(source, target));
+    }
+
     public static Action appendFile(final Path file, final String content) {
         return append(() -> Files.writeString(file, content, CREATE, APPEND));
     }

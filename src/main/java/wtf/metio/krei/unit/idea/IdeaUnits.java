@@ -11,11 +11,20 @@ import java.util.stream.IntStream;
 
 public final class IdeaUnits {
 
+    public static Unit configureGitignore(final Path ideaDirectory) {
+        final var text = IdeaTemplates.gitignore();
+        final var file = ideaDirectory.resolve(".gitignore");
+        return Unit.builder()
+                .id("urn:krei:idea:config:gitignore")
+                .action(FileActions.appendFile(file, text))
+                .build();
+    }
+
     public static Unit configureCopyrightProfile(final Path copyrightDirectory, final String projectName) {
         final var text = String.format(IdeaTemplates.copyrightProfile(), projectName);
         final var file = copyrightDirectory.resolve("profiles_settings.xml");
         return Unit.builder()
-                .id("urn:krei:intellij:config:copyright-profile")
+                .id("urn:krei:idea:config:copyright-profile")
                 .action(FileActions.appendFile(file, text))
                 .build();
     }
@@ -29,7 +38,7 @@ public final class IdeaUnits {
         final var text = String.format(IdeaTemplates.copyright(), matcher, shortText, projectName);
         final var file = copyrightDirectory.resolve(projectName + ".xml");
         return Unit.builder()
-                .id("urn:krei:intellij:config:copyright")
+                .id("urn:krei:idea:config:copyright")
                 .action(FileActions.appendFile(file, text))
                 .build();
     }

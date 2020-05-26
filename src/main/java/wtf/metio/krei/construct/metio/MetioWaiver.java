@@ -24,7 +24,7 @@ public final class MetioWaiver {
                 .addRequires(FileUnits.createDirectory(authorDirectory))
                 .addRequires(LicenseUnits.createWaver(waiver, License.CC0, projectName))
                 .addRequires(LicenseUnits.signWaiver(waiver))
-                .addRequires(FileUnits.moveFile(signedWaiver, authorWaiver))
+                .addRequires(FileUnits.move(signedWaiver, authorWaiver))
                 .build();
     }
 

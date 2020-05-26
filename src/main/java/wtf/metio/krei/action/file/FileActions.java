@@ -17,11 +17,11 @@ public final class FileActions {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileActions.class);
 
     public static Action createDirectory(final Path directory) {
-        return append(() -> Files.createDirectories(directory));
+        return append(() -> Files.createDirectories(directory.toAbsolutePath()));
     }
 
     public static Action move(final Path source, final Path target) {
-        return append(() -> Files.move(source, target));
+        return append(() -> Files.move(source.toAbsolutePath(), target.toAbsolutePath()));
     }
 
     public static Action appendFile(final Path file, final String content) {

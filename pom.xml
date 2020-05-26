@@ -26,8 +26,8 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- https://maven.apache.org/pom.html#More_Project_Information -->
     <name>krei</name>
-    <description>krei: create new projects</description>
-    <url>https://krei.metio.wtf/</url>
+    <description>create new projects</description>
+    <url>https://krei.projects.metio.wtf/</url>
     <inceptionYear>2020</inceptionYear>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -35,10 +35,10 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- https://maven.apache.org/pom.html#SCM -->
     <scm>
-        <connection>scm:git:git@codeberg.org:metio.wtf/krei.git</connection>
-        <developerConnection>scm:git:git@codeberg.org:metio.wtf/krei.git</developerConnection>
+        <connection>scm:git:git@github.com:metio/krei.git</connection>
+        <developerConnection>scm:git:git@github.com:metio/krei.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://codeberg.org/metio.wtf/krei</url>
+        <url>https://github.com/metio/krei</url>
     </scm>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
@@ -46,8 +46,8 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- https://maven.apache.org/pom.html#Issue_Management -->
     <issueManagement>
-        <system>Codeberg</system>
-        <url>https://codeberg.org/metio.wtf/krei/issues</url>
+        <system>GitHub</system>
+        <url>https://github.com/metio/krei/issues</url>
     </issueManagement>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->

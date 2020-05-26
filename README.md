@@ -20,6 +20,7 @@ var project = Project.builder(projectDirectory)
 - https://github.com/martinklepsch/tenzing (ClojureScript)
 - https://github.com/bit101/ProjectMaker (Sublime)
 - https://github.com/generate/generate (NPM)
+- https://yeoman.io/ (NPM)
 
 ## License
 

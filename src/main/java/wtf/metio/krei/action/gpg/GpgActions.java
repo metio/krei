@@ -2,7 +2,7 @@ package wtf.metio.krei.action.gpg;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import wtf.metio.krei.action.file.FileActions;
-import wtf.metio.krei.io.Templates;
+import wtf.metio.krei.template.Templates;
 import wtf.metio.krei.model.Action;
 
 import java.nio.file.Path;

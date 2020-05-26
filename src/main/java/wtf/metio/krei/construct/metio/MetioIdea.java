@@ -3,7 +3,7 @@ package wtf.metio.krei.construct.metio;
 import wtf.metio.krei.model.License;
 import wtf.metio.krei.model.Unit;
 import wtf.metio.krei.unit.file.FileUnits;
-import wtf.metio.krei.unit.intellij.IdeaUnits;
+import wtf.metio.krei.unit.idea.IdeaUnits;
 
 import java.nio.file.Path;
 

@@ -1,0 +1,7 @@
+<component name="CopyrightManager">
+    <copyright>
+        <option name="keyword" value="%s"/>
+        <option name="notice" value="%s"/>
+        <option name="myName" value="%s"/>
+    </copyright>
+</component>

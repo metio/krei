@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import wtf.metio.krei.model.Project;
-import wtf.metio.krei.test.PrintStreams;
 import wtf.metio.krei.unit.git.GitIgnoreUnits;
 
 import java.nio.file.Path;

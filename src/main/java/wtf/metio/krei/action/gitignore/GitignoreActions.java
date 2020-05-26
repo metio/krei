@@ -1,7 +1,7 @@
 package wtf.metio.krei.action.gitignore;
 
 import wtf.metio.krei.action.file.FileActions;
-import wtf.metio.krei.io.Templates;
+import wtf.metio.krei.template.Templates;
 import wtf.metio.krei.model.Action;
 
 import java.nio.file.Path;

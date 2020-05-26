@@ -1,4 +1,4 @@
-package wtf.metio.krei.io;
+package wtf.metio.krei.template;
 
 import java.io.BufferedReader;
 import java.io.IOException;

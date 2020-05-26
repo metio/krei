@@ -1,8 +1,8 @@
 package wtf.metio.krei.unit.gitea;
 
 import org.immutables.value.Value;
-import wtf.metio.krei.gitea.CreateLabelOption;
-import wtf.metio.krei.gitea.GiteaClient;
+import wtf.metio.krei.action.gitea.CreateLabelOption;
+import wtf.metio.krei.action.gitea.GiteaClient;
 import wtf.metio.krei.model.Unit;
 
 @Value.Immutable

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import wtf.metio.hcf4j.okhttp3.OkHttp3HttpClientFactory;
-import wtf.metio.krei.gitea.CodebergClient;
+import wtf.metio.krei.action.gitea.CodebergClient;
 import wtf.metio.krei.model.Action;
 
 class GiteaUnitsTest {

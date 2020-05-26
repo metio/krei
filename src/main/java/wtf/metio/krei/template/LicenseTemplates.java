@@ -1,8 +1,8 @@
-package wtf.metio.krei.io;
+package wtf.metio.krei.template;
 
 import wtf.metio.krei.model.License;
 
-public final class Licenses {
+public final class LicenseTemplates {
 
     public static String header(final License license) {
         return read(license, "/HEADER");
@@ -28,7 +28,7 @@ public final class Licenses {
         return Templates.template("license", license.id() + file);
     }
 
-    private Licenses() {
+    private LicenseTemplates() {
         // factory class
     }
 

@@ -1,4 +1,4 @@
-# krei
+# krei https://www.openhub.net/p/krei/widgets/project_thin_badge.gif["Open Hub statistics", link="https://www.openhub.net/p/krei"]
 
 Project-as-code approach for project creation & setup.
 
@@ -22,10 +22,6 @@ var project = Project.builder(projectDirectory)
 - https://github.com/generate/generate (NPM)
 - https://yeoman.io/ (NPM)
 - https://jeka.dev/ (Java)
-
-## Links
-
-- [OpenHub](https://www.openhub.net/p/krei)
 
 ## SonarQube
 

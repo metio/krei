@@ -1,4 +1,4 @@
-# krei https://www.openhub.net/p/krei/widgets/project_thin_badge.gif["Open Hub statistics", link="https://www.openhub.net/p/krei"]
+# krei [![OpenHub](https://www.openhub.net/p/krei/widgets/project_thin_badge.gif)](https://www.openhub.net/p/krei)
 
 Project-as-code approach for project creation & setup.
 

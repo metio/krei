@@ -26,6 +26,7 @@ var project = Project.builder(projectDirectory)
 ## Links
 
 - [SonarQube](https://sonarcloud.io/dashboard?id=metio_krei)
+- [OpenHub](https://www.openhub.net/p/krei)
 
 ## License
 

@@ -23,10 +23,10 @@ var project = Project.builder(projectDirectory)
 - https://yeoman.io/ (NPM)
 - https://jeka.dev/ (Java)
 
-## SonarQube
+## Metrics
 
-||
-|------:|
+| SonarQube |
+|---------:|
 | [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=alert_status)](https://sonarcloud.io/dashboard?id=metio_krei) |
 | [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=metio_krei) |
 | [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=security_rating)](https://sonarcloud.io/dashboard?id=metio_krei) |

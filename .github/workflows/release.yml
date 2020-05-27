@@ -23,11 +23,11 @@ jobs:
       - name: Set release version
         run: mvn --batch-mode versions:set -DnewVersion=${{steps.release.outputs.version}} -DgenerateBackupPoms=false
       - name: Verify Project
-        run: mvn --batch-mode verify
+        run: mvn --batch-mode --settings $GITHUB_WORKSPACE/build/settings.xml verify
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: SonarCloud Scan
-        run: mvn org.sonarsource.scanner.maven:sonar
+        run: mvn --settings $GITHUB_WORKSPACE/build/settings.xml org.sonarsource.scanner.maven:sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

@@ -2,6 +2,7 @@ package wtf.metio.krei.action.file;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import wtf.metio.krei.test.FileAsserts;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,7 +29,7 @@ class FileActionsTest {
     }
 
     @Test
-    void shouldAppendToFile(@TempDir final Path directory) throws IOException {
+    void shouldAppendToFile(@TempDir final Path directory) {
         // given
         final var file = directory.resolve("test.txt");
 
@@ -37,7 +38,7 @@ class FileActionsTest {
         FileActions.appendFile(file, "world").call();
 
         // then
-        assertEquals("helloworld", Files.readString(file, UTF_8));
+        FileAsserts.assertFileContent(file, "helloworld");
     }
 
     @Test

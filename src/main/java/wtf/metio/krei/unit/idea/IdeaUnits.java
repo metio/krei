@@ -1,13 +1,11 @@
 package wtf.metio.krei.unit.idea;
 
 import wtf.metio.krei.action.file.FileActions;
-import wtf.metio.krei.model.License;
 import wtf.metio.krei.model.Unit;
 import wtf.metio.krei.template.IdeaTemplates;
 import wtf.metio.krei.template.LicenseTemplates;
 
 import java.nio.file.Path;
-import java.util.stream.IntStream;
 
 /**
  * Units that interact with Jetbrains Idea.
@@ -40,17 +38,25 @@ public final class IdeaUnits {
                 .build();
     }
 
-    public static Unit configureCopyright(final Path copyrightDirectory, final String projectName, final License license) {
-        final var matcher = String.format(LicenseTemplates.matcher(license), projectName);
-        final var args = IntStream.range(0, license.sourceHeaderPlaceholders())
-                .mapToObj(i -> projectName)
-                .toArray(String[]::new);
-        final var shortText = String.format(LicenseTemplates.header(license), args);
-        final var text = String.format(IdeaTemplates.copyright(), matcher, shortText, projectName);
+    public static Unit configureCopyright(
+            final Path copyrightDirectory,
+            final String projectName,
+            final LicenseTemplates license) {
+        final var matcher = license.matcher(projectName);
+        final var header = license.header(projectName);
+        return configureCopyright(copyrightDirectory, projectName, matcher, header);
+    }
+
+    public static Unit configureCopyright(
+            final Path copyrightDirectory,
+            final String projectName,
+            final String matcher,
+            final String header) {
+        final var xml = String.format(IdeaTemplates.copyright(), matcher, header, projectName);
         final var file = copyrightDirectory.resolve(projectName + ".xml");
         return Unit.builder()
                 .id("urn:krei:idea:config:copyright")
-                .action(FileActions.appendFile(file, text))
+                .action(FileActions.appendFile(file, xml))
                 .build();
     }
 

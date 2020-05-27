@@ -1,20 +1,13 @@
 package wtf.metio.krei.construct.metio;
 
-import wtf.metio.krei.model.License;
-import wtf.metio.krei.model.Unit;
-import wtf.metio.krei.unit.file.LicenseUnits;
+import wtf.metio.krei.model.license.License;
 
-import java.nio.file.Path;
+import static wtf.metio.krei.template.LicenseTemplates.CC0;
 
 public final class MetioLicense {
 
-    public static Unit construct(final Path projectDirectory) {
-        final var licenseFile = projectDirectory.resolve("LICENSE");
-
-        return Unit.builder()
-                .id("urn:krei:metio:license")
-                .addRequires(LicenseUnits.createLicense(licenseFile, License.CC0))
-                .build();
+    public static License configure(final String projectName) {
+        return License.of(CC0, projectName);
     }
 
     private MetioLicense() {

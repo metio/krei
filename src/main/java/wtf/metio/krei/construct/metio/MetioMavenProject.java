@@ -1,21 +1,19 @@
 package wtf.metio.krei.construct.metio;
 
-import wtf.metio.krei.model.Configuration;
-import wtf.metio.krei.model.Project;
-import wtf.metio.krei.unit.git.GitIgnoreUnits;
+import wtf.metio.krei.model.ProjectConfig;
 
-import java.nio.file.Path;
 import java.util.List;
+
+import static wtf.metio.krei.template.GitIgnoreTemplates.MAVEN;
 
 public final class MetioMavenProject {
 
-    public static Project create(final Configuration configuration) {
-        return Project.builder(configuration.projectDirectory())
-                .addUnits(MetioGit.construct(configuration.projectDirectory(), List.of(GitIgnoreUnits::ignoreMavenOutput)))
-                .addUnits(MetioLicense.construct(configuration.projectDirectory()))
-                .addUnits(MetioWaiver.construct(configuration.projectDirectory(), configuration.projectName()))
-                .addUnits(MetioReadme.construct(configuration.projectDirectory(), configuration.projectName()))
-                .addUnits(MetioIdea.construct(configuration.projectDirectory(), configuration.projectName()))
+    public static ProjectConfig configure(final String projectName) {
+        return ProjectConfig.builder(projectName)
+                .license(MetioLicense.configure(projectName))
+                .vcs(MetioGit.configure(List.of(MAVEN.ignores())))
+                .addIde(MetioIdea.configure())
+                .community(MetioReadme.configure(projectName))
                 .build();
     }
 

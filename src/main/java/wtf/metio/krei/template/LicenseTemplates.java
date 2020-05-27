@@ -1,35 +1,48 @@
 package wtf.metio.krei.template;
 
-import wtf.metio.krei.model.License;
+import java.util.stream.IntStream;
 
-public final class LicenseTemplates {
+public enum LicenseTemplates {
 
-    public static String header(final License license) {
-        return read(license, "/HEADER");
+    CC0("cc0", 2);
+
+    private final String id;
+    private final int sourceHeaderPlaceholders;
+
+    LicenseTemplates(final String id, int sourceHeaderPlaceholders) {
+        this.id = id;
+        this.sourceHeaderPlaceholders = sourceHeaderPlaceholders;
     }
 
-    public static String license(final License license) {
-        return read(license, "/LICENSE");
+    public String id() {
+        return id;
     }
 
-    public static String matcher(final License license) {
-        return read(license, "/MATCHER");
+    public String header(final String projectName) {
+        final var args = IntStream.range(0, sourceHeaderPlaceholders)
+                .mapToObj(i -> projectName)
+                .toArray(String[]::new);
+        return String.format(read("/HEADER"), args);
     }
 
-    public static String readme(final License license) {
-        return read(license, "/README");
+    public String license() {
+        return read("/LICENSE");
     }
 
-    public static String waiver(final License license) {
-        return read(license, "/WAIVER");
+    public String matcher(final String projectName) {
+        return String.format(read("/MATCHER"), projectName);
     }
 
-    private static String read(final License license, final String file) {
-        return Templates.template("license", license.id() + file);
+    public String readme() {
+        return read("/README");
     }
 
-    private LicenseTemplates() {
-        // factory class
+    public String waiver(final String projectName) {
+        return String.format(read("/WAIVER"), projectName);
+    }
+
+    private String read(final String file) {
+        return Templates.template("license", id + file);
     }
 
 }

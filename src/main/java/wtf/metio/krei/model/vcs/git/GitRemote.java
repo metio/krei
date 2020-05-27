@@ -16,10 +16,11 @@ public interface GitRemote {
     }
 
     static GitRemote github(final String repo) {
-        return builder()
-                .name("origin")
-                .url(String.format("git@github.com:%s.git", repo))
-                .build();
+        return of("origin", String.format("git@github.com:%s.git", repo));
+    }
+
+    static GitRemote of(final String name, final String url) {
+        return ImmutableGitRemote.of(name, url);
     }
     //endregion
 

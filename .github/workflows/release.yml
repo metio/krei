@@ -26,10 +26,6 @@ jobs:
         run: mvn --batch-mode --settings $GITHUB_WORKSPACE/build/settings.xml verify
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: SonarCloud Scan
-        run: mvn --settings $GITHUB_WORKSPACE/build/settings.xml sonar:sonar
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Publish to GitHub Packages Apache Maven
         run: mvn --batch-mode deploy

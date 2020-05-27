@@ -22,6 +22,10 @@ var project = Project.builder(projectDirectory)
 - https://github.com/generate/generate (NPM)
 - https://yeoman.io/ (NPM)
 
+## Links
+
+- [SonarQube](https://sonarcloud.io/dashboard?id=metio_krei)
+
 ## License
 
 To the extent possible under law, the author(s) have dedicated all copyright and related and neighboring rights to this software to the public domain worldwide.

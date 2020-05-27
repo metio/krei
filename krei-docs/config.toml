@@ -1,0 +1,9 @@
+baseURL = "https://krei.projects.metio.wtf/"
+languageCode = "en"
+theme = "metio"
+title = "krei"
+
+pygmentsUseClasses=true
+sectionPagesMenu = "main"
+enableRobotsTXT = true
+DefaultContentLanguage = "en"

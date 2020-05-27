@@ -150,6 +150,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>5.7.0.202003110725-r</version>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <version>${version.junit5}</version>

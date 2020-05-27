@@ -1,4 +1,4 @@
-# krei [![OpenHub](https://www.openhub.net/p/krei/widgets/project_thin_badge.gif)](https://www.openhub.net/p/krei)
+# krei [![OpenHub](https://www.openhub.net/p/krei/widgets/project_thin_badge.gif)](https://www.openhub.net/p/krei) [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=alert_status)](https://sonarcloud.io/dashboard?id=metio_krei)
 
 Project-as-code approach for project creation & setup. Take a look at the [website](https://krei.projects.metio.wtf) for detailed information.
 

@@ -1,0 +1,29 @@
+{{ block "header" . }}
+<!--
+  ~ This file is part of krei. It is subject to the license terms in the LICENSE file found in the top-level
+  ~ directory of this distribution and at http://creativecommons.org/publicdomain/zero/1.0/. No part of krei,
+  ~ including this file, may be copied, modified, propagated, or distributed except according to the terms contained
+  ~ in the LICENSE file.
+  -->
+
+<header id="header">
+    <h1 id="projectname">
+        <a href="{{ " id="rootlink"/" | absLangURL }}">{{.Site.Title}}</a>
+        <a href="{{ " sitemap/" | absLangURL }}" title="show me all pages" id="sitemaplink">
+        <img alt="sitemap" height="30" src="/images/sitemap.svg" width="30">
+        </a>
+    </h1>
+    {{ partial "i18n/translations.html" . }}
+    <span id="actions">
+        <a href="https://github.com/cronn/ctc" id="github" title="want some code?">
+            <img alt="github" height="32" src="/images/github.svg" width="32">
+        </a>
+        <a href="https://twitter.com/cronngmbh" id="twitter" title="peep peep peep">
+            <img alt="twitter" height="32" src="/images/twitter.svg" width="32">
+        </a>
+        <a href="/atom.xml" id="newsfeed" title="get notified about updates">
+            <img alt="newsfeed" height="32" src="/images/rss.svg" width="32">
+        </a>
+    </span>
+</header>
+{{ end }}

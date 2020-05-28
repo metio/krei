@@ -1,13 +1,15 @@
+/*
+ * This file is part of krei. It is subject to the license terms in the LICENSE file found in the top-level
+ * directory of this distribution and at http://creativecommons.org/publicdomain/zero/1.0/. No part of krei,
+ * including this file, may be copied, modified, propagated, or distributed except according to the terms contained
+ * in the LICENSE file.
+ */
+
 package wtf.metio.krei.usecase;
 
 import wtf.metio.krei.model.Project;
-import wtf.metio.krei.model.Unit;
 
 import java.io.PrintStream;
-import java.util.stream.Stream;
-
-import static java.lang.String.join;
-import static java.util.stream.Stream.of;
 
 public final class DryRun {
 

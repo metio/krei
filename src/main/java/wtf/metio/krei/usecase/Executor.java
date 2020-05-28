@@ -1,9 +1,15 @@
+/*
+ * This file is part of krei. It is subject to the license terms in the LICENSE file found in the top-level
+ * directory of this distribution and at http://creativecommons.org/publicdomain/zero/1.0/. No part of krei,
+ * including this file, may be copied, modified, propagated, or distributed except according to the terms contained
+ * in the LICENSE file.
+ */
+
 package wtf.metio.krei.usecase;
 
 import wtf.metio.krei.model.Project;
 import wtf.metio.krei.model.Unit;
 
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -45,7 +51,7 @@ final class Executor {
     private static Stream<String> executeUnits(final Set<Unit> units, final Function<Unit, Stream<String>> formatter) {
         return units.stream().flatMap(unit -> unitLifecycle(unit, formatter));
     }
-    
+
     private static Stream<String> defaultFormatter(final Unit unit) {
         final var delimiter = unit.execRaw().orElse(Boolean.FALSE)
                 ? "" : " ";

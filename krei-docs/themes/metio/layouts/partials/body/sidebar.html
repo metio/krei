@@ -1,21 +1,12 @@
-<!--
-  ~ This file is part of krei. It is subject to the license terms in the LICENSE file found in the top-level
-  ~ directory of this distribution and at http://creativecommons.org/publicdomain/zero/1.0/. No part of krei,
-  ~ including this file, may be copied, modified, propagated, or distributed except according to the terms contained
-  ~ in the LICENSE file.
-  -->
-
 <ul>
     {{ $currentPage := . }}
     {{ range .Site.Menus.main }}
     {{ if .HasChildren }}
     <li>
-        <a class="{{ if $currentPage.HasMenuCurrent " href="{{ .URL }}" main" . }}active{{ end }}">{{ .Pre }}{{ .Name
-        }}</a>
+        <a href="{{ .URL }}" class="{{ if $currentPage.HasMenuCurrent "main" . }}active{{ end }}">{{ .Pre }}{{ .Name }}</a>
         <ul>
             {{ range .Children }}
-            <li class="{{ if $currentPage.IsMenuCurrent " main
-            " . }}active{{ end }}">
+            <li class="{{ if $currentPage.IsMenuCurrent "main" . }}active{{ end }}">
             <a href="{{ .URL }}">{{ .Name }}</a>
             </li>
             {{ end }}

@@ -3,18 +3,15 @@
     <h1 id="projectname">
         <a id="rootlink" href="{{ "/" | absLangURL }}">{{.Site.Title}}</a>
         <a href="{{ "sitemap/" | absLangURL }}" title="show me all pages" id="sitemaplink">
-        <img src="/images/sitemap.svg" alt="sitemap" width="30" height="30">
+        <img src="{{ /images/sitemap.svg | absURL }}" alt="sitemap" width="30" height="30">
         </a>
     </h1>
     {{ partial "i18n/translations.html" . }}
     <span id="actions">
-        <a href="https://github.com/cronn/ctc" id="github" title="want some code?">
-            <img src="/images/github.svg" alt="github" width="32" height="32">
+        <a href="https://github.com/metio/krei" id="github" title="want some code?">
+            <img src="{{ /images/github.svg | absURL }}" alt="github" width="32" height="32">
         </a>
-        <a href="https://twitter.com/cronngmbh" id="twitter" title="peep peep peep">
-            <img src="/images/twitter.svg" alt="twitter" width="32" height="32">
-        </a>
-        <a href="/atom.xml" id="newsfeed" title="get notified about updates">
+        <a href="{{ /atom.xml | absURL }}" id="newsfeed" title="get notified about updates">
             <img src="/images/rss.svg" alt="newsfeed" width="32" height="32">
         </a>
     </span>

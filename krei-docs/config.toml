@@ -1,4 +1,4 @@
-baseURL = "https://krei.projects.metio.wtf/"
+baseURL = "https://projects.metio.wtf/krei/"
 languageCode = "en"
 theme = "metio"
 title = "krei"

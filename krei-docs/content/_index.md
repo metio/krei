@@ -3,7 +3,7 @@ title: krei
 date: 2020-04-13
 ---
 
-# Krei
+# krei
 
 `write code that generates code, so that you can write more code`
 

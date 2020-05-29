@@ -12,8 +12,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Create release version
-          id: release
-          run: echo "::set-output name=version::$(date +'%Y.%m.%d-%H%M%S')"
+        id: release
+        run: echo "::set-output name=version::$(date +'%Y.%m.%d-%H%M%S')"
       - name: Publish to Registry
         uses: elgohr/Publish-Docker-Github-Action@master
         with:

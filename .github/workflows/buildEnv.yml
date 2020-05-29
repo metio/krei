@@ -1,0 +1,23 @@
+name: Publish Build Environment
+on:
+  push:
+    paths:
+      - 'krei-build-env/**'
+    branches: [ master ]
+  schedule:
+    - cron: '0 3 * * 0' # Weekly on Sundays at 03:00
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Create release version
+          id: release
+          run: echo "::set-output name=version::$(date +'%Y.%m.%d-%H%M%S')"
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: metio/krei-build-env
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          tags: "latest,${{steps.release.outputs.version}}"

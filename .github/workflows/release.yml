@@ -40,7 +40,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Website
-        run: hugo --source krei-docs --minify --i18n-warnings
+        run: hugo --minify --i18n-warnings --path-warnings --source krei-docs
       - name: Deploy Website
         uses: peaceiris/actions-gh-pages@v3
         with:

@@ -41,6 +41,10 @@ install: ##@hacking Install all artifacts into local repository
 verify: ##@hacking Verify all modules
 	mvn verify
 
+.PHONY: site
+site: ##@hacking Build website
+	hugo --minify --i18n-warnings --path-warnings --source krei-docs
+
 .PHONY: sign-waiver
 sign-waiver: ##@contributing Sign the WAIVER
 	gpg2 --no-version --armor --sign AUTHORS/WAIVER

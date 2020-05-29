@@ -1,9 +1,9 @@
 ---
-title: krei - git mirrors
+title: Git Mirrors
 date: 2020-04-13
 ---
 
-`krei` is using [GitHub](https://github.com/metio/krei) as its primary source/issue/build environment, however its code is mirror to multiple other git repositories in order to deal with [GitHub outages](https://www.githubstatus.com/).
+`krei` is using [GitHub](https://github.com/metio/krei) as its primary source/issue/build environment, however its code is available in other git repositories as well in order to deal with [GitHub outages](https://www.githubstatus.com/).
 
 ## SSH Setup (**Optional**)
 

@@ -7,3 +7,8 @@ pygmentsUseClasses=true
 sectionPagesMenu = "main"
 enableRobotsTXT = true
 DefaultContentLanguage = "en"
+
+[outputs]
+home = [ "HTML", "RSS", "ATOM", "HUMANS", "FOAF"]
+section = ["HTML", "RSS", "ATOM"]
+taxonomy = ["HTML", "RSS", "ATOM"]

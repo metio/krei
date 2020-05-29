@@ -1,5 +1,5 @@
 ---
-title: Performing a Release
+title: Release
 date: 2020-04-13
 menu:
   main:

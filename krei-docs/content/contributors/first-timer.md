@@ -12,13 +12,13 @@ tags:
 
 First time contributors have to perform an additional step in order to get their changes merged into the main repository.
 
-The [WAIVER](https://github.com/metio/krei/blob/master/AUTHORS/WAIVER) has to be signed in order to signal that all contributions can be published into the public domain using the Creative Commons Zero (CC0) license.
+The [WAIVER](https://github.com/metio/krei/blob/master/AUTHORS/WAIVER) has to be signed in order to signal that all contributions can be published into the public domain using the [Creative Commons Zero (CC0)](https://creativecommons.org/publicdomain/zero/1.0/) license.
 
-[minisign](https://jedisct1.github.io/minisign/) is used to sign and verify contributions (see [dev-env](./dev-env).
+[minisign](https://jedisct1.github.io/minisign/) is used to sign and verify contributions (see [dev-env](../dev-env)).
 
 The signed waiver **must** be added to your first pull request. The created git commit **must** be [GPG signed](https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--Sltkeyidgt).
 
-Additionally, any contributor may add her/his [metadata](./metadata) to the project. This is especially useful for `minisign` public keys since you will have to communicate to the project maintainers anyway.
+Additionally, any contributor may add her/his [metadata](../metadata) to the project. This is especially useful for `minisign` public keys since you will have to communicate to the project maintainers anyway.
 
 ## Prerequisite
 
@@ -38,13 +38,13 @@ $ minisign -Sm AUTHORS/WAIVER
 $ mv WAIVER.minisign AUTHORS/WAIVER.`id --name --user`.minisign
 ```
 
-In case you are into [Makefile](./makefile)s, you can use the shorter version:
+In case you are into [Makefiles](../makefile), you can use the shorter version:
 
 ```shell script
 $ make sign-waiver
 ```
 
-In both cases, a new file called `AUTHORS/WAIVER.<USER>.minisign` was created. The Makefile will commit the signed waiver to your local repo as well. In case you have not used the Makefile, run this:
+In both cases, a new file called `AUTHORS/WAIVER.<USER>.minisign` was created. The `Makefile` will commit the signed waiver to your local repo as well. In case you have not used the `Makefile`, run this:
 
 ```shell script
 $ git add AUTHORS/WAIVER.`id --name --user`.minisign

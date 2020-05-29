@@ -45,7 +45,11 @@ verify: ##@hacking Verify all modules
 site: ##@hacking Build website
 	hugo --minify --i18n-warnings --path-warnings --source krei-docs
 
+.PHONY: site-watch
+site-watch: ##@hacking Build and watch website
+	hugo --minify --i18n-warnings --path-warnings --source krei-docs --watch
+
 .PHONY: sign-waiver
 sign-waiver: ##@contributing Sign the WAIVER
-	gpg2 --no-version --armor --sign AUTHORS/WAIVER
-	mv AUTHORS/WAIVER.asc AUTHORS/WAIVER-signed-by-$(USERNAME)-$(CURRENT_DATE).asc
+	minisign -Sm WAIVER
+	mv WAIVER.minisign WAIVER.`id --name --user`.minisign

@@ -10,7 +10,10 @@ package wtf.metio.krei.action.gitea;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.immutables.value.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import wtf.metio.hcf4j.HttpClient;
+import wtf.metio.krei.template.Templates;
 
 /**
  * @see <a href="https://codeberg.org/api/swagger#">OpenAPI documentation</a>
@@ -52,8 +55,7 @@ public interface CodebergClient extends GiteaClient {
                     .mediaType("application/json")
                     .executeOnCallingThread();
             return response.statusCode();
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        } catch (final JsonProcessingException exception) {
             return 1000;
         }
     }

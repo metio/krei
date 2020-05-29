@@ -18,7 +18,7 @@ import wtf.metio.krei.model.Action;
 class GiteaUnitsTest {
 
     @Test
-    @Disabled
+    @Disabled("changes a remote repository which requires credentials")
     void shouldCreateRepository() {
         final var client = CodebergClient.client("123")
                 .httpClient(new OkHttp3HttpClientFactory().build())

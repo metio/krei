@@ -13,7 +13,7 @@ import java.nio.file.Path;
 
 public final class CreateProject {
 
-    public static void execute(final Project project, final Path projectDirectory) {
+    public static void execute(final Project project) {
         Executor.execute(project, CreateProject::execute);
     }
 

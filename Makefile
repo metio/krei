@@ -49,6 +49,10 @@ site: ##@hacking Build website
 site-watch: ##@hacking Build and watch website
 	hugo --minify --i18n-warnings --path-warnings --source krei-docs --watch
 
+.PHONY: sync-mirrors
+sync-mirrors: ##@contributing Synchronize changes to all git mirrors
+	git push mirrors master:master
+
 .PHONY: sign-waiver
 sign-waiver: ##@contributing Sign the WAIVER
 	minisign -Sm AUTHORS/WAIVER

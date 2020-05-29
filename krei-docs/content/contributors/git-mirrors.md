@@ -59,8 +59,18 @@ $ git remote set-url --add --push mirrors git@gitlab.com:metio.wtf/krei.git
 $ git remote set-url --add --push mirrors git@bitbucket.org:metio-wtf/krei.git
 ```
 
+The final configuration should look like this:
+
+```shell script
+$ git remote -v
+mirrors DISABLED (fetch)
+mirrors codeberg:metio.wtf/krei.git (push)
+mirrors gitlab:metio.wtf/krei.git (push)
+mirrors bitbucket:metio-wtf/krei.git (push)
+```
+
 Finally, push the current branch to all mirrors, e.g. `master`:
 
 ```shell script
-$ git push mirrors master
+$ git push mirrors master:master
 ```

@@ -51,5 +51,7 @@ site-watch: ##@hacking Build and watch website
 
 .PHONY: sign-waiver
 sign-waiver: ##@contributing Sign the WAIVER
-	minisign -Sm WAIVER
-	mv WAIVER.minisign WAIVER.`id --name --user`.minisign
+	minisign -Sm AUTHORS/WAIVER
+	mv WAIVER.minisign AUTHORS/WAIVER.${USERNAME}.minisign
+	git add AUTHORS/WAIVER.${USERNAME}.minisign
+	git commit -m 'sign waiver' --gpg-sign

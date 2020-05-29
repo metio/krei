@@ -1,4 +1,4 @@
-FROM maven:latest
+FROM maven:3.6-openjdk-14-slim
 
 LABEL org.opencontainers.image.authors="Sebastian Hoß <seb@hoß.de>"
 LABEL org.opencontainers.image.vendor="metio.wtf"

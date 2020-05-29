@@ -20,4 +20,5 @@ jobs:
           name: metio/krei-build-env
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+          workdir: krei-build-env
           tags: "latest,${{steps.release.outputs.version}}"

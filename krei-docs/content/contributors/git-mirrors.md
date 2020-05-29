@@ -4,6 +4,11 @@ date: 2020-04-13
 menu:
   main:
     parent: 'Contributors'
+categories:
+- Contributors
+tags:
+- git
+- mirror
 ---
 
 `krei` is using [GitHub](https://github.com/metio/krei) as its primary source/issue/build environment, however its code is available in other git repositories as well in order to deal with [GitHub outages](https://www.githubstatus.com/).

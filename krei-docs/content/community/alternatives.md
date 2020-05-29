@@ -4,6 +4,10 @@ date: 2020-04-13
 menu:
   main:
     parent: 'Community'
+categories:
+- Community
+tags:
+- alternatives
 ---
 
 In case `krei` is not what you are looking for, take a look at these alternatives:

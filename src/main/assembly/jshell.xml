@@ -1,0 +1,44 @@
+<!--
+  ~ This file is part of krei. It is subject to the license terms in the LICENSE file found in the top-level
+  ~ directory of this distribution and at http://creativecommons.org/publicdomain/zero/1.0/. No part of krei,
+  ~ including this file, may be copied, modified, propagated, or distributed except according to the terms contained
+  ~ in the LICENSE file.
+  -->
+
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="http://maven.apache.org/ASSEMBLY/2.0.0"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+
+    <id>jshell</id>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <formats>
+        <format>zip</format>
+    </formats>
+
+    <dependencySets>
+        <dependencySet>
+            <excludes>
+                <exclude>org.immutables:value</exclude>
+            </excludes>
+            <outputDirectory>/libs</outputDirectory>
+            <useProjectArtifact>true</useProjectArtifact>
+            <scope>compile</scope>
+            <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
+        </dependencySet>
+    </dependencySets>
+
+    <fileSets>
+        <fileSet>
+            <directory>${project.basedir}/src/main/jshell</directory>
+            <outputDirectory/>
+            <includes>
+                <include>README.md</include>
+                <include>bootstrap.jsh</include>
+                <include>constructs/*</include>
+                <include>imports/*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+
+</assembly>

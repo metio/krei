@@ -22,7 +22,7 @@ Additionally, any contributor may add her/his [metadata](../metadata) to the pro
 
 ## Prerequisite
 
-Make sure at least version `0.8` is installed:
+Make sure at least version `0.8` of `minisign` is installed:
 
 ```shell script
 $ minisign -v

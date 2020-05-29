@@ -216,6 +216,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M4</version>
                 <configuration>
+                    <systemPropertyVariables>
+                        <org.slf4j.simpleLogger.defaultLogLevel>off</org.slf4j.simpleLogger.defaultLogLevel>
+                    </systemPropertyVariables>
                     <argLine>
                         --enable-preview
                         --add-opens wtf.metio.krei/wtf.metio.krei.construct.metio=ALL-UNNAMED

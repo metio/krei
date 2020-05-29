@@ -16,6 +16,7 @@ this software. If not, see http://creativecommons.org/publicdomain/zero/1.0/.
 ## Mirrors
 
 - https://github.com/metio/krei
+- https://repo.or.cz/krei.git
 - https://codeberg.org/metio.wtf/krei (*master only*)
 - https://gitlab.com/metio.wtf/krei (*master only*)
 - https://bitbucket.org/metio-wtf/krei (*master only*)

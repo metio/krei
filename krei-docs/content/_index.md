@@ -9,6 +9,22 @@ date: 2020-04-13
 
 `krei` ([esperanto for *create*](https://translate.google.com/#view=home&op=translate&sl=en&tl=eo&text=create)) is a project creator, generator, differ, and validator. It's available in several forms, pick the one matching your use case.
 
-## Java Library
+## krei-core
 
-`krei` can be embedded as a Java library.
+Re-usable Java library which implements the entire business logic. See [here](krei-core) for details.
+
+## krei-cli
+
+CLI to interact with krei-core. See [here](krei-cli) for details.
+
+## krei-fx
+
+JavaFX application to interact with krei-core. See [here](krei-fx) for details.
+
+## krei-service
+
+Webservice with browser UI to interact with krei-core. See [here](krei-service) for details.
+
+## krei-central
+
+Definitions for projects at https://github.com/metio. See [here](krei-central) for details.

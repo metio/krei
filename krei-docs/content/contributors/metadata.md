@@ -14,7 +14,7 @@ Every contributor may add/remove her/his metadata to the [list of contributors](
 
 Metadata is currently used in three places:
 
-1. To generate a list of existing [minisign](https://jedisct1.github.io/minisign/) signatures in the [first timer](./first-timer) documentation.
+1. To generate a list of existing [minisign](https://jedisct1.github.io/minisign/) signatures in the [first timer](../first-timer) documentation.
 2. To generate a [humans.txt](http://humanstxt.org/) file of [all contributors](https://krei.projects.metio.wtf/humans.txt).
 3. To generate a [FOAF](http://www.foaf-project.org/) for the [entire project](https://krei.projects.metio.wtf/foaf.rdf).
 

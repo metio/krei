@@ -3,17 +3,10 @@ title: krei
 date: 2020-04-13
 ---
 
-## Community
+> write code that generates code, so that you can write more code
 
-- [Alternatives to krei](community/alternatives)
+`krei` ([esperanto for *create*](https://translate.google.com/#view=home&op=translate&sl=en&tl=eo&text=create)) is a project creator, generator, differ, and validator. It's available in several forms, pick the one matching your use case.
 
-## Contributors
+## Java Library
 
-- [Development Environment](contributors/dev-env)
-- [How to build](contributors/build)
-- [Setup Git Mirrors](contributors/git-mirrors)
-- [Perform a Release](contributors/release)
-
-## Metrics
-
-- [Badges](metrics/badges)
+`krei` can be embedded as a Java library.

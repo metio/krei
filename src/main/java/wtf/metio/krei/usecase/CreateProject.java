@@ -9,8 +9,6 @@ package wtf.metio.krei.usecase;
 
 import wtf.metio.krei.model.Project;
 
-import java.nio.file.Path;
-
 public final class CreateProject {
 
     public static void execute(final Project project) {

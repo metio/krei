@@ -7,6 +7,7 @@
 
 package wtf.metio.krei.unit.git;
 
+import wtf.metio.krei.action.git.GitActions;
 import wtf.metio.krei.model.Unit;
 import wtf.metio.krei.model.vcs.git.GitRemote;
 
@@ -14,10 +15,10 @@ import java.nio.file.Path;
 
 public final class GitUnits {
 
-    public static Unit initializeRepository(final Path path) {
+    public static Unit initializeRepository(final Path projectDirectory) {
         return Unit.builder()
                 .id("urn:krei:git:repo:init")
-                .addExec("git", "init", path.toAbsolutePath().toString())
+                .action(GitActions.initializeRepository(projectDirectory))
                 .build();
     }
 

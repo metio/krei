@@ -20,6 +20,14 @@ import java.util.stream.Collectors;
 
 public final class Materialize {
 
+    static int intoFilesystem(final ProjectConfig config, final Path projectDirectory) {
+        return Executor.execute(asProject(config, projectDirectory));
+    }
+
+    static int intoFilesystem(final ProjectConfig config, final MaterializeOptions options) {
+        return Executor.execute(asProject(config, options));
+    }
+
     static Project asProject(final ProjectConfig config, final Path projectDirectory) {
         return asProject(config, MaterializeOptions.standard(projectDirectory));
     }

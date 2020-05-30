@@ -27,6 +27,10 @@ public interface MaterializeOptions {
         return ImmutableMaterializeOptions.builder().projectDirectory(projectDirectory);
     }
 
+    static ImmutableMaterializeOptions.Builder from(final MaterializeOptions options) {
+        return ImmutableMaterializeOptions.builder().from(options);
+    }
+
     static MaterializeOptions standard(final Path projectDirectory) {
         return builder(projectDirectory)
                 .addBuildHandler(new BuildSystemHandler(projectDirectory))

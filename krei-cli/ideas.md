@@ -1,0 +1,4 @@
+- use Maven resolver to fetch dependencies on-the-fly
+- generate jshell classpath/startup scripts
+- open jshell automatically
+- have a .krei.yaml in the project to declare krei version & external deps

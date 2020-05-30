@@ -27,6 +27,7 @@ In case `krei` is not what you are looking for, take a look at these alternative
 - https://github.com/miguellealw/project-spawner (JavaScript)
 - https://github.com/liftoffcli/liftoff (Ruby)
 - https://github.com/esy/pesy (Reason)
+- https://github.com/nyteshade/krei (JavaScript)
 
 ## Comparison
 
@@ -45,4 +46,5 @@ In case `krei` is not what you are looking for, take a look at these alternative
 ### krei vs project-spawner
 ### krei vs liftoff
 ### krei vs pesy
+### krei vs krei
 

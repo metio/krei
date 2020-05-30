@@ -56,7 +56,7 @@ $ git commit -m 'sign waiver' --gpg-sign
 An existing contributor will verify your signature with:
 
 ```shell script
-$ minisign -V -x WAIVER.<YOUR_NAME>.minisign -P <YOUR_PUB_KEY> -m WAIVER
+$ minisign -V -x AUTHORS/WAIVER.<YOUR_NAME>.minisign -P <YOUR_PUB_KEY> -m AUTHORS/WAIVER
 ```
 
 In order to verify existing signatures, do any of the following:

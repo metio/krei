@@ -1,5 +1,5 @@
 {{ range $.Site.Data.contributors }}
 <div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># verify signature: {{ .id }}</span>
-$ minisign -V -x WAIVER.{{ .id }}.minisign -P {{ .minisign }} -m WAIVER
+$ minisign -V -x AUTHORS/WAIVER.{{ .id }}.minisign -P {{ .minisign }} -m AUTHORS/WAIVER
 </code></pre></div>
 {{ end }}

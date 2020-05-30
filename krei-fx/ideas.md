@@ -1,0 +1,2 @@
+- graphical equivalent to krei-cli based on JavaFX
+- instead of launching jshell, create/diff/validate projects

@@ -23,3 +23,7 @@ img:hover {
 a,a:visited,a>span {
     color: #268bd2;
 }
+
+li::marker {
+    color: white;
+}

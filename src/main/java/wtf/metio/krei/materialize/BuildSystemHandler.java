@@ -9,6 +9,7 @@ package wtf.metio.krei.materialize;
 
 import wtf.metio.krei.model.Unit;
 import wtf.metio.krei.model.build.BuildSystem;
+import wtf.metio.krei.model.build.maven.Maven;
 
 import java.nio.file.Path;
 import java.util.function.Function;
@@ -23,7 +24,10 @@ public final class BuildSystemHandler implements Function<BuildSystem, Unit> {
 
     @Override
     public Unit apply(final BuildSystem buildSystem) {
-        // Handle unknown BuildSystem?
+        if (buildSystem instanceof Maven maven) {
+            return new MavenHandler(projectDirectory).apply(maven);
+        }
+        // Handle unknown build system?
         return Unit.noop();
     }
 

@@ -19,7 +19,7 @@ public final class Callables {
     private static final Logger LOGGER = LoggerFactory.getLogger(Callables.class);
 
     public static Action call(final Callable<?> callable) {
-        return none(() -> callable.call());
+        return none(callable::call);
     }
 
     public static Action none(final Call callable) {

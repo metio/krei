@@ -8,26 +8,22 @@
 package wtf.metio.krei.materialize;
 
 import wtf.metio.krei.model.Unit;
-import wtf.metio.krei.model.community.Community;
-import wtf.metio.krei.model.community.readme.Readme;
+import wtf.metio.krei.model.build.BuildSystem;
+import wtf.metio.krei.model.build.maven.Maven;
 
 import java.nio.file.Path;
 import java.util.function.Function;
 
-public final class CommunityHandler implements Function<Community, Unit> {
+public final class MavenHandler implements Function<Maven, Unit> {
 
     private final Path projectDirectory;
 
-    CommunityHandler(final Path projectDirectory) {
+    MavenHandler(final Path projectDirectory) {
         this.projectDirectory = projectDirectory;
     }
 
     @Override
-    public Unit apply(final Community community) {
-        if (community instanceof Readme readme) {
-            return new ReadmeHandler(projectDirectory).apply(readme);
-        }
-        // Handle unknown community?
+    public Unit apply(final Maven maven) {
         return Unit.noop();
     }
 

@@ -24,7 +24,7 @@ public final class GitUnits {
 
     public static Unit addGitRemote(final GitRemote remote) {
         return Unit.builder()
-                .id("urn:krei:git:remote:add")
+                .id("urn:krei:git:remote:add:" + remote.name())
                 .build();
     }
 

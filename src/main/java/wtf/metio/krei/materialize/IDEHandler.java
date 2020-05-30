@@ -9,6 +9,7 @@ package wtf.metio.krei.materialize;
 
 import wtf.metio.krei.model.Unit;
 import wtf.metio.krei.model.ide.IDE;
+import wtf.metio.krei.model.ide.idea.Idea;
 
 import java.nio.file.Path;
 import java.util.function.Function;
@@ -23,6 +24,9 @@ public final class IDEHandler implements Function<IDE, Unit> {
 
     @Override
     public Unit apply(final IDE ide) {
+        if (ide instanceof Idea idea) {
+            return new IdeaHandler(projectDirectory).apply(idea);
+        }
         // Handle unknown IDE?
         return Unit.noop();
     }

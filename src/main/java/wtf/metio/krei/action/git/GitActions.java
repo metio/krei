@@ -18,7 +18,7 @@ public final class GitActions {
     public static Action initializeRepository(final Path projectDirectory) {
         return Callables.none(() -> FileRepositoryBuilder
                 .create(projectDirectory.toAbsolutePath().toFile())
-                .create());
+                .create(true));
     }
 
     private GitActions() {

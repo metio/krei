@@ -1,0 +1,2 @@
+- start.spring.io like service based on krei-core
+- integrate start.spring.io via its API?

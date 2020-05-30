@@ -46,7 +46,7 @@ var license = LicenseUnits.createLicense(licenseFile, licenseText);
 
 ### Create `WAIVER`
 
-```jshelllanguage
+```java
 import wtf.metio.krei.unit.file.LicenseUnits;
 
 var projectDirectory = Paths.get("/some/project/folder");

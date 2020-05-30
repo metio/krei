@@ -8,7 +8,6 @@
 package wtf.metio.krei.materialize;
 
 import wtf.metio.krei.model.Unit;
-import wtf.metio.krei.model.build.BuildSystem;
 import wtf.metio.krei.model.build.maven.Maven;
 
 import java.nio.file.Path;
@@ -24,7 +23,7 @@ public final class MavenHandler implements Function<Maven, Unit> {
 
     @Override
     public Unit apply(final Maven maven) {
-        return Unit.noop();
+        return Unit.builder().id(projectDirectory.toString()).build();
     }
 
 }

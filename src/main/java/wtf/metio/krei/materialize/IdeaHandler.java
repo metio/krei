@@ -23,7 +23,7 @@ public final class IdeaHandler implements Function<Idea, Unit> {
 
     @Override
     public Unit apply(final Idea idea) {
-        return Unit.noop();
+        return Unit.builder().id(projectDirectory.toString()).build();
     }
 
 }

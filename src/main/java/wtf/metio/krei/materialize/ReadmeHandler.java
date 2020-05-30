@@ -23,7 +23,7 @@ public final class ReadmeHandler implements Function<Readme, Unit> {
 
     @Override
     public Unit apply(final Readme readme) {
-        return Unit.noop();
+        return Unit.builder().id(projectDirectory.toString()).build();
     }
 
 }

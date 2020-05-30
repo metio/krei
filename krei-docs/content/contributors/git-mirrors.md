@@ -13,7 +13,23 @@ tags:
 
 `krei` is using [GitHub](https://github.com/metio/krei) as its primary source/issue/build environment, however its code is available in other git repositories as well in order to deal with [GitHub outages](https://www.githubstatus.com/).
 
-## SSH Setup (**Optional**)
+## Available Mirrors
+
+- https://github.com/metio/krei
+- https://repo.or.cz/krei.git
+- https://codeberg.org/metio.wtf/krei
+- https://gitlab.com/metio.wtf/krei
+- https://bitbucket.org/metio-wtf/krei
+
+## Automatic Mirroring
+
+The Gitlab repository pulls changes from GitHub and pushes changes into Codeberg and Bitbucket. The repo.or.cz mirror pulls from GitHub as well, therefore all you have to do is, push your changes into GitHub and a few minutes later, all other repositories will get the latest code automatically - including all branches.
+
+## Manual Mirroring
+
+In case Gitlab is down or removes the mirroring feature, an update can be performed manually.
+
+### SSH Setup (**Optional**)
 
 Use the following example config as reference and adapt according to your needs. In case you are using the same SSH key for every remote, adapt the `IdentityFile` part in the example. In case you only want to mirror to a subset of all mirrors, remove all those that you do not want to support.
 
@@ -39,7 +55,7 @@ Host codeberg
     IdentityFile ~/.ssh/codeberg
 ```
 
-## Git Remote Mirrors
+### Git Remote Mirrors
 
 Use the following commands to create a new git remote which only allows pushing code. Only specify those mirrors that you want to support.
 

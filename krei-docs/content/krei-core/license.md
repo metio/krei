@@ -31,6 +31,25 @@ var license = License.of(LicenseTemplates.CC0, projectName);
 - [x] configure `README` license section
 - [x] use provided project name for templating
 
+### Custom Configuration
+
+```java
+import wtf.metio.krei.model.license.License;import wtf.metio.krei.model.license.Waiver;import java.nio.file.Paths;
+
+var projectName = "your-project";
+var license = License.builder()
+    .license("your license text")
+    .licenseFile(Paths.get("/path/to/the/LICENSE/file"))
+    .sourceHeader("your source file header")
+    .sourceHeaderMatcher("regex to match source header")
+    .readme("README text for your license")
+    .waiver(Waiver.builder()
+        .text("your waiver text")
+        .waiverFile(Paths.get("/path/to/the/WAIVER/file"))
+        .build())
+    .build();
+```
+
 ## Imperative API
 
 ### Create `LICENSE`

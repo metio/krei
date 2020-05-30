@@ -2,7 +2,7 @@
     display: grid;
     grid-template-rows: auto auto 100px;
     grid-template-columns: 1fr;
-    grid-template-areas: "content" "navigation" "footer";
+    grid-template-areas: "content" "navigation" "footer" "header";
 }
 
 #header {

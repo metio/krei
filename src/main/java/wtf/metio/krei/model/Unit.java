@@ -23,6 +23,10 @@ public interface Unit {
     static ImmutableUnit.Builder builder() {
         return ImmutableUnit.builder();
     }
+    
+    static Unit noop() {
+        return builder().id("urn:krei:noop").build();
+    }
     //endregion
 
     /**

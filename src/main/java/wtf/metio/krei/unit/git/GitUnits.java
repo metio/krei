@@ -8,6 +8,7 @@
 package wtf.metio.krei.unit.git;
 
 import wtf.metio.krei.model.Unit;
+import wtf.metio.krei.model.vcs.git.GitRemote;
 
 import java.nio.file.Path;
 
@@ -17,6 +18,12 @@ public final class GitUnits {
         return Unit.builder()
                 .id("urn:krei:git:repo:init")
                 .addExec("git", "init", path.toAbsolutePath().toString())
+                .build();
+    }
+
+    public static Unit addGitRemote(final GitRemote remote) {
+        return Unit.builder()
+                .id("urn:krei:git:remote:add")
                 .build();
     }
 

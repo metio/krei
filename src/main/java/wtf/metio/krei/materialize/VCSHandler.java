@@ -9,6 +9,7 @@ package wtf.metio.krei.materialize;
 
 import wtf.metio.krei.model.Unit;
 import wtf.metio.krei.model.vcs.VCS;
+import wtf.metio.krei.model.vcs.git.Git;
 
 import java.nio.file.Path;
 import java.util.function.Function;
@@ -23,7 +24,11 @@ public final class VCSHandler implements Function<VCS, Unit> {
 
     @Override
     public Unit apply(final VCS vcs) {
-        return Unit.builder().build();
+        if (vcs instanceof Git git) {
+            return new GitHandler(projectDirectory).apply(git);
+        }
+        // Handle unknown VCS?
+        return Unit.noop();
     }
 
 }

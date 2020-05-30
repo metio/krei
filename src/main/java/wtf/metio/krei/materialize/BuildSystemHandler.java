@@ -23,7 +23,8 @@ public final class BuildSystemHandler implements Function<BuildSystem, Unit> {
 
     @Override
     public Unit apply(final BuildSystem buildSystem) {
-        return Unit.builder().build();
+        // Handle unknown BuildSystem?
+        return Unit.noop();
     }
 
 }

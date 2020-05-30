@@ -8,23 +8,26 @@
 package wtf.metio.krei.materialize;
 
 import wtf.metio.krei.model.Unit;
-import wtf.metio.krei.model.community.Community;
+import wtf.metio.krei.model.vcs.git.Git;
+import wtf.metio.krei.unit.git.GitUnits;
 
 import java.nio.file.Path;
 import java.util.function.Function;
 
-public final class CommunityHandler implements Function<Community, Unit> {
+public final class GitHandler implements Function<Git, Unit> {
 
     private final Path projectDirectory;
 
-    CommunityHandler(final Path projectDirectory) {
+    GitHandler(final Path projectDirectory) {
         this.projectDirectory = projectDirectory;
     }
 
     @Override
-    public Unit apply(final Community community) {
-        // Handle unknown Community?
-        return Unit.noop();
+    public Unit apply(final Git git) {
+        final var builder = Unit.builder()
+                .addBefore(GitUnits.initializeRepository(projectDirectory));
+        git.remotes().stream().map(GitUnits::addGitRemote).forEach(builder::addRequires);
+        return builder.build();
     }
 
 }

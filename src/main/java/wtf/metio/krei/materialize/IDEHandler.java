@@ -23,7 +23,8 @@ public final class IDEHandler implements Function<IDE, Unit> {
 
     @Override
     public Unit apply(final IDE ide) {
-        return Unit.builder().build();
+        // Handle unknown IDE?
+        return Unit.noop();
     }
 
 }

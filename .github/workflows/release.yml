@@ -79,3 +79,14 @@ jobs:
           asset_path: ./target/krei-${{steps.release.outputs.version}}-jshell.zip
           asset_name: krei-core-${{steps.release.outputs.version}}-jshell.zip
           asset_content_type: application/zip
+      - name: Send mail
+        uses: dawidd6/action-send-mail@v2
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: krei release ${{steps.release.outputs.version}}
+          body: See https://github.com/metio/krei/releases/tag/${{steps.release.outputs.version}} for details.
+          to: krei@metio.groups.io
+          from: ${{ secrets.MAIL_SENDER }}

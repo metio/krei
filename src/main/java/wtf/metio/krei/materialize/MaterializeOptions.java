@@ -8,8 +8,6 @@
 package wtf.metio.krei.materialize;
 
 import org.immutables.value.Value;
-import wtf.metio.krei.model.Project;
-import wtf.metio.krei.model.ProjectConfig;
 import wtf.metio.krei.model.Unit;
 import wtf.metio.krei.model.build.BuildSystem;
 import wtf.metio.krei.model.community.Community;
@@ -20,7 +18,6 @@ import wtf.metio.krei.model.vcs.VCS;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Value.Immutable
 public interface MaterializeOptions {
@@ -32,7 +29,11 @@ public interface MaterializeOptions {
 
     static MaterializeOptions standard(final Path projectDirectory) {
         return builder(projectDirectory)
+                .addBuildHandler(new BuildSystemHandler(projectDirectory))
+                .addCommunityHandler(new CommunityHandler(projectDirectory))
+                .addIdeHandler(new IDEHandler(projectDirectory))
                 .addLicenseHandler(new LicenseHandler(projectDirectory))
+                .addVcsHandler(new VCSHandler(projectDirectory))
                 .build();
     }
     //endregion
@@ -41,11 +42,11 @@ public interface MaterializeOptions {
 
     List<Function<BuildSystem, Unit>> buildHandler();
 
-    List<Function<License, Unit>> licenseHandler();
-
     List<Function<Community, Unit>> communityHandler();
 
     List<Function<IDE, Unit>> ideHandler();
+
+    List<Function<License, Unit>> licenseHandler();
 
     List<Function<VCS, Unit>> vcsHandler();
 

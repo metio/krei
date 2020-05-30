@@ -3,6 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/krei.iml" filepath="$PROJECT_DIR$/.idea/krei.iml" />
+      <module fileurl="file://$PROJECT_DIR$/krei-cli/krei-cli.iml" filepath="$PROJECT_DIR$/krei-cli/krei-cli.iml" />
+      <module fileurl="file://$PROJECT_DIR$/krei-core/krei-core.iml" filepath="$PROJECT_DIR$/krei-core/krei-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/krei-fx/krei-fx.iml" filepath="$PROJECT_DIR$/krei-fx/krei-fx.iml" />
+      <module fileurl="file://$PROJECT_DIR$/krei-service/krei-service.iml" filepath="$PROJECT_DIR$/krei-service/krei-service.iml" />
     </modules>
   </component>
 </project>

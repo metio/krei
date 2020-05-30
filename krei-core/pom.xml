@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of krei. It is subject to the license terms in the LICENSE file found in the top-level
+  ~ directory of this distribution and at http://creativecommons.org/publicdomain/zero/1.0/. No part of krei,
+  ~ including this file, may be copied, modified, propagated, or distributed except according to the terms contained
+  ~ in the LICENSE file.
+  -->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ordering follows https://maven.apache.org/developers/conventions/code.html#POM_Code_Convention -->
+
+    <parent>
+        <groupId>wtf.metio.krei</groupId>
+        <artifactId>krei</artifactId>
+        <version>9999.99.99-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!--                               COORDINATES                               -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- https://maven.apache.org/pom.html#Maven_Coordinates -->
+    <artifactId>krei-core</artifactId>
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!--                               DEPENDENCIES                              -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- https://maven.apache.org/pom.html#Dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+            <version>${version.immutables}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>wtf.metio.hcf4j</groupId>
+            <artifactId>hcf4j-api</artifactId>
+            <version>2020.05.24-181034</version>
+        </dependency>
+        <dependency>
+            <groupId>wtf.metio.hcf4j</groupId>
+            <artifactId>hcf4j-okhttp3</artifactId>
+            <version>2020.05.24-181034</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${version.jackson}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk15on</artifactId>
+            <version>1.65</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.30</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jgit</groupId>
+            <artifactId>org.eclipse.jgit</artifactId>
+            <version>5.7.0.202003110725-r</version>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>${version.junit5}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${version.junit5}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${version.junit5}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!--                                   BUILD                                 -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- https://maven.apache.org/pom.html#Build -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>--enable-preview</compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.immutables</groupId>
+                            <artifactId>value-processor</artifactId>
+                            <version>${version.immutables}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M4</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <org.slf4j.simpleLogger.defaultLogLevel>off</org.slf4j.simpleLogger.defaultLogLevel>
+                    </systemPropertyVariables>
+                    <argLine>
+                        --enable-preview
+                        --add-opens wtf.metio.krei/wtf.metio.krei.construct.metio=ALL-UNNAMED
+                        --add-opens wtf.metio.krei/wtf.metio.krei.construct.community=ALL-UNNAMED
+                        --add-opens wtf.metio.krei/wtf.metio.krei.model=ALL-UNNAMED
+                        --add-opens wtf.metio.krei/wtf.metio.krei.template=ALL-UNNAMED
+                        --add-opens wtf.metio.krei/wtf.metio.krei.unit=ALL-UNNAMED
+                        --add-opens wtf.metio.krei/wtf.metio.krei.usecase=ALL-UNNAMED
+                    </argLine>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${version.m-assembly-p}</version>
+                <executions>
+                    <execution>
+                        <id>jshell-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>${project.basedir}/src/main/assembly/jshell.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>net.nicoulaj.maven.plugins</groupId>
+                <artifactId>checksum-maven-plugin</artifactId>
+                <version>${version.checksum-m-p}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>artifacts</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <algorithms>
+                        <algorithm>SHA-512</algorithm>
+                    </algorithms>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

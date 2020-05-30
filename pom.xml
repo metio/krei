@@ -12,14 +12,20 @@
 
     <!-- ordering follows https://maven.apache.org/developers/conventions/code.html#POM_Code_Convention -->
 
+    <parent>
+        <groupId>wtf.metio.maven.parents</groupId>
+        <artifactId>maven-parents-java-prototype</artifactId>
+        <version>2020.05.24-162837</version>
+    </parent>
+
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!--                               COORDINATES                               -->
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- https://maven.apache.org/pom.html#Maven_Coordinates -->
     <groupId>wtf.metio.krei</groupId>
     <artifactId>krei</artifactId>
-    <version>${revision}</version>
-    <packaging>jar</packaging>
+    <version>9999.99.99-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!--                               INFORMATIONS                              -->
@@ -55,9 +61,7 @@
     <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
     <!-- https://maven.apache.org/pom.html#Properties -->
     <properties>
-        <revision>0.0.0-SNAPSHOT</revision>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.java>14</version.java>
+        <version.jdk>14</version.jdk>
         <version.junit5>5.6.2</version.junit5>
         <version.immutables>2.8.8</version.immutables>
         <version.jackson>2.10.0</version.jackson>
@@ -65,11 +69,18 @@
         <version.checksum-m-p>1.8</version.checksum-m-p>
 
         <!-- https://jira.sonarsource.com/browse/MSONAR-174 -->
-        <sonar.java.source>${version.java}</sonar.java.source>
-        <sonar.java.target>${version.java}</sonar.java.target>
+        <sonar.java.source>${version.jdk}</sonar.java.source>
+        <sonar.java.target>${version.jdk}</sonar.java.target>
 
         <project.build.outputTimestamp>2020</project.build.outputTimestamp>
     </properties>
+
+    <modules>
+        <module>krei-core</module>
+        <module>krei-cli</module>
+        <module>krei-fx</module>
+        <module>krei-service</module>
+    </modules>
 
     <repositories>
         <repository>
@@ -113,182 +124,12 @@
         </repository>
     </distributionManagement>
 
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <!--                               DEPENDENCIES                              -->
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <!-- https://maven.apache.org/pom.html#Dependencies -->
-    <dependencies>
-        <dependency>
-            <groupId>org.immutables</groupId>
-            <artifactId>value</artifactId>
-            <version>${version.immutables}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>wtf.metio.hcf4j</groupId>
-            <artifactId>hcf4j-api</artifactId>
-            <version>2020.05.24-181034</version>
-        </dependency>
-        <dependency>
-            <groupId>wtf.metio.hcf4j</groupId>
-            <artifactId>hcf4j-okhttp3</artifactId>
-            <version>2020.05.24-181034</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${version.jackson}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.65</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.30</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jgit</groupId>
-            <artifactId>org.eclipse.jgit</artifactId>
-            <version>5.7.0.202003110725-r</version>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${version.junit5}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>${version.junit5}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${version.junit5}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
-
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <!--                                   BUILD                                 -->
-    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-    <!-- https://maven.apache.org/pom.html#Build -->
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.sonarsource.scanner.maven</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.7.0.1746</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <release>${version.java}</release>
-                    <compilerArgs>--enable-preview</compilerArgs>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.immutables</groupId>
-                            <artifactId>value-processor</artifactId>
-                            <version>${version.immutables}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.0.0-M4</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <org.slf4j.simpleLogger.defaultLogLevel>off</org.slf4j.simpleLogger.defaultLogLevel>
-                    </systemPropertyVariables>
-                    <argLine>
-                        --enable-preview
-                        --add-opens wtf.metio.krei/wtf.metio.krei.construct.metio=ALL-UNNAMED
-                        --add-opens wtf.metio.krei/wtf.metio.krei.construct.community=ALL-UNNAMED
-                        --add-opens wtf.metio.krei/wtf.metio.krei.model=ALL-UNNAMED
-                        --add-opens wtf.metio.krei/wtf.metio.krei.template=ALL-UNNAMED
-                        --add-opens wtf.metio.krei/wtf.metio.krei.unit=ALL-UNNAMED
-                        --add-opens wtf.metio.krei/wtf.metio.krei.usecase=ALL-UNNAMED
-                    </argLine>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${version.m-assembly-p}</version>
-                <executions>
-                    <execution>
-                        <id>jshell-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>${project.basedir}/src/main/assembly/jshell.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>net.nicoulaj.maven.plugins</groupId>
-                <artifactId>checksum-maven-plugin</artifactId>
-                <version>${version.checksum-m-p}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>artifacts</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <algorithms>
-                        <algorithm>SHA-512</algorithm>
-                    </algorithms>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
         <profile>
             <id>sonar</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.sonarsource.scanner.maven</groupId>
-                        <artifactId>sonar-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sonar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <sonar.skip>false</sonar.skip>
+            </properties>
         </profile>
     </profiles>
 

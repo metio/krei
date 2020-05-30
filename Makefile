@@ -49,6 +49,10 @@ site: ##@hacking Build website
 site-watch: ##@hacking Build and watch website
 	hugo --minify --i18n-warnings --path-warnings --source krei-docs --watch
 
+.PHONY: site-serve
+site-serve: ##@hacking Build and watch website
+	hugo server --minify --i18n-warnings --path-warnings --source krei-docs --watch
+
 .PHONY: shell
 shell: ##@hacking Open a new shell in a predefined build environment
 	ilo @build/shell

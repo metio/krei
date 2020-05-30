@@ -23,7 +23,8 @@
 
 #projectname #sitemaplink {
     margin-top: 4px;
-    margin-left: 10px
+    margin-left: 10px;
+    mask: url(/images/sitemap.svg) no-repeat center;
 }
 
 #languages {

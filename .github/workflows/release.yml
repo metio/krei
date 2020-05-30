@@ -94,5 +94,5 @@ jobs:
         uses: rzr/fediverse-action@master
         with:
           access-token: ${{ secrets.MASTODON_TOKEN }}
-          message: ":rocket: #krei version ${{steps.release.outputs.version}} published! https://github.com/metio/krei/releases/tag/${{steps.release.outputs.version}}"
+          message: "#krei version ${{steps.release.outputs.version}} published! https://github.com/metio/krei/releases/tag/${{steps.release.outputs.version}}"
           host: ${{ secrets.MASTODON_SERVER }}

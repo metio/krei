@@ -17,7 +17,7 @@ tags:
 
 ### Standard Configuration
 
-```jshelllanguage
+```java
 import wtf.metio.krei.model.license.License;
 import static wtf.metio.krei.template.LicenseTemplates.CC0;
 
@@ -35,7 +35,7 @@ var license = License.of(CC0, projectName);
 
 ### Create `LICENSE`
 
-```jshelllanguage
+```java
 import wtf.metio.krei.unit.file.LicenseUnits;
 
 var projectDirectory = Paths.get("/some/project/folder");

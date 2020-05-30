@@ -34,7 +34,9 @@ var license = License.of(LicenseTemplates.CC0, projectName);
 ### Custom Configuration
 
 ```java
-import wtf.metio.krei.model.license.License;import wtf.metio.krei.model.license.Waiver;import java.nio.file.Paths;
+import wtf.metio.krei.model.license.License;
+import wtf.metio.krei.model.license.Waiver;
+import java.nio.file.Paths;
 
 var projectName = "your-project";
 var license = License.builder()

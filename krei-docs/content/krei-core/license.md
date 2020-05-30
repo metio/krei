@@ -19,10 +19,10 @@ tags:
 
 ```java
 import wtf.metio.krei.model.license.License;
-import static wtf.metio.krei.template.LicenseTemplates.CC0;
+import wtf.metio.krei.template.LicenseTemplates;
 
 var projectName = "your-project";
-var license = License.of(CC0, projectName);
+var license = License.of(LicenseTemplates.CC0, projectName);
 ```
 
 - [x] configure `LICENSE` file

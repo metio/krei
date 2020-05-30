@@ -17,7 +17,7 @@ The [Makefile](https://github.com/metio/krei/blob/master/Makefile) commonly used
 usage: make [target]
 
 contributing:
-  sync-mirrors                    Synchronize changes to all git mirror
+  sync-mirrors                    Synchronize changes to all git mirrors
   sign-waiver                     Sign the WAIVER
 
 hacking:
@@ -25,6 +25,8 @@ hacking:
   verify                          Verify all modules
   site                            Build website
   site-watch                      Build and watch website
+  shell                           Open a new shell in a predefined build environment
+  once                            Build the entire project once in a predefined build environment
 
 other:
   help                            Show this help

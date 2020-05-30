@@ -7,56 +7,56 @@
 
 package wtf.metio.krei.materialize;
 
-import org.immutables.value.Value;
+import wtf.metio.krei.model.ImmutableProject;
 import wtf.metio.krei.model.Project;
 import wtf.metio.krei.model.ProjectConfig;
 import wtf.metio.krei.model.Unit;
-import wtf.metio.krei.model.build.BuildSystem;
-import wtf.metio.krei.model.license.License;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Value.Immutable
-public interface Materialize {
+public final class Materialize {
 
-    //region Builders
-    static ImmutableMaterialize.Builder builder(final Path projectDirectory) {
-        return ImmutableMaterialize.builder().projectDirectory(projectDirectory);
+    static Project asProject(final ProjectConfig config, final Path projectDirectory) {
+        return asProject(config, MaterializeOptions.standard(projectDirectory));
     }
 
-    static Materialize into(final Path projectDirectory) {
-        return builder(projectDirectory)
-                .addLicenseHandler(new LicenseHandler(projectDirectory))
-                .build();
-    }
-    //endregion
-
-    default Project asProject(final ProjectConfig config) {
-        final var builder = Project.builder(projectDirectory());
-        config.build().map(this::handleBuild).ifPresent(builder::addAllUnits);
-        config.license().map(this::handleLicense).ifPresent(builder::addAllUnits);
+    static Project asProject(final ProjectConfig config, final MaterializeOptions options) {
+        final var builder = Project.builder(options.projectDirectory());
+        addAsUnits(config.build(), options.buildHandler(), builder);
+        addAsUnits(config.license(), options.licenseHandler(), builder);
+        addAsUnits(config.community(), options.communityHandler(), builder);
+        addAsUnits(config.ide(), options.ideHandler(), builder);
+        addAsUnits(config.vcs(), options.vcsHandler(), builder);
         return builder.build();
     }
 
-    private List<Unit> handleBuild(final BuildSystem build) {
-        return buildHandler().stream()
-                .map(handler -> handler.apply(build))
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private static <T> void addAsUnits(
+            final Optional<T> object,
+            final List<Function<T, Unit>> handlers,
+            final ImmutableProject.Builder builder) {
+        object.map(value -> handle(value, handlers)).ifPresent(builder::addAllUnits);
+    }
+
+    private static <T> void addAsUnits(
+            final List<T> objects,
+            final List<Function<T, Unit>> handlers,
+            final ImmutableProject.Builder builder) {
+        objects.stream().map(value -> handle(value, handlers)).forEach(builder::addAllUnits);
+    }
+
+    private static <T> List<Unit> handle(final T object, final List<Function<T, Unit>> handlers) {
+        return handlers.stream()
+                .map(handler -> handler.apply(object))
                 .collect(Collectors.toList());
     }
 
-    private List<Unit> handleLicense(final License license) {
-        return licenseHandler().stream()
-                .map(handler -> handler.apply(license))
-                .collect(Collectors.toList());
+    private Materialize() {
+        // factory class
     }
-
-    Path projectDirectory();
-
-    List<Function<BuildSystem, Unit>> buildHandler();
-
-    List<Function<License, Unit>> licenseHandler();
 
 }

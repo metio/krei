@@ -23,7 +23,7 @@ class MaterializeTest {
         final var config = ProjectConfig.builder("test").build();
 
         // when
-        final var project = Materialize.into(projectDirectory).asProject(config);
+        final var project = Materialize.asProject(config, projectDirectory);
 
         // then
         assertNotNull(project);

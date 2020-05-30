@@ -12,6 +12,7 @@ tags:
 
 In case `krei` is not what you are looking for, take a look at these alternatives:
 
+- https://github.com/nyteshade/krei (JavaScript)
 - https://github.com/kowainik/summoner (Haskell)
 - https://github.com/martinklepsch/tenzing (ClojureScript)
 - https://github.com/bit101/ProjectMaker (Sublime)
@@ -27,10 +28,11 @@ In case `krei` is not what you are looking for, take a look at these alternative
 - https://github.com/miguellealw/project-spawner (JavaScript)
 - https://github.com/liftoffcli/liftoff (Ruby)
 - https://github.com/esy/pesy (Reason)
-- https://github.com/nyteshade/krei (JavaScript)
+- https://github.com/lockedata/starters (R)
 
 ## Comparison
 
+### krei vs krei
 ### krei vs summoner
 ### krei vs tenzing
 ### krei vs ProjectMaker
@@ -46,5 +48,5 @@ In case `krei` is not what you are looking for, take a look at these alternative
 ### krei vs project-spawner
 ### krei vs liftoff
 ### krei vs pesy
-### krei vs krei
+### krei vs starters
 

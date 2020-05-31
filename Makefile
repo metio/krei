@@ -73,5 +73,5 @@ sign-waiver: ##@contributing Sign the WAIVER
 	git commit -m 'sign waiver' --gpg-sign
 
 .PHONY: jshell
-jshell: ##@hacking Verify all modules
+jshell: ##@hacking Open project in a JShell
 	mvn --projects krei-metio --also-make --activate-profiles jshell test

@@ -35,7 +35,7 @@
             <includes>
                 <include>README.md</include>
                 <include>bootstrap.jsh</include>
-                <include>constructs/*</include>
+                <include>projects/*</include>
                 <include>imports/*</include>
             </includes>
         </fileSet>

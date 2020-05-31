@@ -48,6 +48,9 @@
                                 <phase>test</phase>
                             </execution>
                         </executions>
+                        <configuration>
+                            <scripts></scripts>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

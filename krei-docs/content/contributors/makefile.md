@@ -27,6 +27,7 @@ hacking:
   site-watch                      Build and watch website
   build-env                       Open a new shell in a predefined build environment
   build-once                      Build the entire project once in a predefined build environment
+  jshell                          Verify all modules
 
 other:
   help                            Show this help

@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="krei-metio" />
         <module name="krei-fx" />
         <module name="krei-service" />
         <module name="krei-cli" />
@@ -43,6 +44,7 @@
       <module name="krei-cli" target="14" />
       <module name="krei-core" target="14" />
       <module name="krei-fx" target="14" />
+      <module name="krei-metio" target="14" />
       <module name="krei-service" target="14" />
     </bytecodeTargetLevel>
   </component>

@@ -11,20 +11,20 @@ date: 2020-04-13
 
 ## krei-core
 
-Re-usable Java library which implements the core logic behind `krei`. See [here](krei-core) for details. **(proof of concept)**
+Re-usable Java library which implements the core logic behind `krei`. See [here](krei-core) for details. (**proof of concept**)
 
 ## krei-cli
 
-CLI to interact with `krei-core`. See [here](krei-cli) for details. **(gathering ideas)**
+CLI to interact with `krei-core`. See [here](krei-cli) for details. (**gathering ideas**)
 
 ## krei-fx
 
-JavaFX application to interact with `krei-core`. See [here](krei-fx) for details. **(gathering ideas)**
+JavaFX application to interact with `krei-core`. See [here](krei-fx) for details. (**gathering ideas**)
 
 ## krei-service
 
-Webservice with browser UI to interact with `krei-core`. See [here](krei-service) for details. **(gathering ideas)**
+Webservice with browser UI to interact with `krei-core`. See [here](krei-service) for details. (**gathering ideas**)
 
-## krei-central
+## krei-metio
 
-Definitions for projects at https://github.com/metio. See [here](krei-central) for details. **(gathering ideas)**
+Definitions for projects at https://github.com/metio. See [here](krei-metio) for details. (**proof of concept**)

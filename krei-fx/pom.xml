@@ -17,5 +17,6 @@
     </parent>
 
     <artifactId>krei-fx</artifactId>
+    <name>krei :: fx</name>
 
 </project>

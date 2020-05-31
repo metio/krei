@@ -17,5 +17,6 @@
     </parent>
 
     <artifactId>krei-service</artifactId>
+    <name>krei :: service</name>
 
 </project>

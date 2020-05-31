@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ This file is part of krei. It is subject to the license terms in the LICENSE file found in the top-level
+  ~ directory of this distribution and at http://creativecommons.org/publicdomain/zero/1.0/. No part of krei,
+  ~ including this file, may be copied, modified, propagated, or distributed except according to the terms contained
+  ~ in the LICENSE file.
+  -->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>wtf.metio.krei</groupId>
+        <artifactId>krei</artifactId>
+        <version>9999.99.99-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>krei-metio</artifactId>
+    <name>krei :: metio</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>wtf.metio.krei</groupId>
+            <artifactId>krei-core</artifactId>
+            <version>9999.99.99-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>jshell</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.johnpoth</groupId>
+                        <artifactId>jshell-maven-plugin</artifactId>
+                        <version>1.3</version>
+                        <executions>
+                            <execution>
+                                <id>shell</id>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <phase>test</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

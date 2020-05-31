@@ -1,0 +1,3 @@
+- move construct.metio into this package
+- keep track of defaults for metio org in this package
+- use package as an example for other people/orgs

@@ -17,5 +17,6 @@
     </parent>
 
     <artifactId>krei-cli</artifactId>
+    <name>krei :: cli</name>
 
 </project>

@@ -3,5 +3,7 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/krei-core/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/krei-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/krei-metio/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/krei-metio/src/main/resources" charset="UTF-8" />
   </component>
 </project>

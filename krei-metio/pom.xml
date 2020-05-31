@@ -50,7 +50,7 @@
                         </executions>
                         <configuration>
                             <options>--enable-preview</options>
-                            <scripts>${project.basedir}/src/main/jshell/krei.jsh</scripts>
+                            <scripts>${project.basedir}/src/main/jshell/krei.jsh,${project.basedir}/src/main/jshell/metio.jsh</scripts>
                         </configuration>
                     </plugin>
                 </plugins>

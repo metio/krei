@@ -41,7 +41,13 @@ You can do all that manually, or call the following code:
 ```java
 import wtf.metio.krei.metio.shared.*;
 
-var project = MetioMavenProject.configure("projectName")
+var project = MetioMavenProject.configure("projectName");
+```
+
+The JShell plugin ([see here](../) already imports all packages, thus you can just write:
+
+```jshelllanguage
+var project = MetioMavenProject.configure("projectName");
 ```
 
 You can see its current implementation of `MetioMavenProject` [here](https://github.com/metio/krei/blob/master/krei-metio/src/main/java/wtf/metio/krei/metio/shared/MetioMavenProject.java).

@@ -5,6 +5,11 @@
     {{ partial "head/opengraph.html" . }}
     {{ partial "head/links.html" . }}
     {{ partial "head/styles.html" . }}
+    <title>
+        {{ block "title" . }}
+        {{ .Site.Title }}
+        {{ end }}
+    </title>
 </head>
 <body id="site">
 {{ partial "body/site-header.html" . }}

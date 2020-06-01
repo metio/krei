@@ -17,11 +17,11 @@ All [Maven](https://maven.apache.org/) projects at https://github.com/metio adhe
 - [x] Create `LICENSE`
 - [x] Create `AUTHORS/WAIVER`
 - [x] Create `README.md`
-- [] Create `CODE_OF_CONDUCT.md`
-- [] Create `CONTRIBUTING.md`
-- [] Create templates in `.github/ISSUE_TEMPLATE/`
-- [] Create `.github/ISSUE_TEMPLATE/config.yml`
-- [] Create templates in `.github/PULL_REQUEST_TEMPLATE/`
+- [x] Create `CODE_OF_CONDUCT.md`
+- [x] Create `CONTRIBUTING.md`
+- [x] Create templates in `.github/ISSUE_TEMPLATE/`
+- [x] Create `.github/ISSUE_TEMPLATE/config.yml`
+- [x] Create templates in `.github/PULL_REQUEST_TEMPLATE/`
 - [x] Create `.github/workflows/release.yml`
 - [x] Create `Makefile`
 - [x] Create `pom.xml`

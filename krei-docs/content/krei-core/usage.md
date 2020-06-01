@@ -33,14 +33,6 @@ In order to create a new project with `krei` you will have to follow these steps
 
 Thanks for trying out `krei`! In case you are missing something, please [let us know](../../community/help). In case you want to show that you used `krei` for one of your projects, consider using these badges:
 
-![krei generated this project](https://img.shields.io/badge/krei-created-brightgreen?style=flat-square) for projects that were once created with `krei`.
+![krei generated this project](https://img.shields.io/badge/krei-created-success) for projects that were once created with `krei` use `https://img.shields.io/badge/krei-created-success`.
 
-```markdown
-![krei generated this project](https://img.shields.io/badge/krei-created-brightgreen?style=flat-square)
-```
-
-![krei manages this project](https://img.shields.io/badge/krei-managed-brightgreen?style=flat-square) for projects that are continuously monitored by `krei`.
-
-```markdown
-![krei manages this project](https://img.shields.io/badge/krei-managed-brightgreen?style=flat-square)
-```
+![krei manages this project](https://img.shields.io/badge/krei-managed-success) for projects that are continuously monitored by `krei` use `https://img.shields.io/badge/krei-managed-success`.

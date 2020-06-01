@@ -65,7 +65,7 @@ jobs:
             ```xml
             <dependency>
               <groupId>wtf.metio.krei</groupId>
-              <artifactId>krei</artifactId>
+              <artifactId>krei-core</artifactId>
               <version>${{steps.release.outputs.version}}</version>
             </dependency>
             ```

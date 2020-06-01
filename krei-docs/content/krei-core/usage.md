@@ -34,6 +34,7 @@ import wtf.metio.krei.model.vcs.git.*;
 import wtf.metio.krei.template.*;
 
 var projectName = "your-new-project";
+
 var license = License.of(LicenseTemplates.CC0, projectName);
 var git = Git.builder()
         .ignore(GitIgnore.of(GitIgnoreTemplates.MAVEN).and(GitIgnoreTemplates.BAZEL))
@@ -46,6 +47,7 @@ var idea = Idea.builder()
         .build();
 var maven = Maven.builder()
         .build();
+
 var project = ProjectConfig.builder(projectName)
         .license(license)
         .vcs(git)

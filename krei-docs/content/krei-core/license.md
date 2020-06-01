@@ -79,3 +79,7 @@ var waiver = LicenseUnits.createWaiver(waiverFile, waiverText);
 ## License Templates
 
 `krei` includes a collection of pre-defined license templates which all be accessed through the [`wtf.metio.krei.template.LicenseTemplates`](https://github.com/metio/krei/blob/master/krei-core/src/main/java/wtf/metio/krei/template/LicenseTemplates.java) enum.
+
+Available license templates include:
+
+- Creative Commons Zero 1.0

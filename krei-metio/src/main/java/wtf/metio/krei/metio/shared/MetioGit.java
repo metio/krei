@@ -17,7 +17,7 @@ public final class MetioGit {
 
     public static Git configure(final List<String> ignores) {
         return Git.builder()
-                .config(GitConfig.of("user.email", "seb@hoß.de"))
+                .config(GitConfig.of("user.email", "sebhoss@pm.me"))
                 .ignore(GitIgnore.builder().addAllLines(ignores).build())
                 .build();
     }

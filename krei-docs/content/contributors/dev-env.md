@@ -18,7 +18,7 @@ tags:
 - [minisign](https://jedisct1.github.io/minisign/) to sign the waiver as a contributor
 - [gpg](https://gnupg.org/) to sign your the commit which adds the waiver
 
-## Build Setup
+## Manual Setup
 
 - [Java JDK](https://jdk.java.net/) to compile the code
 - [Maven](https://maven.apache.org/) to build the project

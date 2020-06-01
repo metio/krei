@@ -13,7 +13,7 @@ tags:
 The [Makefile](https://github.com/metio/krei/blob/master/Makefile) commonly used task by maintainers of this project. In order to use it, you have to install a variant of [make](https://en.wikipedia.org/wiki/Make_(software)) on your system. Just calling `make` in the root directory will print the help/usage guide:
 
 ```shell script
-[krei] $ make
+$ make
 usage: make [target]
 
 contributing:
@@ -36,5 +36,5 @@ other:
 Run any of the available targets like this:
 
 ```shell script
-[krei] $ make verify
+$ make verify
 ```

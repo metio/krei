@@ -9,8 +9,14 @@ package wtf.metio.krei.template;
 
 import java.util.stream.IntStream;
 
+/**
+ * Pre-defined license templates.
+ */
 public enum LicenseTemplates {
 
+    /**
+     * @see <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a>
+     */
     CC0("cc0", 2);
 
     private final String id;

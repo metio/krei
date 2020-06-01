@@ -25,7 +25,7 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - name: Create release version
+      - name: Create Release Version
         id: release
         run: echo "::set-output name=version::$(date +'%Y.%m.%d-%H%M%S')"
       - name: Set release version
@@ -69,8 +69,8 @@ jobs:
               <version>${{steps.release.outputs.version}}</version>
             </dependency>
             ```
-      - name: Upload Release Asset
-        id: upload-release-asset
+      - name: Upload JShell Artifact
+        id: upload-jshell-artifact
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -79,7 +79,17 @@ jobs:
           asset_path: ./krei-core/target/krei-core-${{steps.release.outputs.version}}-jshell.zip
           asset_name: krei-core-${{steps.release.outputs.version}}-jshell.zip
           asset_content_type: application/zip
-      - name: Send mail
+      - name: Upload JShell Checksum
+        id: upload-jshell-checksum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./krei-core/target/krei-core-${{steps.release.outputs.version}}-jshell.zip.sha512
+          asset_name: krei-core-${{steps.release.outputs.version}}-jshell.zip.sha512
+          asset_content_type: text/plain
+      - name: Send Mail
         uses: dawidd6/action-send-mail@v2
         with:
           server_address: ${{ secrets.MAIL_SERVER }}

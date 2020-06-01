@@ -10,7 +10,7 @@ tags:
 - environment
 ---
 
-`krei` requires a certain set of software installed on your system in order to be build.
+`krei` requires a certain set of software installed on your system in order to be built.
 
 ## Prerequisites
 

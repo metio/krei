@@ -23,6 +23,37 @@ In order to create a new project with `krei` you will have to follow these steps
 
 ### Declarative API
 
+The main interface of the declarative API is `ProjectConfiguration`. Create a new instance like this:
+
+```java
+import wtf.metio.krei.model.*;
+import wtf.metio.krei.model.build.maven.*;
+import wtf.metio.krei.model.ide.idea.*;
+import wtf.metio.krei.model.license.*;
+import wtf.metio.krei.model.vcs.git.*;
+import wtf.metio.krei.template.*;
+
+var projectName = "your-new-project";
+var license = License.of(LicenseTemplates.CC0, projectName);
+var git = Git.builder()
+        .ignore(GitIgnore.of(GitIgnoreTemplates.MAVEN).and(GitIgnoreTemplates.BAZEL))
+        .config(GitConfig.of("user.email", "someone@example.com"))
+        .addRemotes(GitRemote.github("org/repo"))
+        .build();
+var idea = Idea.builder()
+        .copyright(IdeaCopyright.builder().build())
+        .codeStyle(IdeaCodeStyle.builder().build())
+        .build();
+var maven = Maven.builder()
+        .build();
+var project = ProjectConfig.builder(projectName)
+        .license(license)
+        .vcs(git)
+        .addIde(idea)
+        .build(maven)
+        .build();
+```
+
 ### Imperative API
 
 ## Materialize Projects

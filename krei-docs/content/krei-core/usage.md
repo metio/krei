@@ -12,10 +12,10 @@ tags:
 
 In order to create a new project with `krei` you will have to follow these steps:
 
-1. Create a `Project` or `ProjectConfiguration`
-2. Materialize the project to disk
-3. (Optional) validate the created project
-4. Celebrate \o/
+1. Define a project: Create a `Project` or `ProjectConfiguration`
+2. Generate a project: Materialize the above definition to the file system
+3. Validate a project: (Optional) validate definition against best-practices and check generated project against definition.
+4. **Celebrate \o/**
 
 ## Define Projects
 

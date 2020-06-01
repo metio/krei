@@ -46,7 +46,7 @@ var project = MetioMavenProject.configure("projectName");
 
 The JShell plugin ([see here](../)) already imports all packages, thus you can just write:
 
-```jshelllanguage
+```java
 var project = MetioMavenProject.configure("projectName");
 ```
 

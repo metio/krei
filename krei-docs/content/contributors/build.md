@@ -10,7 +10,7 @@ tags:
 - build
 ---
 
-The required build environment for `krei` is described in [build-env](../build-env).
+The required build environment for `krei` is described in [dev-env](../dev-env).
 
 In case you have Java and Maven locally installed call:
 

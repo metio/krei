@@ -39,7 +39,9 @@ All [Maven](https://maven.apache.org/) projects at https://github.com/metio adhe
 You can do all that manually, or call the following code:
 
 ```java
-MetioMavenProject.configure("projectName")
+import wtf.metio.krei.metio.shared.*;
+
+var project = MetioMavenProject.configure("projectName")
 ```
 
 `MetioMavenProject` encapsulates the shared project setup know-how for the [metio](https://github.com/metio) organization. You can see its current implementation [here](https://github.com/metio/krei/blob/master/krei-metio/src/main/java/wtf/metio/krei/metio/shared/MetioMavenProject.java).

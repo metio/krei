@@ -30,5 +30,4 @@ first_name: '<YOUR_FIRST_NAME>'     # used by FOAF/humans.txt (optional)
 last_name: '<YOUR_LAST_NAME>'       # used by FOAF/humans.txt (optional)
 email: '<YOUR_EMAIL>'               # used by FOAF (optional)
 website: '<YOUR_URL>'               # used by FOAF/humans.txt (optional)
-
 ```

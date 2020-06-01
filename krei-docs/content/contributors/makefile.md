@@ -31,12 +31,10 @@ hacking:
 
 other:
   help                Show this help
-
 ```
 
 Run any of the available targets like this:
 
 ```shell script
 [krei] $ make verify
-
 ```

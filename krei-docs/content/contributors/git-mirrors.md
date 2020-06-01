@@ -53,7 +53,6 @@ Host codeberg
     HostName codeberg.org
     User git
     IdentityFile ~/.ssh/codeberg
-
 ```
 
 ### Git Remote Mirrors
@@ -65,7 +64,6 @@ $ git remote add mirrors DISABLED
 $ git remote set-url --add --push mirrors codeberg:metio.wtf/krei.git
 $ git remote set-url --add --push mirrors gitlab:metio.wtf/krei.git
 $ git remote set-url --add --push mirrors bitbucket:metio-wtf/krei.git
-
 ```
 
 In case you have not done the SSH setup above, use this:
@@ -75,7 +73,6 @@ $ git remote add mirrors DISABLED
 $ git remote set-url --add --push mirrors git@codeberg.org:metio.wtf/krei.git
 $ git remote set-url --add --push mirrors git@gitlab.com:metio.wtf/krei.git
 $ git remote set-url --add --push mirrors git@bitbucket.org:metio-wtf/krei.git
-
 ```
 
 The final configuration should look like this:
@@ -86,12 +83,10 @@ mirrors DISABLED (fetch)
 mirrors codeberg:metio.wtf/krei.git (push)
 mirrors gitlab:metio.wtf/krei.git (push)
 mirrors bitbucket:metio-wtf/krei.git (push)
-
 ```
 
 Finally, push the current branch to all mirrors, e.g. `master`:
 
 ```shell script
 $ git push mirrors master:master
-
 ```

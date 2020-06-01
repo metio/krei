@@ -36,8 +36,8 @@ class ProjectConfigTest {
                 .addRemotes(GitRemote.github("metio/krei"))
                 .build();
         final var idea = Idea.builder()
-                .copyright(IdeaCopyright.builder().build())
-                .codeStyle(IdeaCodeStyle.builder().build())
+                .copyright(IdeaCopyright.of())
+                .codeStyle(IdeaCodeStyle.of())
                 .build();
         final var maven = Maven.builder()
                 .build();

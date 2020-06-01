@@ -41,8 +41,8 @@ var git = Git.builder()
         .addRemotes(GitRemote.github("org/repo"))
         .build();
 var idea = Idea.builder()
-        .copyright(IdeaCopyright.builder().build())
-        .codeStyle(IdeaCodeStyle.builder().build())
+        .copyright(IdeaCopyright.of())
+        .codeStyle(IdeaCodeStyle.of())
         .build();
 var maven = Maven.builder()
         .build();

@@ -23,3 +23,5 @@ $ mvn --projects krei-metio --also-make --activate-profiles jshell test
 # using make
 $ make jshell
 ```
+
+See [Makefile](../../contributors/makefile) for details about `make` usage.

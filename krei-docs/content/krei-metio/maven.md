@@ -1,0 +1,45 @@
+---
+title: 'Metio: Maven'
+date: 2020-04-13
+menu:
+  main:
+    parent: 'krei-metio'
+categories:
+- 'krei-metio'
+tags:
+- usage
+- maven
+---
+
+All [Maven](https://maven.apache.org/) projects at https://github.com/metio adhere to a certain project setup/layout which includes:
+
+- [x] Use Creative Commons Zero [license](../../krei-core/license/#license-templates)
+- [x] Create `LICENSE`
+- [x] Create `AUTHORS/WAIVER`
+- [x] Create `README.md`
+- [] Create `CODE_OF_CONDUCT.md`
+- [] Create `CONTRIBUTING.md`
+- [] Create templates in `.github/ISSUE_TEMPLATE/`
+- [] Create `.github/ISSUE_TEMPLATE/config.yml`
+- [] Create templates in `.github/PULL_REQUEST_TEMPLATE/`
+- [x] Create `.github/workflows/release.yml`
+- [x] Create `Makefile`
+- [x] Create `pom.xml`
+- [x] Use [maven-build-process](https://github.com/metio/maven-build-process) as Maven parent
+- [x] Configure IntelliJ Idea code style settings
+- [x] Configure IntelliJ Idea copyright settings
+- [x] Create `docs` folder with [metio-hugo-theme](https://github.com/metio/metio-hugo-theme) as theme
+- [x] Initialize Git repository
+- [x] Setup local Git configuration
+- [x] Create `.gitignore`
+- [x] Perform initial commit
+- [x] Create Git remotes at GitHub/GitLab/Codeberg/BitBucket
+- [x] Push to all remotes
+
+You can do all that manually, or call the following code:
+
+```java
+MetioMavenProject.configure("projectName")
+```
+
+`MetioMavenProject` encapsulates the shared project setup know-how for the [metio](https://github.com/metio) organization. You can see its current implementation [here](https://github.com/metio/krei/blob/master/krei-metio/src/main/java/wtf/metio/krei/metio/shared/MetioMavenProject.java).

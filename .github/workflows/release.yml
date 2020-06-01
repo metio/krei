@@ -69,7 +69,9 @@ jobs:
               <version>${{steps.release.outputs.version}}</version>
             </dependency>
             ```
-            Or download the [JShell](https://github.com/metio/krei/releases/download/${{ steps.release.outputs.version }}/krei-core-${{ steps.release.outputs.version }}-jshell.zip) artifact.
+            `krei` is currently not available in Maven Central, thus you have to pull it from [GitHub Packages](https://krei.projects.metio.wtf/contributors/dev-env/#github-packages).
+
+            The [JShell](https://github.com/metio/krei/releases/download/${{ steps.release.outputs.version }}/krei-core-${{ steps.release.outputs.version }}-jshell.zip) artifact requires only Java11+ installed and contains its own `README` with further instructions.
       - name: Upload JShell Artifact
         id: upload-jshell-artifact
         uses: actions/upload-release-asset@v1

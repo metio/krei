@@ -19,6 +19,9 @@ All [Maven](https://maven.apache.org/) projects at https://github.com/metio adhe
 - [x] Create `README.md`
 - [x] Create `CODE_OF_CONDUCT.md`
 - [x] Create `CONTRIBUTING.md`
+- [x] Create `CHANGELOG.md`
+- [x] Create `.github/SECURITY.md`
+- [x] Create `.github/SUPPORT.md`
 - [x] Create templates in `.github/ISSUE_TEMPLATE/`
 - [x] Create `.github/ISSUE_TEMPLATE/config.yml`
 - [x] Create templates in `.github/PULL_REQUEST_TEMPLATE/`

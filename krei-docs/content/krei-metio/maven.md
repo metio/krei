@@ -44,7 +44,7 @@ import wtf.metio.krei.metio.shared.*;
 var project = MetioMavenProject.configure("projectName");
 ```
 
-The JShell plugin ([see here](../) already imports all packages, thus you can just write:
+The JShell plugin ([see here](../)) already imports all packages, thus you can just write:
 
 ```jshelllanguage
 var project = MetioMavenProject.configure("projectName");

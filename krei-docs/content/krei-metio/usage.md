@@ -5,7 +5,7 @@ menu:
   main:
     parent: 'krei-metio'
 categories:
-- 'krei-central'
+- 'krei-metio'
 tags:
 - usage
 ---

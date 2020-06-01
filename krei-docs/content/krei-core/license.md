@@ -23,6 +23,7 @@ import wtf.metio.krei.template.LicenseTemplates;
 
 var projectName = "your-project";
 var license = License.of(LicenseTemplates.CC0, projectName);
+
 ```
 
 - [x] configure `LICENSE` file
@@ -50,6 +51,7 @@ var license = License.builder()
         .waiverFile(Paths.get("/path/to/the/WAIVER/file"))
         .build())
     .build();
+
 ```
 
 ## Imperative API
@@ -63,6 +65,7 @@ var projectDirectory = Paths.get("/some/project/folder");
 var licenseFile = projectDirectory.resolve("LICENSE");
 var licenseText = "your license text";
 var license = LicenseUnits.createLicense(licenseFile, licenseText);
+
 ```
 
 ### Create `WAIVER`
@@ -74,11 +77,12 @@ var projectDirectory = Paths.get("/some/project/folder");
 var waiverFile = projectDirectory.resolve("AUTHORS/WAIVER");
 var waiverText = "your waiver text";
 var waiver = LicenseUnits.createWaiver(waiverFile, waiverText);
+
 ```
 
 ## License Templates
 
-`krei` includes a collection of pre-defined license templates which all be accessed through the [`wtf.metio.krei.template.LicenseTemplates`](https://github.com/metio/krei/blob/master/krei-core/src/main/java/wtf/metio/krei/template/LicenseTemplates.java) enum.
+`krei` includes a collection of pre-defined license templates which all be accessed through the [`LicenseTemplates`](https://github.com/metio/krei/blob/master/krei-core/src/main/java/wtf/metio/krei/template/LicenseTemplates.java) enum.
 
 Available license templates include:
 

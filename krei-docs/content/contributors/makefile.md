@@ -17,24 +17,26 @@ The [Makefile](https://github.com/metio/krei/blob/master/Makefile) commonly used
 usage: make [target]
 
 contributing:
-  sync-mirrors                    Synchronize changes to all git mirrors
-  sign-waiver                     Sign the WAIVER
+  sync-mirrors        Synchronize changes to all git mirrors
+  sign-waiver         Sign the WAIVER
 
 hacking:
-  install                         Install all artifacts into local repository
-  verify                          Verify all modules
-  site                            Build website
-  site-watch                      Build and watch website
-  build-env                       Open a new shell in a predefined build environment
-  build-once                      Build the entire project once in a predefined build environment
-  jshell                          Open project in a JShell
+  install             Install all artifacts into local repository
+  verify              Verify all modules
+  site                Build website
+  site-watch          Build and watch website
+  build-env           Open a new shell in a predefined build environment
+  build-once          Build the entire project once in a predefined build environment
+  jshell              Open project in a JShell
 
 other:
-  help                            Show this help
+  help                Show this help
+
 ```
 
 Run any of the available targets like this:
 
 ```shell script
 [krei] $ make verify
+
 ```

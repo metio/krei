@@ -1,17 +1,20 @@
 <ul>
     {{ $currentPage := . }}
-    {{ range .Site.Menus.main }}
-    {{ if .HasChildren }}
-    <li>
-        <a href="{{ .URL }}" class="{{ if $currentPage.HasMenuCurrent "main" . }}active{{ end }}">{{ .Pre }}{{ .Name }}</a>
-        <ul>
-            {{ range .Children }}
-            <li class="{{ if $currentPage.IsMenuCurrent "main" . }}active{{ end }}">
-            <a href="{{ .URL }}">{{ .Name }}</a>
-            </li>
-            {{ end }}
-        </ul>
-    </li>
+    {{ if ne $currentPage.URL "/" }}
+        <li id="homelink"><a href="{{ "/" | absLangURL }}">Home</a></li>
     {{ end }}
+    {{ range .Site.Menus.main }}
+        {{ if .HasChildren }}
+            <li>
+                <a href="{{ .URL }}" class="{{ if (or ($currentPage.HasMenuCurrent "main" .) ($currentPage.IsMenuCurrent "main" .)) }}active{{ end }}">{{ .Pre }}{{ .Name }}</a>
+                <ul>
+                    {{ range .Children }}
+                        <li class="{{ if $currentPage.IsMenuCurrent "main" . }}active{{ end }}">
+                        <a href="{{ .URL }}">{{ .Name }}</a>
+                        </li>
+                    {{ end }}
+                </ul>
+            </li>
+        {{ end }}
     {{ end }}
 </ul>

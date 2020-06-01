@@ -13,9 +13,16 @@
 #content {
     grid-area: content;
     padding-left: 15px;
-    padding-right: 30px;
+    padding-right: 15px;
 }
 
 #footer {
     grid-area: footer;
+}
+
+.highlight {
+    max-width: 90vw;
+}
+.highlight > pre {
+    overflow: scroll;
 }

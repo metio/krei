@@ -14,3 +14,7 @@ blockquote {
 blockquote > p::before, blockquote > p::after {
     content: '”';
 }
+
+code {
+    font-weight: bold;
+}

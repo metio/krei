@@ -20,6 +20,7 @@ In order to use `krei-core` in your project, add it as a dependency. You can fin
   <artifactId>krei-core</artifactId>
   <version>KREI_VERSION</version>
 </dependency>
+
 ```
 
-Replace `KREI_VERSION` with the latest available version in either GitHub or Maven Central.
+Replace `KREI_VERSION` with the latest available version in either [GitHub](https://github.com/metio/krei/packages/249806) or Maven Central.

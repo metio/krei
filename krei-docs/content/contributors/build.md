@@ -15,11 +15,24 @@ The required build environment for `krei` is described in [build-env](../build-e
 In case you have Java and Maven locally installed call:
 
 ```shell script
+# run all tests
 $ mvn verify
+
+# install locally
+$ mvn install
+
+# open jshell
+$ mvn --projects krei-metio --also-make --activate-profiles jshell test
 ```
 
 In case you are using `ilo` call this:
 
 ```shell script
+# build the project
 $ ilo @build/once
+
+# open a shell with a pre-defined build environment
+$ ilo @build/shell
 ```
+
+Take a look at the [Makefile](../makefile) as an easy way to call all these commands.

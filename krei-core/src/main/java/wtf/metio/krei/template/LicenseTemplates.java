@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 /**
  * Pre-defined license templates.
  */
-public enum LicenseTemplates {
+public enum LicenseTemplates { // TODO: extract interface?
 
     /**
      * @see <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a>

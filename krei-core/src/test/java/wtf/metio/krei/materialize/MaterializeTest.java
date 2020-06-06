@@ -36,7 +36,7 @@ class MaterializeTest {
     void shouldMaterializeGitRepo(@TempDir final Path projectDirectory) {
         // given
         final var config = ProjectConfig.builder("test")
-                .vcs(Git.builder().build())
+                .addVcs(Git.builder().build())
                 .build();
 
         // when

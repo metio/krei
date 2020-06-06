@@ -24,10 +24,10 @@ public final class MetioMavenProject {
 
     public static ProjectConfig configure(final String projectName) {
         return ProjectConfig.builder(projectName)
-                .license(MetioLicense.configure(projectName))
-                .vcs(MetioGit.configure(List.of(MAVEN.ignores())))
+                .addLicense(MetioLicense.configure(projectName))
+                .addVcs(MetioGit.configure(List.of(MAVEN.ignores())))
                 .addIde(MetioIdea.configure())
-                .community(MetioReadme.configure(projectName))
+                .addCommunity(MetioReadme.configure(projectName))
                 .build();
     }
 

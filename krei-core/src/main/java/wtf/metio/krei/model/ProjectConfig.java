@@ -14,8 +14,8 @@ import wtf.metio.krei.model.ide.IDE;
 import wtf.metio.krei.model.license.License;
 import wtf.metio.krei.model.vcs.VCS;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Configuration of a project.
@@ -29,18 +29,18 @@ public interface ProjectConfig {
     }
     //endregion
 
-    Optional<BuildSystem> build();
+    Set<BuildSystem> buildSystem();
 
-    Optional<Community> community();
+    Set<Community> community();
 
     Optional<String> description();
 
-    List<IDE> ide();
+    Set<IDE> ide();
 
-    Optional<License> license();
+    Set<License> license();
 
     String name();
 
-    Optional<VCS> vcs();
+    Set<VCS> vcs();
 
 }

@@ -44,10 +44,10 @@ class ProjectConfigTest {
 
         // when
         final var project = ProjectConfig.builder(projectName)
-                .license(license)
-                .vcs(git)
+                .addLicense(license)
+                .addVcs(git)
                 .addIde(idea)
-                .build(maven)
+                .addBuildSystem(maven)
                 .build();
 
         // then

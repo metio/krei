@@ -15,6 +15,7 @@ import wtf.metio.krei.model.Unit;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ public final class Materialize {
 
     static Project asProject(final ProjectConfig config, final MaterializeOptions options) {
         final var builder = Project.builder(options.projectDirectory());
-        addAsUnits(config.build(), options.buildHandler(), builder);
+        addAsUnits(config.buildSystem(), options.buildHandler(), builder);
         addAsUnits(config.license(), options.licenseHandler(), builder);
         addAsUnits(config.community(), options.communityHandler(), builder);
         addAsUnits(config.ide(), options.ideHandler(), builder);
@@ -53,7 +54,7 @@ public final class Materialize {
     }
 
     private static <T> void addAsUnits(
-            final List<T> objects,
+            final Set<T> objects,
             final List<Function<T, Unit>> handlers,
             final ImmutableProject.Builder builder) {
         objects.stream().map(value -> handle(value, handlers)).forEach(builder::addAllUnits);

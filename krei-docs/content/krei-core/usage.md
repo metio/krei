@@ -49,10 +49,10 @@ var maven = Maven.builder()
         .build();
 
 var project = ProjectConfig.builder(projectName)
-        .license(license)
-        .vcs(git)
+        .addLicense(license)
+        .addVcs(git)
         .addIde(idea)
-        .build(maven)
+        .addBuildSystem(maven)
         .build();
 ```
 

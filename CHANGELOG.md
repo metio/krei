@@ -6,4 +6,9 @@ Take a look at the [latest commits](https://github.com/metio/krei/commits/master
 
 ## Breaking Changes
 
-No breaking changes so far.
+### <first-stable-release> (???)
+
+### Proof of Concept (current)
+
+While `krei` is in proof of concept stage, all APIs are subject to change at any moment. Use at your own risk and only if you are feeling adventurous.
+

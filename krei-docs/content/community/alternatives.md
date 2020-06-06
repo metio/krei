@@ -32,6 +32,7 @@ In case `krei` is not what you are looking for, take a look at these alternative
 - [GENie](https://github.com/bkaradzic/GENie) (Lua)
 . [hygen](http://www.hygen.io/) (JavaScript)
 - [Slush](https://slushjs.github.io/) (JavaScript)
+- [JHipster](https://www.jhipster.tech/) (Java)
 
 ## Comparison
 

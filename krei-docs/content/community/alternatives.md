@@ -29,6 +29,7 @@ In case `krei` is not what you are looking for, take a look at these alternative
 - [liftoff](https://github.com/liftoffcli/liftoff) (Ruby)
 - [pesy](https://github.com/esy/pesy) (Reason)
 - [starters](https://github.com/lockedata/starters) (R)
+- [GENie](https://github.com/bkaradzic/GENie) (Lua)
 
 ## Comparison
 

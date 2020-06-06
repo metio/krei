@@ -68,7 +68,7 @@ sync-mirrors: ##@contributing Synchronize changes to all git mirrors
 .PHONY: sign-waiver
 sign-waiver: ##@contributing Sign the WAIVER
 	minisign -Sm AUTHORS/WAIVER
-	mv WAIVER.minisign AUTHORS/WAIVER.${USERNAME}.minisign
+	mv AUTHORS/WAIVER.minisign AUTHORS/WAIVER.${USERNAME}.minisign
 	git add AUTHORS/WAIVER.${USERNAME}.minisign
 	git commit -m 'sign waiver' --gpg-sign
 

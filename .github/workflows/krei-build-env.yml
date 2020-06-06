@@ -2,7 +2,7 @@ name: Publish Build Environment
 on:
   push:
     paths:
-      - 'krei-build-env/**'
+      - 'build/env/**'
     branches: [ master ]
   schedule:
     - cron: '0 3 * * 0' # Weekly on Sundays at 03:00
@@ -20,5 +20,5 @@ jobs:
           name: metio/krei-build-env
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          workdir: krei-build-env
+          workdir: build/env
           tags: "latest,${{steps.release.outputs.version}}"

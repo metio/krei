@@ -60,6 +60,14 @@ var project = ProjectConfig.builder(projectName)
 
 ## Materialize Projects
 
+In order to materialize a project to your local file system, use the `Materialize` class like this:
+
+```java
+import wtf.metio.krei.materialize.*;
+
+Materialize.intoFilesystem(project, projectDirectory);
+```
+
 ## Validate Project
 
 ## Celebrate

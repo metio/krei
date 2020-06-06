@@ -99,13 +99,13 @@ jobs:
           server_port: ${{ secrets.MAIL_PORT }}
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
-          subject: krei release ${{steps.release.outputs.version}}
-          body: See https://github.com/metio/krei/releases/tag/${{steps.release.outputs.version}} for details.
+          subject: krei release ${{ steps.release.outputs.version }}
+          body: See https://github.com/metio/krei/releases/tag/${{ steps.release.outputs.version }} for details.
           to: krei@metio.groups.io
           from: ${{ secrets.MAIL_SENDER }}
       - name: Publish Toot
         uses: rzr/fediverse-action@master
         with:
           access-token: ${{ secrets.MASTODON_TOKEN }}
-          message: "#krei version ${{steps.release.outputs.version}} published! https://github.com/metio/krei/releases/tag/${{steps.release.outputs.version}} #metio"
+          message: "#krei version ${{ steps.release.outputs.version }} published! https://github.com/metio/krei/releases/tag/${{ steps.release.outputs.version }} #metio"
           host: ${{ secrets.MASTODON_SERVER }}

@@ -64,7 +64,9 @@ In order to materialize a project to your local file system, use the `Materializ
 
 ```java
 import wtf.metio.krei.materialize.*;
+import java.nio.file.Paths;
 
+var projectDirectory = Paths.get("/path/to/the/project");
 Materialize.intoFilesystem(project, projectDirectory);
 ```
 

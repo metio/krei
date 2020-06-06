@@ -5,27 +5,20 @@
  * in the LICENSE file.
  */
 
-package wtf.metio.krei.action.git;
+package wtf.metio.krei.predicate.file;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import wtf.metio.krei.test.FileAsserts;
-import wtf.metio.krei.test.TestRunner;
 
 import java.nio.file.Path;
 
-class GitActionsTest {
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+class FilePredicatesTest {
 
     @Test
-    void shouldCreateGitRepository(@TempDir final Path projectDirectory) {
-        // given
-        final var action = GitActions.initializeRepository(projectDirectory);
-
-        // when
-        TestRunner.assertAction(action);
-
-        // then
-        FileAsserts.assertFiles(projectDirectory, projectDirectory.resolve(".git"));
+    void shouldCreatePathExistsCheck(@TempDir final Path directory) {
+        assertNotNull(FilePredicates.exists(directory));
     }
 
 }

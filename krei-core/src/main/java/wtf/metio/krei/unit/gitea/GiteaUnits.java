@@ -25,7 +25,7 @@ public interface GiteaUnits {
     default Unit createRepository(final String organization, final String projectName) {
         return Unit.builder()
                 .id("urn:krei:gitea:repo:create")
-                .action(() -> client().createRepositoryInOrganization(projectName, organization))
+                // .action(() -> client().createRepositoryInOrganization(projectName, organization))
                 .build();
     }
 
@@ -35,7 +35,7 @@ public interface GiteaUnits {
             final CreateLabelOption label) {
         return Unit.builder()
                 .id("urn:krei:gitea:label:add:" + label.name())
-                .action(() -> client().createLabel(projectName, organization, label))
+                // .action(() -> client().createLabel(projectName, organization, label))
                 .build();
     }
     //endregion

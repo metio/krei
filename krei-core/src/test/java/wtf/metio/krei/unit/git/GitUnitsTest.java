@@ -9,6 +9,8 @@ package wtf.metio.krei.unit.git;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import wtf.metio.krei.test.FileAsserts;
+import wtf.metio.krei.test.TestRunner;
 
 import java.nio.file.Path;
 
@@ -18,7 +20,22 @@ class GitUnitsTest {
 
     @Test
     void shouldCreateContributingGuide(@TempDir final Path projectDirectory) {
+        // given
+        // when
+        // then
         assertNotNull(GitUnits.initializeRepository(projectDirectory));
+    }
+
+    @Test
+    void shouldCreateGitRepository(@TempDir final Path projectDirectory) {
+        // given
+        final var unit = GitUnits.initializeRepository(projectDirectory);
+
+        // when
+        TestRunner.assertUnit(unit);
+
+        // then
+        FileAsserts.assertFiles(projectDirectory, projectDirectory.resolve(".git"));
     }
 
 }

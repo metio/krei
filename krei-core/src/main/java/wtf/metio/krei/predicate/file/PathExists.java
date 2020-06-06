@@ -5,22 +5,24 @@
  * in the LICENSE file.
  */
 
-package wtf.metio.krei.usecase;
+package wtf.metio.krei.predicate.file;
 
-import wtf.metio.krei.model.Project;
+import wtf.metio.krei.model.Check;
 
-public final class CreateProject {
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-    public static void execute(final Project project) {
-        Executor.execute(project, CreateProject::execute);
+public final class PathExists implements Check {
+
+    private final Path path;
+
+    PathExists(final Path path) {
+        this.path = path;
     }
 
-    private static void execute(final String exec) {
-        // &#10; in HEADER
-    }
-
-    private CreateProject() {
-        // entry point
+    @Override
+    public boolean test() {
+        return Files.exists(path);
     }
 
 }

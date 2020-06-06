@@ -7,8 +7,8 @@
 
 package wtf.metio.krei.unit.git;
 
-import wtf.metio.krei.action.file.FileActions;
 import wtf.metio.krei.model.Unit;
+import wtf.metio.krei.task.file.FileTasks;
 
 import java.nio.file.Path;
 
@@ -20,14 +20,14 @@ public final class GitIgnoreUnits {
     public static Unit ignoreMavenOutput(final Path gitignoreFile) {
         return Unit.builder()
                 .id("urn:krei:git:ignore:maven-output")
-                .action(FileActions.appendFile(gitignoreFile, MAVEN.ignores()))
+                .task(FileTasks.appendFile(gitignoreFile, MAVEN.ignores()))
                 .build();
     }
 
     public static Unit ignoreBazelDirectories(final Path gitignoreFile) {
         return Unit.builder()
                 .id("urn:krei:git:ignore:bazel-directories")
-                .action(FileActions.appendFile(gitignoreFile, BAZEL.ignores()))
+                .task(FileTasks.appendFile(gitignoreFile, BAZEL.ignores()))
                 .build();
     }
 

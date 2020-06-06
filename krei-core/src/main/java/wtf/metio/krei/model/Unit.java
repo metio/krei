@@ -23,7 +23,7 @@ public interface Unit {
     static ImmutableUnit.Builder builder() {
         return ImmutableUnit.builder();
     }
-    
+
     static Unit noop() {
         return builder().id("urn:krei:noop").build();
     }
@@ -44,17 +44,7 @@ public interface Unit {
      */
     List<String> documentation();
 
-    /**
-     * List of commands/arguments to execute.
-     */
-    List<String> exec();
-
-    /**
-     * Whether {@link #exec()} should be taken as-is (true), or whitespace delimited (false/default)
-     */
-    Optional<Boolean> execRaw();
-
-    Optional<Action> action();
+    Optional<Task> task();
 
     /**
      * Units that are started as soon as this unit is started. Whether those units succeed does not affect the result of

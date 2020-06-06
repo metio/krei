@@ -5,22 +5,22 @@
  * in the LICENSE file.
  */
 
-package wtf.metio.krei.unit.file;
+package wtf.metio.krei.task.git;
 
-import wtf.metio.krei.model.Unit;
+import wtf.metio.krei.action.git.GitActions;
+import wtf.metio.krei.model.Task;
 
 import java.nio.file.Path;
 
-public final class ReadmeUnits {
+public final class GitTasks {
 
-    public static Unit createReadme(final Path path) {
-        return Unit.builder()
-                .id("urn:krei:readme:create")
-                // .addExec("touch", path.toAbsolutePath().toString())
+    public static Task initializeRepository(final Path projectDirectory) {
+        return Task.builder()
+                .action(GitActions.initializeRepository(projectDirectory))
                 .build();
     }
 
-    private ReadmeUnits() {
+    private GitTasks() {
         // factory class
     }
 

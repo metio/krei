@@ -25,6 +25,7 @@ public final class GitHandler implements Function<Git, Unit> {
     @Override
     public Unit apply(final Git git) {
         final var builder = Unit.builder()
+                .id("urn:krei:handler:git")
                 .addBefore(GitUnits.initializeRepository(projectDirectory));
         git.remotes().stream().map(GitUnits::addGitRemote).forEach(builder::addRequires);
         return builder.build();

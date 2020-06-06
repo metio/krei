@@ -10,9 +10,12 @@ package wtf.metio.krei.materialize;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import wtf.metio.krei.model.ProjectConfig;
+import wtf.metio.krei.model.vcs.git.Git;
+import wtf.metio.krei.test.FileAsserts;
 
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class MaterializeTest {
@@ -27,6 +30,21 @@ class MaterializeTest {
 
         // then
         assertNotNull(project);
+    }
+
+    @Test
+    void shouldMaterializeGitRepo(@TempDir final Path projectDirectory) {
+        // given
+        final var config = ProjectConfig.builder("test")
+                .vcs(Git.builder().build())
+                .build();
+
+        // when
+        final var result = Materialize.intoFilesystem(config, projectDirectory);
+
+        // then
+        assertEquals(0, result);
+        FileAsserts.assertFiles(projectDirectory, projectDirectory.resolve(".git"));
     }
 
 }

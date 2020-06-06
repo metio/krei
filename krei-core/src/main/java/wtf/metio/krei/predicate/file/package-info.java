@@ -5,20 +5,4 @@
  * in the LICENSE file.
  */
 
-package wtf.metio.krei.usecase;
-
-import wtf.metio.krei.model.Project;
-
-import java.io.PrintStream;
-
-public final class DryRun {
-
-    public static void execute(final Project project, final PrintStream print) {
-        Executor.execute(project, print::println);
-    }
-
-    private DryRun() {
-        // entry point
-    }
-
-}
+package wtf.metio.krei.predicate.file;

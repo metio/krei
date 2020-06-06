@@ -8,6 +8,7 @@
 package wtf.metio.krei.test;
 
 import wtf.metio.krei.model.Action;
+import wtf.metio.krei.model.Task;
 import wtf.metio.krei.model.Unit;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,9 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public final class TestRunner {
 
     public static void assertUnit(final Unit unit) {
-        final var result = unit.action()
-                .map(Action::call)
-                .orElse(-1);
+        assertAction(unit.task().map(Task::action)
+                .orElse(() -> -1));
+    }
+
+    public static void assertTask(final Task task) {
+        assertAction(task.action());
+    }
+
+    public static void assertAction(final Action action) {
+        final var result = action.call();
         assertAll(
                 () -> assertTrue(result >= 0, "action could not be called"),
                 () -> assertEquals(0, result, "run did not succeed")

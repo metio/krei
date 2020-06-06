@@ -7,8 +7,8 @@
 
 package wtf.metio.krei.unit.idea;
 
-import wtf.metio.krei.action.file.FileActions;
 import wtf.metio.krei.model.Unit;
+import wtf.metio.krei.task.file.FileTasks;
 import wtf.metio.krei.template.IdeaTemplates;
 import wtf.metio.krei.template.LicenseTemplates;
 
@@ -29,19 +29,19 @@ public final class IdeaUnits {
      */
     public static Unit configureGitignore(final Path ideaDirectory) {
         final var text = IdeaTemplates.gitignore();
-        final var file = ideaDirectory.resolve(".gitignore");
+        final var path = ideaDirectory.resolve(".gitignore");
         return Unit.builder()
                 .id("urn:krei:idea:config:gitignore")
-                .action(FileActions.appendFile(file, text))
+                .task(FileTasks.appendFile(path, text))
                 .build();
     }
 
     public static Unit configureCopyrightProfile(final Path copyrightDirectory, final String projectName) {
         final var text = String.format(IdeaTemplates.copyrightProfile(), projectName);
-        final var file = copyrightDirectory.resolve("profiles_settings.xml");
+        final var path = copyrightDirectory.resolve("profiles_settings.xml");
         return Unit.builder()
                 .id("urn:krei:idea:config:copyright-profile")
-                .action(FileActions.appendFile(file, text))
+                .task(FileTasks.appendFile(path, text))
                 .build();
     }
 
@@ -60,10 +60,10 @@ public final class IdeaUnits {
             final String matcher,
             final String header) {
         final var xml = String.format(IdeaTemplates.copyright(), matcher, header, projectName);
-        final var file = copyrightDirectory.resolve(projectName + ".xml");
+        final var path = copyrightDirectory.resolve(projectName + ".xml");
         return Unit.builder()
                 .id("urn:krei:idea:config:copyright")
-                .action(FileActions.appendFile(file, xml))
+                .task(FileTasks.appendFile(path, xml))
                 .build();
     }
 

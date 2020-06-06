@@ -7,7 +7,7 @@
 
 package wtf.metio.krei.action.git;
 
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
+import org.eclipse.jgit.api.Git;
 import wtf.metio.krei.action.utils.Callables;
 import wtf.metio.krei.model.Action;
 
@@ -16,9 +16,9 @@ import java.nio.file.Path;
 public final class GitActions {
 
     public static Action initializeRepository(final Path projectDirectory) {
-        return Callables.none(() -> FileRepositoryBuilder
-                .create(projectDirectory.toAbsolutePath().toFile())
-                .create(true));
+        return Callables.none(() -> Git.init()
+                .setDirectory(projectDirectory.toAbsolutePath().toFile())
+                .call());
     }
 
     private GitActions() {

@@ -7,9 +7,9 @@
 
 package wtf.metio.krei.unit.git;
 
-import wtf.metio.krei.action.git.GitActions;
 import wtf.metio.krei.model.Unit;
 import wtf.metio.krei.model.vcs.git.GitRemote;
+import wtf.metio.krei.task.git.GitTasks;
 
 import java.nio.file.Path;
 
@@ -18,7 +18,7 @@ public final class GitUnits {
     public static Unit initializeRepository(final Path projectDirectory) {
         return Unit.builder()
                 .id("urn:krei:git:repo:init")
-                .action(GitActions.initializeRepository(projectDirectory))
+                .task(GitTasks.initializeRepository(projectDirectory))
                 .build();
     }
 
@@ -31,7 +31,7 @@ public final class GitUnits {
     public static Unit configureUserEmail(final Path path, final String email) {
         return Unit.builder()
                 .id("urn:krei:git:config:user-email")
-                .addExec("git", "config", "--file", path.toAbsolutePath().toString(), "user.email", email)
+                // .addExec("git", "config", "--file", path.toAbsolutePath().toString(), "user.email", email)
                 .build();
     }
 

@@ -5,22 +5,19 @@
  * in the LICENSE file.
  */
 
-package wtf.metio.krei.unit.file;
+package wtf.metio.krei.predicate.file;
 
-import wtf.metio.krei.model.Unit;
+import wtf.metio.krei.model.Check;
 
 import java.nio.file.Path;
 
-public final class ReadmeUnits {
+public final class FilePredicates {
 
-    public static Unit createReadme(final Path path) {
-        return Unit.builder()
-                .id("urn:krei:readme:create")
-                // .addExec("touch", path.toAbsolutePath().toString())
-                .build();
+    public static Check exists(final Path path) {
+        return new PathExists(path);
     }
 
-    private ReadmeUnits() {
+    private FilePredicates() {
         // factory class
     }
 

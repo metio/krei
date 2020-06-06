@@ -7,9 +7,7 @@
 
 package wtf.metio.krei.materialize;
 
-import wtf.metio.krei.model.Action;
-import wtf.metio.krei.model.Project;
-import wtf.metio.krei.model.Unit;
+import wtf.metio.krei.model.*;
 
 import java.util.Objects;
 import java.util.Set;
@@ -22,42 +20,42 @@ import static java.util.stream.Stream.of;
 final class Executor {
 
     static int execute(final Project project) {
-        return execute(project, Executor::defaultExecutor);
+        return execute(project, Executor::defaultExecute);
     }
 
     static int execute(
             final Project project,
-            final Function<Unit, Stream<Integer>> executor) {
+            final Function<Unit, Stream<Integer>> execute) {
         return project.units().stream()
-                .flatMap(unit -> unitLifecycle(unit, executor))
+                .flatMap(unit -> unitLifecycle(unit, execute))
                 .max(Integer::compareTo)
                 .orElse(0);
     }
 
-    private static Stream<Integer> unitLifecycle(final Unit unit, final Function<Unit, Stream<Integer>> executor) {
-        final var before = executeUnits(unit.before(), executor);
-        final var after = executeUnits(unit.after(), executor);
-        final var requires = executeUnits(unit.requires(), executor);
-        final var wants = executeUnits(unit.wants(), executor);
-        final var exec = formatExec(unit, executor);
+    private static Stream<Integer> unitLifecycle(final Unit unit, final Function<Unit, Stream<Integer>> execute) {
+        final var before = executeUnits(unit.before(), execute);
+        final var after = executeUnits(unit.after(), execute);
+        final var requires = executeUnits(unit.requires(), execute);
+        final var wants = executeUnits(unit.wants(), execute);
+        final var exec = executeUnit(unit, execute);
         return of(before, requires, wants, exec, after)
                 .flatMap(identity())
                 .filter(Objects::nonNull);
     }
 
-    private static Stream<Integer> executeUnits(final Set<Unit> units, final Function<Unit, Stream<Integer>> formatter) {
-        return units.stream().flatMap(unit -> unitLifecycle(unit, formatter));
+    private static Stream<Integer> executeUnits(final Set<Unit> units, final Function<Unit, Stream<Integer>> execute) {
+        return units.stream().flatMap(unit -> unitLifecycle(unit, execute));
     }
 
-    private static Stream<Integer> defaultExecutor(final Unit unit) {
-        return unit.action().stream().map(Action::call);
+    private static Stream<Integer> executeUnit(final Unit unit, final Function<Unit, Stream<Integer>> execute) {
+        return execute.apply(unit);
     }
 
-    private static Stream<Integer> formatExec(final Unit unit, final Function<Unit, Stream<Integer>> formatter) {
-        if (unit.exec().isEmpty()) {
-            return Stream.of();
-        }
-        return formatter.apply(unit);
+    private static Stream<Integer> defaultExecute(final Unit unit) {
+        return unit.task().stream()
+                .filter(task -> task.check().map(Check::test).orElse(true))
+                .map(Task::action)
+                .map(Action::call);
     }
 
     private Executor() {

@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import wtf.metio.hcf4j.okhttp3.OkHttp3HttpClientFactory;
 import wtf.metio.krei.action.gitea.CodebergClient;
 import wtf.metio.krei.model.Action;
+import wtf.metio.krei.model.Task;
 
 class GiteaUnitsTest {
 
@@ -24,9 +25,11 @@ class GiteaUnitsTest {
                 .httpClient(new OkHttp3HttpClientFactory().build())
                 .objectMapper(new ObjectMapper())
                 .build();
+        // TODO: use TestRunner
         Assertions.assertEquals(201, GiteaUnits.of(client)
                 .createRepository("metio.wtf", "test")
-                .action()
+                .task()
+                .map(Task::action)
                 .map(Action::call)
                 .orElse(0));
     }

@@ -2,6 +2,8 @@
 
 This directory contains [ilo](https://ilo.projects.metio.wtf) argument files, a [Maven](maven.apache.org/) settings file, and a [Docker](docker.com/) image which contains all build dependencies.
 
+See https://krei.projects.metio.wtf/contributors/build/ for more.
+
 ## ilo
 
 - `once`: `ilo` arguments to build the entire project once

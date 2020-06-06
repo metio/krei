@@ -30,6 +30,7 @@ In case `krei` is not what you are looking for, take a look at these alternative
 - [pesy](https://github.com/esy/pesy) (Reason)
 - [starters](https://github.com/lockedata/starters) (R)
 - [GENie](https://github.com/bkaradzic/GENie) (Lua)
+. [hygen](http://www.hygen.io/) (JavaScript)
 
 ## Comparison
 

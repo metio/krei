@@ -20,9 +20,12 @@ import java.util.List;
 public interface Project {
 
     //region Builders
+    static ImmutableProject.Builder builder() {
+        return ImmutableProject.builder();
+    }
+
     static ImmutableProject.Builder builder(final Path projectDirectory) {
-        return ImmutableProject.builder()
-                .addUnits(FileUnits.createDirectory(projectDirectory));
+        return builder().addUnits(FileUnits.createDirectory(projectDirectory));
     }
     //endregion
 

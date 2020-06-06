@@ -58,6 +58,17 @@ var project = ProjectConfig.builder(projectName)
 
 ### Imperative API
 
+The main interface of the imperative API is `Project`. It wraps multiple `Unit`s together.
+
+```java
+import wtf.metio.krei.model.*;
+import wtf.metio.krei.unit.file.*;
+
+var project = Project.builder()
+    .addUnits(FileUnits.createDirectory(someDirectory))
+    .build();
+``` 
+
 ## Materialize Projects
 
 In order to materialize a project to your local file system, use the `Materialize` class like this:

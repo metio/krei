@@ -35,4 +35,14 @@ $ ilo @build/once
 $ ilo @build/shell
 ```
 
+In case you want to build the website do this:
+
+```shell script
+# build website
+$ hugo --minify --i18n-warnings --path-warnings --source krei-docs
+
+# serve website
+$ hugo server --minify --i18n-warnings --path-warnings --source krei-docs --watch
+```
+
 Take a look at the [Makefile](../makefile) as an easy way to call all these commands.

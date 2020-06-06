@@ -35,7 +35,7 @@ In order to sign the waiver, call the following commands from the root of the pr
 
 ```shell script
 $ minisign -Sm AUTHORS/WAIVER
-$ mv WAIVER.minisign AUTHORS/WAIVER.`id --name --user`.minisign
+$ mv AUTHORS/WAIVER.minisig AUTHORS/WAIVER.`id --name --user`.minisig
 ```
 
 In case you are into [Makefiles](../makefile), you can use the shorter version:
@@ -47,7 +47,7 @@ $ make sign-waiver
 In both cases, a new file called `AUTHORS/WAIVER.<USER>.minisign` was created. The `Makefile` will commit the signed waiver to your local repo as well. In case you have not used the `Makefile`, run this:
 
 ```shell script
-$ git add AUTHORS/WAIVER.`id --name --user`.minisign
+$ git add AUTHORS/WAIVER.`id --name --user`.minisig
 $ git commit -m 'sign waiver' --gpg-sign
 ```
 
@@ -56,7 +56,7 @@ $ git commit -m 'sign waiver' --gpg-sign
 An existing contributor will verify your signature with:
 
 ```shell script
-$ minisign -V -x AUTHORS/WAIVER.<YOUR_NAME>.minisign -P <YOUR_PUB_KEY> -m AUTHORS/WAIVER
+$ minisign -V -x AUTHORS/WAIVER.<YOUR_NAME>.minisig -P <YOUR_PUB_KEY> -m AUTHORS/WAIVER
 ```
 
 In order to verify existing signatures, do any of the following:

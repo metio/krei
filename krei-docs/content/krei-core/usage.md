@@ -88,7 +88,6 @@ In order to validate a project, use the `Validate` class like this:
 
 ```java
 import wtf.metio.krei.validate.*;
-import java.nio.file.Paths;
 
 var problems = Validate.validate(project);
 ```

@@ -14,7 +14,6 @@ import wtf.metio.krei.model.Unit;
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -43,14 +42,6 @@ public final class Materialize {
         addAsUnits(config.ide(), options.ideHandler(), builder);
         addAsUnits(config.vcs(), options.vcsHandler(), builder);
         return builder.build();
-    }
-
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private static <T> void addAsUnits(
-            final Optional<T> object,
-            final List<Function<T, Unit>> handlers,
-            final ImmutableProject.Builder builder) {
-        object.map(value -> handle(value, handlers)).ifPresent(builder::addAllUnits);
     }
 
     private static <T> void addAsUnits(

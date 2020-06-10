@@ -7,9 +7,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="krei-metio" />
-        <module name="krei-fx" />
-        <module name="krei-service" />
-        <module name="krei-cli" />
       </profile>
       <profile name="Annotation profile for krei" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />

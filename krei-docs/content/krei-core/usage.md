@@ -84,6 +84,17 @@ Materialize.intoFilesystem(project, projectDirectory);
 
 ## Validate Project
 
+In order to validate a project, use the `Validate` class like this:
+
+```java
+import wtf.metio.krei.validate.*;
+import java.nio.file.Paths;
+
+var problems = Validate.validate(project);
+```
+
+The list of problems will be empty in case no validator found any problem. Otherwise check the entries in the list for problem descriptions and [online explanations](tbd).
+
 ## Celebrate
 
 Thanks for trying out `krei`! In case you are missing something, please [let us know](../../community/help). In case you want to show that you used `krei` for one of your projects, consider using these badges:

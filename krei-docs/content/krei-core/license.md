@@ -1,5 +1,5 @@
 ---
-title: 'Core: License'
+title: 'License'
 date: 2020-04-13
 menu:
   main:

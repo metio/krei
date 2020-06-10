@@ -1,9 +1,10 @@
 ---
-title: 'Core: Usage'
+title: 'Usage'
 date: 2020-04-13
 menu:
   main:
     parent: 'krei-core'
+    identifier: core_usage
 categories:
 - 'krei-core'
 tags:

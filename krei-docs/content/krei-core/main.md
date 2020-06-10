@@ -1,5 +1,5 @@
 ---
-title: 'Core: static-void-main'
+title: 'static-void-main'
 date: 2020-04-13
 menu:
   main:

@@ -1,9 +1,10 @@
 ---
-title: 'Core: Install'
+title: 'Install'
 date: 2020-04-13
 menu:
   main:
     parent: 'krei-core'
+    identifier: core_install
 categories:
 - 'krei-core'
 tags:

@@ -30,7 +30,7 @@ public final class Templates {
             final var content = reader.lines().collect(joining(lineSeparator(), "", lineSeparator()));
             LOGGER.trace("read [/template{}/{}]\n{}", category, file, content);
             return content;
-        } catch (final IOException exception) {
+        } catch (final IOException | NullPointerException exception) {
             LOGGER.error("Could not read template", exception);
             return "";
         }

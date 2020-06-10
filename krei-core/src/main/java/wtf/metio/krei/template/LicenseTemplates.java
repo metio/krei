@@ -12,7 +12,7 @@ import java.util.stream.IntStream;
 /**
  * Pre-defined license templates.
  */
-public enum LicenseTemplates { // TODO: extract interface?
+public enum LicenseTemplates {
 
     /**
      * @see <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero</a>
@@ -25,10 +25,6 @@ public enum LicenseTemplates { // TODO: extract interface?
     LicenseTemplates(final String id, int sourceHeaderPlaceholders) {
         this.id = id;
         this.sourceHeaderPlaceholders = sourceHeaderPlaceholders;
-    }
-
-    public String id() {
-        return id;
     }
 
     public String header(final String projectName) {

@@ -27,13 +27,13 @@ tags:
 
 ## SonarQube
 
-- [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=alert_status)](https://sonarcloud.io/dashboard?id=metio_krei)
-- [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=metio_krei)
-- [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=security_rating)](https://sonarcloud.io/dashboard?id=metio_krei)
-- [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=metio_krei)
-- [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=ncloc)](https://sonarcloud.io/dashboard?id=metio_krei)
-- [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=bugs)](https://sonarcloud.io/dashboard?id=metio_krei)
-- [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=metio_krei)
-- [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=code_smells)](https://sonarcloud.io/dashboard?id=metio_krei)
-- [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=sqale_index)](https://sonarcloud.io/dashboard?id=metio_krei)
-- [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=coverage)](https://sonarcloud.io/dashboard?id=metio_krei)
+- [![SonarQube: Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=alert_status)](https://sonarcloud.io/dashboard?id=metio_krei)
+- [![SonarQube: Maintainability](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=sqale_rating)](https://sonarcloud.io/dashboard?id=metio_krei)
+- [![SonarQube: Security](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=security_rating)](https://sonarcloud.io/dashboard?id=metio_krei)
+- [![SonarQube: Reliability](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=metio_krei)
+- [![SonarQube: Lines of code](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=ncloc)](https://sonarcloud.io/dashboard?id=metio_krei)
+- [![SonarQube: Bugs](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=bugs)](https://sonarcloud.io/dashboard?id=metio_krei)
+- [![SonarQube: Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=vulnerabilities)](https://sonarcloud.io/dashboard?id=metio_krei)
+- [![SonarQube: Code Smells](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=code_smells)](https://sonarcloud.io/dashboard?id=metio_krei)
+- [![SonarQube: Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=sqale_index)](https://sonarcloud.io/dashboard?id=metio_krei)
+- [![SonarQube: Coverage](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=coverage)](https://sonarcloud.io/dashboard?id=metio_krei)

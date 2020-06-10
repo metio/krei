@@ -1,9 +1,10 @@
 ---
-title: 'Metio: Maven'
+title: 'Maven'
 date: 2020-04-13
 menu:
   main:
     parent: 'krei-metio'
+    identifier: metio_maven
 categories:
 - 'krei-metio'
 tags:

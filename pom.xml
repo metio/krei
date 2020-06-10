@@ -78,9 +78,9 @@
     <modules>
         <module>krei-core</module>
         <module>krei-metio</module>
-        <module>krei-cli</module>
-        <module>krei-fx</module>
-        <module>krei-service</module>
+<!--        <module>krei-cli</module>-->
+<!--        <module>krei-fx</module>-->
+<!--        <module>krei-service</module>-->
     </modules>
 
     <repositories>

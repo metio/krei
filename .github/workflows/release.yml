@@ -1,7 +1,7 @@
 name: Perform Release
 on:
-  push:
-    branches: [ master ]
+  schedule:
+    - cron:  '0 0 * * SAT'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,6 +28,9 @@ jobs:
       - name: Create Release Version
         id: release
         run: echo "::set-output name=version::$(date +'%Y.%m.%d-%H%M%S')"
+      - name: Count commits in last week
+        id: commits
+        run: echo "::set-output name=count::$(git rev-list --count HEAD --since='last Saturday')"
       - name: Set release version
         run: mvn --batch-mode versions:set -DnewVersion=${{steps.release.outputs.version}} -DgenerateBackupPoms=false
       - name: Verify Project
@@ -36,12 +39,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Publish to GitHub Packages Apache Maven
+        if: steps.commits.outputs.count > 0
         run: mvn --batch-mode deploy -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Website
+        if: steps.commits.outputs.count > 0
         run: hugo --minify --i18n-warnings --path-warnings --source krei-docs
       - name: Deploy Website
+        if: steps.commits.outputs.count > 0
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -49,6 +55,7 @@ jobs:
           force_orphan: true
           cname: krei.projects.metio.wtf
       - name: Create Release
+        if: steps.commits.outputs.count > 0
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -73,6 +80,7 @@ jobs:
 
             The [JShell](https://github.com/metio/krei/releases/download/${{ steps.release.outputs.version }}/krei-core-${{ steps.release.outputs.version }}-jshell.zip) artifact requires only Java11+ installed and contains its own `README` with further instructions.
       - name: Upload JShell Artifact
+        if: steps.commits.outputs.count > 0
         id: upload-jshell-artifact
         uses: actions/upload-release-asset@v1
         env:
@@ -83,6 +91,7 @@ jobs:
           asset_name: krei-core-${{steps.release.outputs.version}}-jshell.zip
           asset_content_type: application/zip
       - name: Upload JShell Checksum
+        if: steps.commits.outputs.count > 0
         id: upload-jshell-checksum
         uses: actions/upload-release-asset@v1
         env:
@@ -93,6 +102,7 @@ jobs:
           asset_name: krei-core-${{steps.release.outputs.version}}-jshell.zip.sha512
           asset_content_type: text/plain
       - name: Send Mail
+        if: steps.commits.outputs.count > 0
         uses: dawidd6/action-send-mail@v2
         with:
           server_address: ${{ secrets.MAIL_SERVER }}
@@ -104,6 +114,7 @@ jobs:
           to: krei@metio.groups.io
           from: ${{ secrets.MAIL_SENDER }}
       - name: Publish Toot
+        if: steps.commits.outputs.count > 0
         uses: rzr/fediverse-action@master
         with:
           access-token: ${{ secrets.MASTODON_TOKEN }}

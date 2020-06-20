@@ -120,3 +120,11 @@ jobs:
           access-token: ${{ secrets.MASTODON_TOKEN }}
           message: "#krei version ${{ steps.release.outputs.version }} published! https://github.com/metio/krei/releases/tag/${{ steps.release.outputs.version }} #metio #java"
           host: ${{ secrets.MASTODON_SERVER }}
+      - uses: BjornLuG/release-for-reddit-action@v1
+        if: steps.commits.outputs.count > 0
+        with:
+          username: ${{ secrets.REDDIT_USERNAME }}
+          password: ${{ secrets.REDDIT_PASSWORD }}
+          app-id: ${{ secrets.REDDIT_APP_ID }}
+          app-secret: ${{ secrets.REDDIT_APP_SECRET }}
+          subreddit: ${{ secrets.REDDIT_SUBREDDIT }}

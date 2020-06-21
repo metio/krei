@@ -1,4 +1,4 @@
-# krei [![Chat](https://img.shields.io/badge/matrix-%23krei:matrix.org-brightgreen.svg?style=social&label=Matrix)](https://riot.im/app/#/room/#krei:matrix.org) [![Mailing List](https://img.shields.io/badge/email-krei%40metio.groups.io%20-brightgreen.svg?style=social&label=Mail)](https://metio.groups.io/g/krei/topics) [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=alert_status)](https://sonarcloud.io/dashboard?id=metio_krei)
+# krei [![Chat](https://img.shields.io/badge/matrix-%23krei:matrix.org-brightgreen.svg?style=social&label=Matrix)](https://matrix.to/#/#krei:matrix.org) [![Mailing List](https://img.shields.io/badge/email-krei%40metio.groups.io%20-brightgreen.svg?style=social&label=Mail)](https://metio.groups.io/g/krei/topics) [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=alert_status)](https://sonarcloud.io/dashboard?id=metio_krei)
 
 Project-as-code approach for project creation & validation. Take a look at the [website](https://krei.projects.metio.wtf) for detailed information.
 

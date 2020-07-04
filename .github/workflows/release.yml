@@ -130,3 +130,4 @@ jobs:
           app-id: ${{ secrets.REDDIT_APP_ID }}
           app-secret: ${{ secrets.REDDIT_APP_SECRET }}
           subreddit: ${{ secrets.REDDIT_SUBREDDIT }}
+          url: https://github.com/metio/krei/releases/tag/${{ steps.release.outputs.version }}

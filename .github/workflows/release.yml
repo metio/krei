@@ -1,7 +1,7 @@
 name: Perform Release
 on:
   schedule:
-    - cron:  '0 0 * * SAT'
+    - cron:  '0 0 * * SUN'
 jobs:
   build:
     runs-on: ubuntu-latest

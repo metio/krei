@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class PathExistsTest {
 
     @Test
-    void shouldDetectExistingPath(@TempDir final Path directory) throws IOException {
+    void shouldDetectExistingPath(@TempDir final Path directory) {
         // given
         final var check = new PathExists(directory);
 
@@ -31,7 +31,7 @@ class PathExistsTest {
     }
 
     @Test
-    void shouldDetectNonExistingPath(@TempDir final Path directory) throws IOException {
+    void shouldDetectNonExistingPath(@TempDir final Path directory) {
         // given
         final var check = new PathExists(directory.resolve("does-not-exist"));
 

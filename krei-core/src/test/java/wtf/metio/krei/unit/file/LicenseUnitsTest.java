@@ -80,4 +80,17 @@ class LicenseUnitsTest {
         FileAsserts.assertFileContent(waiverFile, template.waiver(projectName));
     }
 
+    @DisplayName("sign waiver")
+    @Test
+    void shouldSignWaiver(@TempDir final Path projectDirectory) {
+        // given
+        final var waiverFile = projectDirectory.resolve("WAIVER");
+
+        // when
+        final var unit = LicenseUnits.signWaiver(waiverFile);
+
+        // then
+        TestRunner.assertUnit(unit);
+    }
+
 }

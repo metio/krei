@@ -41,7 +41,7 @@ public final class LicenseUnits {
     public static Unit signWaiver(final Path path) {
         return Unit.builder()
                 .id("urn:krei:license:waiver:sign")
-                // .addExec("gpg2", "--no-version", "--armor", "--sign", path.toAbsolutePath().toString())
+                .task(FileTasks.appendFile(path, "##signature##"))
                 .build();
     }
 

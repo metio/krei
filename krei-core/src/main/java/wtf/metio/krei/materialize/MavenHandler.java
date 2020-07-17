@@ -23,7 +23,7 @@ public final class MavenHandler implements Function<Maven, Unit> {
 
     @Override
     public Unit apply(final Maven maven) {
-        return Unit.builder().id(projectDirectory.toString()).build();
+        return Unit.builder().id("urn:krei:materialize:maven:" + projectDirectory.toString()).build();
     }
 
 }

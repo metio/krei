@@ -23,7 +23,7 @@ public final class IdeaHandler implements Function<Idea, Unit> {
 
     @Override
     public Unit apply(final Idea idea) {
-        return Unit.builder().id(projectDirectory.toString()).build();
+        return Unit.builder().id("urn:krei:materialize:idea:" + projectDirectory.toString()).build();
     }
 
 }

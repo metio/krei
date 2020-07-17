@@ -21,10 +21,8 @@ public class MetioKrei {
 
         final var mavenProjects = Stream.of("common-records")
                 .map(MetioMavenProject::configure)
-                .mapToInt(project -> Materialize.intoFilesystem(project, projectsRoot.resolve(project.name())))
-                .max();
-
-        System.exit(mavenProjects.orElse(666));
+                .map(project -> Materialize.intoFilesystem(project, projectsRoot.resolve(project.name())))
+                .collect(Collectors.toList());
     }
 
 }

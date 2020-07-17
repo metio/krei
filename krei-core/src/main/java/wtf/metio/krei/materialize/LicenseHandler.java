@@ -10,6 +10,7 @@ package wtf.metio.krei.materialize;
 import wtf.metio.krei.model.Unit;
 import wtf.metio.krei.model.license.License;
 import wtf.metio.krei.model.license.Waiver;
+import wtf.metio.krei.unit.file.FileUnits;
 import wtf.metio.krei.unit.file.LicenseUnits;
 
 import java.nio.file.Path;
@@ -38,11 +39,12 @@ public final class LicenseHandler implements Function<License, Unit> {
     private Unit handleWaiver(final Waiver waiver) {
         final var waiverFile = waiver.waiverFile()
                 .map(projectDirectory::resolve)
-                .orElse(projectDirectory.resolve("LICENSE"));
+                .orElse(projectDirectory.resolve("AUTHORS/WAIVER"));
         return Unit.builder()
                 .id("urn:krei:materialize:waiver")
-                .addBefore(LicenseUnits.createWaiver(waiverFile, waiver.text()))
-                .addAfter(LicenseUnits.signWaiver(waiverFile))
+                .addBefore(FileUnits.createDirectory(waiverFile.getParent()))
+                .addRequires(LicenseUnits.createWaiver(waiverFile, waiver.text()))
+                .addWants(LicenseUnits.signWaiver(waiverFile))
                 .build();
     }
 

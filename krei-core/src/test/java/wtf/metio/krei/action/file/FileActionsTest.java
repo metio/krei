@@ -11,13 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import wtf.metio.krei.test.FileAsserts;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static java.nio.file.StandardOpenOption.APPEND;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static wtf.metio.krei.test.FileAsserts.assertFile;
 
 class FileActionsTest {
@@ -45,30 +40,6 @@ class FileActionsTest {
 
         // then
         FileAsserts.assertFileContent(file, "helloworld");
-    }
-
-    @Test
-    void shouldReturnZeroForSuccess(@TempDir final Path directory) {
-        // given
-        final var file = directory.resolve("test.txt");
-
-        // when
-        final var result = FileActions.append(() -> Files.writeString(file, "hello world", CREATE, APPEND)).call();
-
-        // then
-        assertEquals(0, result);
-    }
-
-    @Test
-    void shouldReturn1000ForIOException(@TempDir final Path directory) {
-        // given
-        final var file = directory.resolve("test.txt");
-
-        // when
-        final var result = FileActions.append(() -> {throw new IOException();}).call();
-
-        // then
-        assertEquals(1000, result);
     }
 
 }

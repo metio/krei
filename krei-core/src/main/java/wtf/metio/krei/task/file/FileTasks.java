@@ -19,7 +19,7 @@ public final class FileTasks {
     public static Task createDirectory(final Path directory) {
         return Task.builder()
                 .action(FileActions.createDirectory(directory))
-                .check(FilePredicates.exists(directory))
+                .check(FilePredicates.exists(directory).not())
                 .build();
     }
 

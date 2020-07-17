@@ -56,7 +56,8 @@ final class Executor {
         return unit.task().stream()
                 .filter(task -> task.check().map(Check::test).orElse(true))
                 .map(Task::action)
-                .map(Action::call);
+                .map(Action::call)
+                .peek(result -> System.out.println(unit.id() + " -> " + result));
     }
 
     private Executor() {

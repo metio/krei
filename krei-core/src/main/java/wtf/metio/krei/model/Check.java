@@ -14,5 +14,9 @@ public interface Check {
      * @return Performs a check and returns its result.
      */
     boolean test();
+    
+    default Check not() {
+        return () -> !test();
+    }
 
 }

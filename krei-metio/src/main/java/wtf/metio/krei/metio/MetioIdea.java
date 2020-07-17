@@ -5,7 +5,7 @@
  * in the LICENSE file.
  */
 
-package wtf.metio.krei.metio.shared;
+package wtf.metio.krei.metio;
 
 import wtf.metio.krei.model.ide.IDE;
 import wtf.metio.krei.model.ide.idea.Idea;

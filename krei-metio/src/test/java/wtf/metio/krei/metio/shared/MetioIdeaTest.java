@@ -8,6 +8,7 @@
 package wtf.metio.krei.metio.shared;
 
 import org.junit.jupiter.api.Test;
+import wtf.metio.krei.metio.MetioIdea;
 
 import static org.junit.jupiter.api.Assertions.*;
 

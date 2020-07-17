@@ -29,6 +29,7 @@ public final class LicenseHandler implements Function<License, Unit> {
                 .map(projectDirectory::resolve)
                 .orElse(projectDirectory.resolve("LICENSE"));
         final var builder = Unit.builder()
+                .id("urn:krei:materialize:license")
                 .addRequires(LicenseUnits.createLicense(licenseFile, license.license()));
         license.waiver().map(this::handleWaiver).ifPresent(builder::addRequires);
         return builder.build();
@@ -39,6 +40,7 @@ public final class LicenseHandler implements Function<License, Unit> {
                 .map(projectDirectory::resolve)
                 .orElse(projectDirectory.resolve("LICENSE"));
         return Unit.builder()
+                .id("urn:krei:materialize:waiver")
                 .addBefore(LicenseUnits.createWaiver(waiverFile, waiver.text()))
                 .addAfter(LicenseUnits.signWaiver(waiverFile))
                 .build();

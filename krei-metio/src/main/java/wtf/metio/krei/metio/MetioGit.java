@@ -5,7 +5,7 @@
  * in the LICENSE file.
  */
 
-package wtf.metio.krei.metio.shared;
+package wtf.metio.krei.metio;
 
 import wtf.metio.krei.model.vcs.git.Git;
 import wtf.metio.krei.model.vcs.git.GitConfig;

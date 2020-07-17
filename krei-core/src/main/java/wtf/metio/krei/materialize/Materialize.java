@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public final class Materialize {
 
-    static int intoFilesystem(final ProjectConfig config, final Path projectDirectory) {
+    public static int intoFilesystem(final ProjectConfig config, final Path projectDirectory) {
         // TODO: define exception handler/explainer
         return Executor.execute(asProject(config, projectDirectory));
     }

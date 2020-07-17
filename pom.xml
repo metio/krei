@@ -71,6 +71,7 @@
         <!-- https://jira.sonarsource.com/browse/MSONAR-174 -->
         <sonar.java.source>${version.jdk}</sonar.java.source>
         <sonar.java.target>${version.jdk}</sonar.java.target>
+        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
 
         <project.build.outputTimestamp>2020</project.build.outputTimestamp>
     </properties>

@@ -41,7 +41,7 @@ public final class LicenseUnits {
     public static Unit signWaiver(final Path path) {
         return Unit.builder()
                 .id("urn:krei:license:waiver:sign")
-                .task(FileTasks.appendFile(path, "##signature##"))
+                .task(FileTasks.appendFile(path, ""))
                 .build();
     }
 

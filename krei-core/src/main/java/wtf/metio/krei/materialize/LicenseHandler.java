@@ -44,7 +44,8 @@ public final class LicenseHandler implements Function<License, Unit> {
                 .id("urn:krei:materialize:waiver")
                 .addBefore(FileUnits.createDirectory(waiverFile.getParent()))
                 .addRequires(LicenseUnits.createWaiver(waiverFile, waiver.text()))
-                .addWants(LicenseUnits.signWaiver(waiverFile))
+                // TODO: enable waiver signature
+                // .addWants(LicenseUnits.signWaiver(waiverFile))
                 .build();
     }
 

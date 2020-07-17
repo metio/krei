@@ -52,12 +52,10 @@ final class Executor {
     }
 
     private static Stream<Integer> defaultExecute(final Unit unit) {
-        System.out.println(unit.id());
         return unit.task().stream()
                 .filter(task -> task.check().map(Check::test).orElse(true))
                 .map(Task::action)
-                .map(Action::call)
-                .peek(result -> System.out.println(unit.id() + " -> " + result));
+                .map(Action::call);
     }
 
     private Executor() {

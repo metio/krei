@@ -1,4 +1,4 @@
-name: update parent
+name: Update Parent
 on:
   schedule:
     - cron:  '15 1 * * SAT'

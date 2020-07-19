@@ -42,7 +42,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Publish to GitHub Packages Apache Maven
         if: steps.commits.outputs.count > 0
-        run: mvn --batch-mode deploy -DskipTests
+        run: mvn --batch-mode --settings $GITHUB_WORKSPACE/build/settings.xml deploy -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build Website

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.74.3">Hugo</generator><title type="html">Contributors on krei</title><link href="https://krei.projects.metio.wtf/categories/contributors/" rel="alternate" type="text/html" title="HTML"/><link href="https://krei.projects.metio.wtf/categories/contributors/index.xml" rel="alternate" type="application/rss+xml" title="RSS"/><link href="https://krei.projects.metio.wtf/categories/contributors/atom.xml" rel="self" type="application/atom+xml" title="Atom"/><updated>2020-08-16T02:31:00+00:00</updated><id>https://krei.projects.metio.wtf/categories/contributors/</id><entry><title type="html">Build</title><link href="https://krei.projects.metio.wtf/contributors/build/?utm_source=atom_feed" rel="alternate" type="text/html"/><id>https://krei.projects.metio.wtf/contributors/build/</id><published>2020-04-13T00:00:00+00:00</published><updated>2020-04-13T00:00:00+00:00</updated><content type="html"><![CDATA[<p>The required build environment for <code>krei</code> is described in <a href="../dev-env">dev-env</a>.</p>
+<p>In case you have Java and Maven locally installed call:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># run all tests</span>
+$ mvn verify
+
+<span class="c1"># install locally</span>
+$ mvn install
+
+<span class="c1"># open jshell</span>
+$ mvn --projects krei-metio --also-make --activate-profiles jshell <span class="nb">test</span>
+</code></pre></div><p>In case you are using <code>ilo</code> call this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># build the project</span>
+$ ilo @build/once
+
+<span class="c1"># open a shell with a pre-defined build environment</span>
+$ ilo @build/shell
+</code></pre></div><p>In case you want to build the website do this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># build website</span>
+$ hugo --minify --i18n-warnings --path-warnings --source krei-docs
+
+<span class="c1"># serve website</span>
+$ hugo server --minify --i18n-warnings --path-warnings --source krei-docs --watch
+</code></pre></div><p>Take a look at the <a href="../makefile">Makefile</a> as an easy way to call all these commands.</p>
+]]></content><category scheme="https://krei.projects.metio.wtf/categories/contributors" term="contributors" label="Contributors"/><category scheme="https://krei.projects.metio.wtf/tags/build" term="build" label="build"/></entry><entry><title type="html">Dev Env</title><link href="https://krei.projects.metio.wtf/contributors/dev-env/?utm_source=atom_feed" rel="alternate" type="text/html"/><id>https://krei.projects.metio.wtf/contributors/dev-env/</id><published>2020-04-13T00:00:00+00:00</published><updated>2020-04-13T00:00:00+00:00</updated><content type="html"><![CDATA[<p><code>krei</code> requires a certain set of software installed on your system in order to be built.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<ul>
+<li><a href="https://git-scm.com/">git</a> for version control</li>
+<li><a href="https://jedisct1.github.io/minisign/">minisign</a> to sign the waiver as a contributor</li>
+<li><a href="https://gnupg.org/">gpg</a> to sign your the commit which adds the waiver</li>
+</ul>
+<h2 id="manual-setup">Manual Setup</h2>
+<ul>
+<li><a href="https://jdk.java.net/">Java JDK</a> to compile the code</li>
+<li><a href="https://maven.apache.org/">Maven</a> to build the project</li>
+<li><a href="https://gohugo.io/">hugo</a> in order to create the website</li>
+</ul>
+<h2 id="ilo-setup">ilo Setup</h2>
+<ul>
+<li><a href="https://github.com/metio/ilo">ilo</a> to open the predefined build environment</li>
+<li><a href="https://podman.io/">podman</a> or <a href="https://www.docker.com/">docker</a> as an <code>ilo</code> runtime</li>
+</ul>
+<h2 id="github-packages">GitHub Packages</h2>
+<p>Some of <code>krei</code>'s dependencies are only available in GitHub packages which requires authentication. Since <code>krei</code> is using Maven to build itself, you will have to create/change your local <code>~/.m2/settings.xml</code> file. Use the following template as reference and take a look at the <a href="https://github.com/metio/krei/blob/master/build/settings.xml">settings used by krei</a> itself:</p>
+<div class="highlight"><pre class="chroma"><code class="language-xml" data-lang="xml"><span class="nt">&lt;settings</span> <span class="na">xmlns=</span><span class="s">&#34;http://maven.apache.org/SETTINGS/1.0.0&#34;</span>
+  <span class="na">xmlns:xsi=</span><span class="s">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+  <span class="na">xsi:schemaLocation=</span><span class="s">&#34;http://maven.apache.org/SETTINGS/1.0.0
+</span><span class="s">                      http://maven.apache.org/xsd/settings-1.0.0.xsd&#34;</span><span class="nt">&gt;</span>
+
+  <span class="nt">&lt;activeProfiles&gt;</span>
+    <span class="nt">&lt;activeProfile&gt;</span>YOUR_NAME<span class="nt">&lt;/activeProfile&gt;</span>
+  <span class="nt">&lt;/activeProfiles&gt;</span>
+
+  <span class="nt">&lt;profiles&gt;</span>
+    <span class="nt">&lt;profile&gt;</span>
+      <span class="nt">&lt;id&gt;</span>YOUR_NAME<span class="nt">&lt;/id&gt;</span>
+      <span class="nt">&lt;repositories&gt;</span>
+        <span class="nt">&lt;repository&gt;</span>
+          <span class="nt">&lt;id&gt;</span>central<span class="nt">&lt;/id&gt;</span>
+          <span class="nt">&lt;url&gt;</span>https://repo1.maven.org/maven2<span class="nt">&lt;/url&gt;</span>
+          <span class="nt">&lt;releases&gt;</span>
+	          <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+	        <span class="nt">&lt;/releases&gt;</span>
+          <span class="nt">&lt;snapshots&gt;</span>
+	          <span class="nt">&lt;enabled&gt;</span>false<span class="nt">&lt;/enabled&gt;</span>
+	        <span class="nt">&lt;/snapshots&gt;</span>
+        <span class="nt">&lt;/repository&gt;</span>
+        <span class="nt">&lt;repository&gt;</span>
+          <span class="nt">&lt;id&gt;</span>maven-build-process<span class="nt">&lt;/id&gt;</span>
+          <span class="nt">&lt;name&gt;</span>GitHub maven-build-process Apache Maven Packages<span class="nt">&lt;/name&gt;</span>
+          <span class="nt">&lt;url&gt;</span>https://maven.pkg.github.com/metio/maven-build-process<span class="nt">&lt;/url&gt;</span>
+          <span class="nt">&lt;releases&gt;</span>
+	          <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+	        <span class="nt">&lt;/releases&gt;</span>
+          <span class="nt">&lt;snapshots&gt;</span>
+	          <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+	        <span class="nt">&lt;/snapshots&gt;</span>
+        <span class="nt">&lt;/repository&gt;</span>
+        <span class="nt">&lt;repository&gt;</span>
+          <span class="nt">&lt;id&gt;</span>hcf4j<span class="nt">&lt;/id&gt;</span>
+          <span class="nt">&lt;name&gt;</span>GitHub hcf4j Apache Maven Packages<span class="nt">&lt;/name&gt;</span>
+          <span class="nt">&lt;url&gt;</span>https://maven.pkg.github.com/metio/hcf4j<span class="nt">&lt;/url&gt;</span>
+          <span class="nt">&lt;releases&gt;</span>
+	          <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+	        <span class="nt">&lt;/releases&gt;</span>
+          <span class="nt">&lt;snapshots&gt;</span>
+	          <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+	        <span class="nt">&lt;/snapshots&gt;</span>
+        <span class="nt">&lt;/repository&gt;</span>
+      <span class="nt">&lt;/repositories&gt;</span>
+    <span class="nt">&lt;/profile&gt;</span>
+  <span class="nt">&lt;/profiles&gt;</span>
+
+  <span class="nt">&lt;servers&gt;</span>
+    <span class="nt">&lt;server&gt;</span>
+      <span class="nt">&lt;id&gt;</span>maven-build-process<span class="nt">&lt;/id&gt;</span>
+      <span class="nt">&lt;username&gt;</span>YOUR_NAME<span class="nt">&lt;/username&gt;</span>
+      <span class="nt">&lt;password&gt;</span>YOUR_TOKEN<span class="nt">&lt;/password&gt;</span>
+    <span class="nt">&lt;/server&gt;</span>
+    <span class="nt">&lt;server&gt;</span>
+      <span class="nt">&lt;id&gt;</span>hcf4j<span class="nt">&lt;/id&gt;</span>
+      <span class="nt">&lt;username&gt;</span>YOUR_NAME<span class="nt">&lt;/username&gt;</span>
+      <span class="nt">&lt;password&gt;</span>YOUR_TOKEN<span class="nt">&lt;/password&gt;</span>
+    <span class="nt">&lt;/server&gt;</span>
+  <span class="nt">&lt;/servers&gt;</span>
+<span class="nt">&lt;/settings&gt;</span>
+</code></pre></div><p>Replace <code>YOUR_NAME</code> and <code>YOUR_TOKEN</code> with your GitHub username and <a href="https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line">personal access token</a>.</p>
+]]></content><category scheme="https://krei.projects.metio.wtf/categories/contributors" term="contributors" label="Contributors"/><category scheme="https://krei.projects.metio.wtf/tags/environment" term="environment" label="environment"/></entry><entry><title type="html">Eclipse</title><link href="https://krei.projects.metio.wtf/contributors/eclipse/?utm_source=atom_feed" rel="alternate" type="text/html"/><link href="https://krei.projects.metio.wtf/contributors/idea/?utm_source=atom_feed" rel="related" type="text/html" title="IntelliJ Idea"/><id>https://krei.projects.metio.wtf/contributors/eclipse/</id><published>2020-04-13T00:00:00+00:00</published><updated>2020-04-13T00:00:00+00:00</updated><content type="html"></content><category scheme="https://krei.projects.metio.wtf/categories/contributors" term="contributors" label="Contributors"/><category scheme="https://krei.projects.metio.wtf/tags/eclipse" term="eclipse" label="eclipse"/><category scheme="https://krei.projects.metio.wtf/tags/ide" term="ide" label="ide"/></entry><entry><title type="html">First Timer</title><link href="https://krei.projects.metio.wtf/contributors/first-timer/?utm_source=atom_feed" rel="alternate" type="text/html"/><link href="https://krei.projects.metio.wtf/community/help/?utm_source=atom_feed" rel="related" type="text/html" title="Help"/><link href="https://krei.projects.metio.wtf/community/security/?utm_source=atom_feed" rel="related" type="text/html" title="Security"/><id>https://krei.projects.metio.wtf/contributors/first-timer/</id><published>2020-04-13T00:00:00+00:00</published><updated>2020-04-13T00:00:00+00:00</updated><content type="html"><![CDATA[<p>First time contributors have to perform an additional step in order to get their changes merged into the main repository.</p>
+<p>The <a href="https://github.com/metio/krei/blob/master/AUTHORS/WAIVER">WAIVER</a> has to be signed in order to signal that all contributions can be published into the public domain using the <a href="https://creativecommons.org/publicdomain/zero/1.0/">Creative Commons Zero (CC0)</a> license.</p>
+<p><a href="https://jedisct1.github.io/minisign/">minisign</a> is used to sign and verify contributions (see <a href="../dev-env">dev-env</a>).</p>
+<p>The signed waiver <strong>must</strong> be added to your first pull request. The created git commit <strong>must</strong> be <a href="https://git-scm.com/docs/git-commit#Documentation/git-commit.txt--Sltkeyidgt">GPG signed</a>.</p>
+<p>Additionally, any contributor may add her/his <a href="../metadata">metadata</a> to the project. This is especially useful for <code>minisign</code> public keys since you will have to communicate to the project maintainers anyway.</p>
+<h2 id="prerequisite">Prerequisite</h2>
+<p>Make sure at least version <code>0.8</code> of <code>minisign</code> is installed:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ minisign -v
+minisign 0.8
+</code></pre></div><h2 id="sign">Sign</h2>
+<p>In order to sign the waiver, call the following commands from the root of the project:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ minisign -Sm AUTHORS/WAIVER
+$ mv AUTHORS/WAIVER.minisig AUTHORS/WAIVER.<span class="sb">`</span>id --name --user<span class="sb">`</span>.minisig
+</code></pre></div><p>In case you are into <a href="../makefile">Makefiles</a>, you can use the shorter version:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ make sign-waiver
+</code></pre></div><p>In both cases, a new file called <code>AUTHORS/WAIVER.&lt;USER&gt;.minisign</code> was created. The <code>Makefile</code> will commit the signed waiver to your local repo as well. In case you have not used the <code>Makefile</code>, run this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ git add AUTHORS/WAIVER.<span class="sb">`</span>id --name --user<span class="sb">`</span>.minisig
+$ git commit -m <span class="s1">&#39;sign waiver&#39;</span> --gpg-sign
+</code></pre></div><h2 id="verify">Verify</h2>
+<p>An existing contributor will verify your signature with:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ minisign -V -x AUTHORS/WAIVER.&lt;YOUR_NAME&gt;.minisig -P &lt;YOUR_PUB_KEY&gt; -m AUTHORS/WAIVER
+</code></pre></div><p>In order to verify existing signatures, do any of the following:</p>
+
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># verify signature: sebhoss</span>
+$ minisign -V -x AUTHORS/WAIVER.sebhoss.minisig -P RWTwUvueDHNazzoOSJ/rbmIWhvMXIWBUJezoJhSE9jP/Nhv&#43;4SUz3HvS -m AUTHORS/WAIVER
+</code></pre></div>
+
+
+]]></content><category scheme="https://krei.projects.metio.wtf/categories/contributors" term="contributors" label="Contributors"/><category scheme="https://krei.projects.metio.wtf/tags/help" term="help" label="help"/></entry><entry><title type="html">Git Mirrors</title><link href="https://krei.projects.metio.wtf/contributors/git-mirrors/?utm_source=atom_feed" rel="alternate" type="text/html"/><id>https://krei.projects.metio.wtf/contributors/git-mirrors/</id><published>2020-04-13T00:00:00+00:00</published><updated>2020-04-13T00:00:00+00:00</updated><content type="html"><![CDATA[<p><code>krei</code> is using <a href="https://github.com/metio/krei">GitHub</a> as its primary source/issue/build environment, however its code is available in other git repositories as well in order to deal with <a href="https://www.githubstatus.com/">GitHub outages</a>.</p>
+<h2 id="available-mirrors">Available Mirrors</h2>
+<ul>
+<li><a href="https://github.com/metio/krei">https://github.com/metio/krei</a></li>
+<li><a href="https://repo.or.cz/krei.git">https://repo.or.cz/krei.git</a></li>
+<li><a href="https://codeberg.org/metio.wtf/krei">https://codeberg.org/metio.wtf/krei</a></li>
+<li><a href="https://gitlab.com/metio.wtf/krei">https://gitlab.com/metio.wtf/krei</a></li>
+<li><a href="https://bitbucket.org/metio-wtf/krei">https://bitbucket.org/metio-wtf/krei</a></li>
+</ul>
+<h2 id="automatic-mirroring">Automatic Mirroring</h2>
+<p>The Gitlab repository pulls changes from GitHub and pushes changes into Codeberg and Bitbucket. The repo.or.cz mirror pulls from GitHub as well, therefore all you have to do is, push your changes into GitHub and a few minutes later, all other repositories will get the latest code automatically - including all branches.</p>
+<h2 id="manual-mirroring">Manual Mirroring</h2>
+<p>In case Gitlab is down or removes the mirroring feature, an update can be performed manually.</p>
+<h3 id="ssh-setup-optional">SSH Setup (<strong>Optional</strong>)</h3>
+<p>Use the following example config as reference and adapt according to your needs. In case you are using the same SSH key for every remote, adapt the <code>IdentityFile</code> part in the example. In case you only want to mirror to a subset of all mirrors, remove all those that you do not want to support.</p>
+<pre><code>Host github
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/github
+
+Host gitlab
+    HostName gitlab.com
+    User git
+    IdentityFile ~/.ssh/gitlab
+
+Host bitbucket
+    HostName bitbucket.org
+    User git
+    IdentityFile ~/.ssh/bitbucket
+
+Host codeberg
+    HostName codeberg.org
+    User git
+    IdentityFile ~/.ssh/codeberg
+</code></pre><h3 id="git-remote-mirrors">Git Remote Mirrors</h3>
+<p>Use the following commands to create a new git remote which only allows pushing code. Only specify those mirrors that you want to support.</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ git remote add mirrors DISABLED
+$ git remote set-url --add --push mirrors codeberg:metio.wtf/krei.git
+$ git remote set-url --add --push mirrors gitlab:metio.wtf/krei.git
+$ git remote set-url --add --push mirrors bitbucket:metio-wtf/krei.git
+</code></pre></div><p>In case you have not done the SSH setup above, use this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ git remote add mirrors DISABLED
+$ git remote set-url --add --push mirrors git@codeberg.org:metio.wtf/krei.git
+$ git remote set-url --add --push mirrors git@gitlab.com:metio.wtf/krei.git
+$ git remote set-url --add --push mirrors git@bitbucket.org:metio-wtf/krei.git
+</code></pre></div><p>The final configuration should look like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ git remote -v
+mirrors DISABLED <span class="o">(</span>fetch<span class="o">)</span>
+mirrors codeberg:metio.wtf/krei.git <span class="o">(</span>push<span class="o">)</span>
+mirrors gitlab:metio.wtf/krei.git <span class="o">(</span>push<span class="o">)</span>
+mirrors bitbucket:metio-wtf/krei.git <span class="o">(</span>push<span class="o">)</span>
+</code></pre></div><p>Finally, push the current branch to all mirrors, e.g. <code>master</code>:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ git push mirrors master:master
+</code></pre></div>]]></content><category scheme="https://krei.projects.metio.wtf/categories/contributors" term="contributors" label="Contributors"/><category scheme="https://krei.projects.metio.wtf/tags/git" term="git" label="git"/><category scheme="https://krei.projects.metio.wtf/tags/mirror" term="mirror" label="mirror"/></entry><entry><title type="html">IntelliJ Idea</title><link href="https://krei.projects.metio.wtf/contributors/idea/?utm_source=atom_feed" rel="alternate" type="text/html"/><link href="https://krei.projects.metio.wtf/contributors/eclipse/?utm_source=atom_feed" rel="related" type="text/html" title="Eclipse"/><id>https://krei.projects.metio.wtf/contributors/idea/</id><published>2020-04-13T00:00:00+00:00</published><updated>2020-04-13T00:00:00+00:00</updated><content type="html"><![CDATA[<p><a href="https://www.jetbrains.com/idea/">IntelliJ Idea</a> is a popular IDE by <a href="https://www.jetbrains.com/">Jetbrains</a>. It allows <a href="https://www.jetbrains.com/help/idea/sharing-your-ide-settings.html">several ways</a> to share settings across team members in a project.</p>
+<p><code>krei</code> stores its IntelliJ settings inside its <a href="https://www.jetbrains.com/help/idea/creating-and-managing-projects.html#share-project-through-vcs">git repository</a> and thus should work out-of-the-box for other IntelliJ users.</p>
+<p>In case you have trouble getting <code>krei</code> to work in IntelliJ, take a look at the <a href="../../community/help">help</a> section.</p>
+]]></content><category scheme="https://krei.projects.metio.wtf/categories/contributors" term="contributors" label="Contributors"/><category scheme="https://krei.projects.metio.wtf/tags/idea" term="idea" label="idea"/><category scheme="https://krei.projects.metio.wtf/tags/ide" term="ide" label="ide"/></entry><entry><title type="html">Makefile</title><link href="https://krei.projects.metio.wtf/contributors/makefile/?utm_source=atom_feed" rel="alternate" type="text/html"/><id>https://krei.projects.metio.wtf/contributors/makefile/</id><published>2020-04-13T00:00:00+00:00</published><updated>2020-04-13T00:00:00+00:00</updated><content type="html"><![CDATA[<p>The <a href="https://github.com/metio/krei/blob/master/Makefile">Makefile</a> commonly used task by maintainers of this project. In order to use it, you have to install a variant of <a href="https://en.wikipedia.org/wiki/Make_(software)">make</a> on your system. Just calling <code>make</code> in the root directory will print the help/usage guide:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ make
+usage: make <span class="o">[</span>target<span class="o">]</span>
+
+contributing:
+  sync-mirrors        Synchronize changes to all git mirrors
+  sign-waiver         Sign the WAIVER
+
+hacking:
+  install             Install all artifacts into <span class="nb">local</span> repository
+  verify              Verify all modules
+  site                Build website
+  site-watch          Build and watch website
+  build-env           Open a new shell in a predefined build environment
+  build-once          Build the entire project once in a predefined build environment
+  jshell              Open project in a JShell
+
+other:
+  <span class="nb">help</span>                Show this <span class="nb">help</span>
+</code></pre></div><p>Run any of the available targets like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ make verify
+</code></pre></div>]]></content><category scheme="https://krei.projects.metio.wtf/categories/contributors" term="contributors" label="Contributors"/><category scheme="https://krei.projects.metio.wtf/tags/makefile" term="makefile" label="makefile"/></entry><entry><title type="html">Metadata</title><link href="https://krei.projects.metio.wtf/contributors/metadata/?utm_source=atom_feed" rel="alternate" type="text/html"/><id>https://krei.projects.metio.wtf/contributors/metadata/</id><published>2020-04-13T00:00:00+00:00</published><updated>2020-04-13T00:00:00+00:00</updated><content type="html"><![CDATA[<p>Every contributor may add/remove her/his metadata to the <a href="https://github.com/metio/krei/tree/master/krei-docs/data/contributors">list of contributors</a> at any time.</p>
+<p>Metadata is currently used in three places:</p>
+<ol>
+<li>To generate a list of existing <a href="https://jedisct1.github.io/minisign/">minisign</a> signatures in the <a href="../first-timer">first timer</a> documentation.</li>
+<li>To generate a <a href="http://humanstxt.org/">humans.txt</a> file of <a href="https://krei.projects.metio.wtf/humans.txt">all contributors</a>.</li>
+<li>To generate a <a href="http://www.foaf-project.org/">FOAF</a> for the <a href="https://krei.projects.metio.wtf/foaf.rdf">entire project</a>.</li>
+</ol>
+<h2 id="adding-a-new-entry">Adding a new entry</h2>
+<p>Create a new file called <code>&lt;YOUR_NAME&gt;.yaml</code> in the <a href="https://github.com/metio/krei/tree/master/krei-docs/data/contributors">contributors directory</a>. Add the following properties to it:</p>
+<div class="highlight"><pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="k">id</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;&lt;YOUR_NAME&gt;&#39;</span><span class="w">                   </span><span class="c"># should match file name (required)</span><span class="w">
+</span><span class="w"></span><span class="k">minisign</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;&lt;YOUR_MINISIGN_PUB_KEY&gt;&#39;</span><span class="w"> </span><span class="c"># used for key verification (required)</span><span class="w">
+</span><span class="w"></span><span class="k">title</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;&lt;YOUR_TITLE&gt;&#39;</span><span class="w">               </span><span class="c"># used by FOAF/humans.txt (optional)</span><span class="w">
+</span><span class="w"></span><span class="k">first_name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;&lt;YOUR_FIRST_NAME&gt;&#39;</span><span class="w">     </span><span class="c"># used by FOAF/humans.txt (optional)</span><span class="w">
+</span><span class="w"></span><span class="k">last_name</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;&lt;YOUR_LAST_NAME&gt;&#39;</span><span class="w">       </span><span class="c"># used by FOAF/humans.txt (optional)</span><span class="w">
+</span><span class="w"></span><span class="k">email</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;&lt;YOUR_EMAIL&gt;&#39;</span><span class="w">               </span><span class="c"># used by FOAF (optional)</span><span class="w">
+</span><span class="w"></span><span class="k">website</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;&lt;YOUR_URL&gt;&#39;</span><span class="w">               </span><span class="c"># used by FOAF/humans.txt (optional)</span><span class="w">
+</span></code></pre></div>]]></content><category scheme="https://krei.projects.metio.wtf/categories/contributors" term="contributors" label="Contributors"/><category scheme="https://krei.projects.metio.wtf/tags/metadata" term="metadata" label="metadata"/></entry></feed>

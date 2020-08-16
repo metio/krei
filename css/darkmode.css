@@ -1,0 +1,30 @@
+body {
+    background-color: black;
+    color: white;
+}
+
+img {
+    opacity: .75;
+    transition: opacity .5s ease-in-out;
+}
+
+img:hover {
+    opacity: 1;
+}
+
+#header a {
+    color: white;
+}
+
+.svgimg {
+    filter: invert(1);
+}
+
+a,a:visited,a>span {
+    color: #268bd2;
+    // #4AF626 terminal green
+}
+
+li::marker {
+    color: white;
+}

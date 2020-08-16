@@ -1,0 +1,70 @@
+<!doctype html><html lang=en><head><meta charset=utf-8><meta content="metio.wtf" name=author><meta content="krei" name=subject><meta content="write code that generates code, so that you can write more code" name=description><meta name=viewport content="width=device-width,initial-scale=1"><meta content="krei" property="og:title"><meta content="website" property="og:type"><meta content="https://krei.projects.metio.wtf/" property="og:url"><meta content="write code that generates code, so that you can write more code" property="og:description"><link href=https://krei.projects.metio.wtf/ rel=canonical><link href=https://krei.projects.metio.wtf/atom.xml rel=alternate title="krei Atom" type=application/atom+xml><link href=https://krei.projects.metio.wtf/index.xml rel=alternate title="krei RSS" type=application/rss+xml><link href=https://krei.projects.metio.wtf/sitemap.xml rel=sitemap title="krei Sitemap" type=application/xml><link rel=author href=https://krei.projects.metio.wtf/humans.txt><link rel=license href=https://creativecommons.org/publicdomain/zero/1.0/><link rel=alternate type=application/rdf+xml title=FOAF href=https://krei.projects.metio.wtf/foaf.rdf><link href=https://krei.projects.metio.wtf/css/normalize.css media=screen rel=stylesheet><link href=https://krei.projects.metio.wtf/css/font.css media=screen rel=stylesheet><link href=https://krei.projects.metio.wtf/css/header.css media=screen rel=stylesheet><link href=https://krei.projects.metio.wtf/css/footer.css media=screen rel=stylesheet><link href=https://krei.projects.metio.wtf/css/navigation.css media=screen rel=stylesheet><link href=https://krei.projects.metio.wtf/css/navigation-mobile.css media="screen and (max-width: 1199px)" rel=stylesheet><link href=https://krei.projects.metio.wtf/css/navigation-tablet.css media="screen and (min-width: 801px)" rel=stylesheet><link href=https://krei.projects.metio.wtf/css/navigation-desktop.css media="screen and (min-width: 1200px)" rel=stylesheet><link href=https://krei.projects.metio.wtf/css/layout.css rel=stylesheet><link href=https://krei.projects.metio.wtf/css/layout-mobile.css media="screen and (max-width: 800px)" rel=stylesheet><link href=https://krei.projects.metio.wtf/css/layout-tablet.css media="screen and (min-width: 801px) and (max-width: 1199px)" rel=stylesheet><link href=https://krei.projects.metio.wtf/css/layout-desktop.css media="screen and (min-width: 1200px)" rel=stylesheet><link href=https://krei.projects.metio.wtf/css/syntax.css media=screen rel=stylesheet><link href=https://krei.projects.metio.wtf/css/darkmode.css media="screen and (prefers-color-scheme: dark)" rel=stylesheet><title>krei &ndash; Dev Env</title></head><body id=site><header id=header><h1 id=projectname><a id=rootlink href=https://krei.projects.metio.wtf/>krei</a>
+<a href=https://krei.projects.metio.wtf/sitemap/ title="show me all pages" id=sitemaplink><img class=svgimg src=https://krei.projects.metio.wtf/images/sitemap.svg alt=sitemap width=30 height=30></a></h1><span id=actions><a href=https://github.com/metio/krei id=github title="want some code?"><img class=svgimg src=https://krei.projects.metio.wtf/images/github.svg alt=github width=32 height=32></a>
+<a href=https://krei.projects.metio.wtf/atom.xml id=newsfeed title="get notified about updates"><img class=svgimg src=https://krei.projects.metio.wtf/images/rss.svg alt=newsfeed width=32 height=32></a></span></header><nav id=navigation><ul><li id=homelink><a href=https://krei.projects.metio.wtf/>Home</a></li><li><a href=/community/>Community</a><ul><li><a href=/community/alternatives/>Alternatives</a></li><li><a href=/community/help/>Help</a></li><li><a href=/community/news/>News</a></li><li><a href=/community/security/>Security</a></li></ul></li><li><a href=/contributors/ class=active>Contributors</a><ul><li><a href=/contributors/build/>Build</a></li><li class=active><a href=/contributors/dev-env/>Dev Env</a></li><li><a href=/contributors/eclipse/>Eclipse</a></li><li><a href=/contributors/first-timer/>First Timer</a></li><li><a href=/contributors/git-mirrors/>Git Mirrors</a></li><li><a href=/contributors/idea/>IntelliJ Idea</a></li><li><a href=/contributors/makefile/>Makefile</a></li><li><a href=/contributors/metadata/>Metadata</a></li><li><a href=/contributors/release/>Release</a></li></ul></li><li><a href=/krei-core/>krei-core</a><ul><li><a href=/krei-core/install/>Install</a></li><li><a href=/krei-core/jshell/>JShell</a></li><li><a href=/krei-core/license/>License</a></li><li><a href=/krei-core/main/>static-void-main</a></li><li><a href=/krei-core/usage/>Usage</a></li></ul></li><li><a href=/krei-metio/>krei-metio</a><ul><li><a href=/krei-metio/maven/>Maven</a></li></ul></li><li><a href=/metrics/>Metrics</a><ul><li><a href=/metrics/badges/>Badges</a></li></ul></li></ul></nav><main id=content><h1>Dev Env</h1><p><code>krei</code> requires a certain set of software installed on your system in order to be built.</p><h2 id=prerequisites>Prerequisites</h2><ul><li><a href=https://git-scm.com/>git</a> for version control</li><li><a href=https://jedisct1.github.io/minisign/>minisign</a> to sign the waiver as a contributor</li><li><a href=https://gnupg.org/>gpg</a> to sign your the commit which adds the waiver</li></ul><h2 id=manual-setup>Manual Setup</h2><ul><li><a href=https://jdk.java.net/>Java JDK</a> to compile the code</li><li><a href=https://maven.apache.org/>Maven</a> to build the project</li><li><a href=https://gohugo.io/>hugo</a> in order to create the website</li></ul><h2 id=ilo-setup>ilo Setup</h2><ul><li><a href=https://github.com/metio/ilo>ilo</a> to open the predefined build environment</li><li><a href=https://podman.io/>podman</a> or <a href=https://www.docker.com/>docker</a> as an <code>ilo</code> runtime</li></ul><h2 id=github-packages>GitHub Packages</h2><p>Some of <code>krei</code>'s dependencies are only available in GitHub packages which requires authentication. Since <code>krei</code> is using Maven to build itself, you will have to create/change your local <code>~/.m2/settings.xml</code> file. Use the following template as reference and take a look at the <a href=https://github.com/metio/krei/blob/master/build/settings.xml>settings used by krei</a> itself:</p><div class=highlight><pre class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;settings</span> <span class=na>xmlns=</span><span class=s>&#34;http://maven.apache.org/SETTINGS/1.0.0&#34;</span>
+  <span class=na>xmlns:xsi=</span><span class=s>&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+  <span class=na>xsi:schemaLocation=</span><span class=s>&#34;http://maven.apache.org/SETTINGS/1.0.0
+</span><span class=s>                      http://maven.apache.org/xsd/settings-1.0.0.xsd&#34;</span><span class=nt>&gt;</span>
+
+  <span class=nt>&lt;activeProfiles&gt;</span>
+    <span class=nt>&lt;activeProfile&gt;</span>YOUR_NAME<span class=nt>&lt;/activeProfile&gt;</span>
+  <span class=nt>&lt;/activeProfiles&gt;</span>
+
+  <span class=nt>&lt;profiles&gt;</span>
+    <span class=nt>&lt;profile&gt;</span>
+      <span class=nt>&lt;id&gt;</span>YOUR_NAME<span class=nt>&lt;/id&gt;</span>
+      <span class=nt>&lt;repositories&gt;</span>
+        <span class=nt>&lt;repository&gt;</span>
+          <span class=nt>&lt;id&gt;</span>central<span class=nt>&lt;/id&gt;</span>
+          <span class=nt>&lt;url&gt;</span>https://repo1.maven.org/maven2<span class=nt>&lt;/url&gt;</span>
+          <span class=nt>&lt;releases&gt;</span>
+	          <span class=nt>&lt;enabled&gt;</span>true<span class=nt>&lt;/enabled&gt;</span>
+	        <span class=nt>&lt;/releases&gt;</span>
+          <span class=nt>&lt;snapshots&gt;</span>
+	          <span class=nt>&lt;enabled&gt;</span>false<span class=nt>&lt;/enabled&gt;</span>
+	        <span class=nt>&lt;/snapshots&gt;</span>
+        <span class=nt>&lt;/repository&gt;</span>
+        <span class=nt>&lt;repository&gt;</span>
+          <span class=nt>&lt;id&gt;</span>maven-build-process<span class=nt>&lt;/id&gt;</span>
+          <span class=nt>&lt;name&gt;</span>GitHub maven-build-process Apache Maven Packages<span class=nt>&lt;/name&gt;</span>
+          <span class=nt>&lt;url&gt;</span>https://maven.pkg.github.com/metio/maven-build-process<span class=nt>&lt;/url&gt;</span>
+          <span class=nt>&lt;releases&gt;</span>
+	          <span class=nt>&lt;enabled&gt;</span>true<span class=nt>&lt;/enabled&gt;</span>
+	        <span class=nt>&lt;/releases&gt;</span>
+          <span class=nt>&lt;snapshots&gt;</span>
+	          <span class=nt>&lt;enabled&gt;</span>true<span class=nt>&lt;/enabled&gt;</span>
+	        <span class=nt>&lt;/snapshots&gt;</span>
+        <span class=nt>&lt;/repository&gt;</span>
+        <span class=nt>&lt;repository&gt;</span>
+          <span class=nt>&lt;id&gt;</span>hcf4j<span class=nt>&lt;/id&gt;</span>
+          <span class=nt>&lt;name&gt;</span>GitHub hcf4j Apache Maven Packages<span class=nt>&lt;/name&gt;</span>
+          <span class=nt>&lt;url&gt;</span>https://maven.pkg.github.com/metio/hcf4j<span class=nt>&lt;/url&gt;</span>
+          <span class=nt>&lt;releases&gt;</span>
+	          <span class=nt>&lt;enabled&gt;</span>true<span class=nt>&lt;/enabled&gt;</span>
+	        <span class=nt>&lt;/releases&gt;</span>
+          <span class=nt>&lt;snapshots&gt;</span>
+	          <span class=nt>&lt;enabled&gt;</span>true<span class=nt>&lt;/enabled&gt;</span>
+	        <span class=nt>&lt;/snapshots&gt;</span>
+        <span class=nt>&lt;/repository&gt;</span>
+      <span class=nt>&lt;/repositories&gt;</span>
+    <span class=nt>&lt;/profile&gt;</span>
+  <span class=nt>&lt;/profiles&gt;</span>
+
+  <span class=nt>&lt;servers&gt;</span>
+    <span class=nt>&lt;server&gt;</span>
+      <span class=nt>&lt;id&gt;</span>maven-build-process<span class=nt>&lt;/id&gt;</span>
+      <span class=nt>&lt;username&gt;</span>YOUR_NAME<span class=nt>&lt;/username&gt;</span>
+      <span class=nt>&lt;password&gt;</span>YOUR_TOKEN<span class=nt>&lt;/password&gt;</span>
+    <span class=nt>&lt;/server&gt;</span>
+    <span class=nt>&lt;server&gt;</span>
+      <span class=nt>&lt;id&gt;</span>hcf4j<span class=nt>&lt;/id&gt;</span>
+      <span class=nt>&lt;username&gt;</span>YOUR_NAME<span class=nt>&lt;/username&gt;</span>
+      <span class=nt>&lt;password&gt;</span>YOUR_TOKEN<span class=nt>&lt;/password&gt;</span>
+    <span class=nt>&lt;/server&gt;</span>
+  <span class=nt>&lt;/servers&gt;</span>
+<span class=nt>&lt;/settings&gt;</span>
+</code></pre></div><p>Replace <code>YOUR_NAME</code> and <code>YOUR_TOKEN</code> with your GitHub username and <a href=https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line>personal access token</a>.</p></main><footer id=footer><p xmlns:dct=http://purl.org/dc/terms/ xmlns:vcard=http://www.w3.org/2001/vcard-rdf/3.0#><a rel=license href=https://creativecommons.org/publicdomain/zero/1.0/><img src=https://krei.projects.metio.wtf/images/cc0.png style=border-style:none alt=CC0 width=88px height=31px></a><br>To the extent possible under law,
+<a rel=dct:publisher href=https://krei.projects.metio.wtf/><span property="dct:title">metio.wtf</span></a>
+has waived all copyright and related or neighboring rights to
+<span property="dct:title">krei</span>.
+This work is published from:
+<span property="vcard:Country" datatype="dct:ISO3166" content="EN" about="https://krei.projects.metio.wtf/">Germany</span></p></footer></body></html>

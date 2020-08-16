@@ -1,0 +1,8 @@
+#site {
+    grid-template-rows: 100px auto auto 100px;
+    grid-template-areas: "header" "content" "navigation" "footer";
+}
+
+#header {
+    visibility: visible;
+}

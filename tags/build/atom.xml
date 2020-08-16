@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.74.3">Hugo</generator><title type="html">build on krei</title><link href="https://krei.projects.metio.wtf/tags/build/" rel="alternate" type="text/html" title="HTML"/><link href="https://krei.projects.metio.wtf/tags/build/index.xml" rel="alternate" type="application/rss+xml" title="RSS"/><link href="https://krei.projects.metio.wtf/tags/build/atom.xml" rel="self" type="application/atom+xml" title="Atom"/><updated>2020-08-16T02:31:00+00:00</updated><id>https://krei.projects.metio.wtf/tags/build/</id><entry><title type="html">Build</title><link href="https://krei.projects.metio.wtf/contributors/build/?utm_source=atom_feed" rel="alternate" type="text/html"/><id>https://krei.projects.metio.wtf/contributors/build/</id><published>2020-04-13T00:00:00+00:00</published><updated>2020-04-13T00:00:00+00:00</updated><content type="html"><![CDATA[<p>The required build environment for <code>krei</code> is described in <a href="../dev-env">dev-env</a>.</p>
+<p>In case you have Java and Maven locally installed call:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># run all tests</span>
+$ mvn verify
+
+<span class="c1"># install locally</span>
+$ mvn install
+
+<span class="c1"># open jshell</span>
+$ mvn --projects krei-metio --also-make --activate-profiles jshell <span class="nb">test</span>
+</code></pre></div><p>In case you are using <code>ilo</code> call this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># build the project</span>
+$ ilo @build/once
+
+<span class="c1"># open a shell with a pre-defined build environment</span>
+$ ilo @build/shell
+</code></pre></div><p>In case you want to build the website do this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># build website</span>
+$ hugo --minify --i18n-warnings --path-warnings --source krei-docs
+
+<span class="c1"># serve website</span>
+$ hugo server --minify --i18n-warnings --path-warnings --source krei-docs --watch
+</code></pre></div><p>Take a look at the <a href="../makefile">Makefile</a> as an easy way to call all these commands.</p>
+]]></content><category scheme="https://krei.projects.metio.wtf/categories/contributors" term="contributors" label="Contributors"/><category scheme="https://krei.projects.metio.wtf/tags/build" term="build" label="build"/></entry></feed>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en"><generator uri="https://gohugo.io/" version="0.74.3">Hugo</generator><title type="html">makefile on krei</title><link href="https://krei.projects.metio.wtf/tags/makefile/" rel="alternate" type="text/html" title="HTML"/><link href="https://krei.projects.metio.wtf/tags/makefile/index.xml" rel="alternate" type="application/rss+xml" title="RSS"/><link href="https://krei.projects.metio.wtf/tags/makefile/atom.xml" rel="self" type="application/atom+xml" title="Atom"/><updated>2020-08-16T02:31:00+00:00</updated><id>https://krei.projects.metio.wtf/tags/makefile/</id><entry><title type="html">Makefile</title><link href="https://krei.projects.metio.wtf/contributors/makefile/?utm_source=atom_feed" rel="alternate" type="text/html"/><id>https://krei.projects.metio.wtf/contributors/makefile/</id><published>2020-04-13T00:00:00+00:00</published><updated>2020-04-13T00:00:00+00:00</updated><content type="html"><![CDATA[<p>The <a href="https://github.com/metio/krei/blob/master/Makefile">Makefile</a> commonly used task by maintainers of this project. In order to use it, you have to install a variant of <a href="https://en.wikipedia.org/wiki/Make_(software)">make</a> on your system. Just calling <code>make</code> in the root directory will print the help/usage guide:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ make
+usage: make <span class="o">[</span>target<span class="o">]</span>
+
+contributing:
+  sync-mirrors        Synchronize changes to all git mirrors
+  sign-waiver         Sign the WAIVER
+
+hacking:
+  install             Install all artifacts into <span class="nb">local</span> repository
+  verify              Verify all modules
+  site                Build website
+  site-watch          Build and watch website
+  build-env           Open a new shell in a predefined build environment
+  build-once          Build the entire project once in a predefined build environment
+  jshell              Open project in a JShell
+
+other:
+  <span class="nb">help</span>                Show this <span class="nb">help</span>
+</code></pre></div><p>Run any of the available targets like this:</p>
+<div class="highlight"><pre class="chroma"><code class="language-shell" data-lang="shell">$ make verify
+</code></pre></div>]]></content><category scheme="https://krei.projects.metio.wtf/categories/contributors" term="contributors" label="Contributors"/><category scheme="https://krei.projects.metio.wtf/tags/makefile" term="makefile" label="makefile"/></entry></feed>

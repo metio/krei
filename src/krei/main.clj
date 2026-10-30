@@ -57,12 +57,14 @@ The config defaults to $XDG_CONFIG_HOME/krei/config.edn.")
    repositories
    (fn [repository]
      (let [id (:id repository)
-           {:keys [status pushed? pull-request opened?]} (plan/sync! config (plan/inspect config rules repository))]
+           {:keys [status pushed? pull-request opened? reason]} (plan/sync! config (plan/inspect config rules repository))
+           by-hand (str "; open a pull request for it by hand" (when reason (str " (" reason ")")))]
        (case status
          :in-sync (ok id " follows its rules")
-         :pushed (if pushed?
-                   (ok id ": pushed " (:branch config) "; open a pull request for it by hand")
-                   (skipped id ": " (:branch config) " already holds these changes"))
+         :pushed (cond
+                   pushed? (ok id ": pushed " (:branch config) by-hand)
+                   reason (skipped id ": " (:branch config) " already holds these changes" by-hand)
+                   :else (skipped id ": " (:branch config) " already holds these changes"))
          :proposed (cond
                      opened? (ok id ": opened " pull-request)
                      pushed? (ok id ": updated " pull-request)

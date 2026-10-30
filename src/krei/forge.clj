@@ -13,7 +13,8 @@
 (defn- gh! [& args]
   (let [{:keys [exit out err]} (apply process/shell {:out :string :err :string :continue true} "gh" args)]
     (when-not (zero? exit)
-      (throw (ex-info (str "gh " (str/join " " args) ": " (str/trim err)) {:krei/problem :forge})))
+      (throw (ex-info (str "gh " (str/join " " args) ": " (str/trim err))
+                      {:krei/problem :forge :reason (first (str/split-lines (str/trim err)))})))
     (str/trim out)))
 
 (defn- slug [{:keys [host path]}]

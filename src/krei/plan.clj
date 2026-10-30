@@ -35,7 +35,8 @@
   "Commits the changes of `inspection` onto the krei branch, pushes it, and
   opens a pull request for it where the host supports one. Returns
   {:status :pushed?, :pull-request, :opened?}; :status is :in-sync when there
-  is nothing to change."
+  is nothing to change, and :pushed without a pull request, with the forge's
+  :reason when opening one failed."
   [{:keys [branch message signoff]} {:keys [repository dir changes]}]
   (if (empty? changes)
     {:status :in-sync}
@@ -44,6 +45,11 @@
         (let [pushed? (git/publish! dir branch)
               {:keys [supported? ensure!]} *forge*]
           (if (supported? repository)
-            (let [[url opened?] (ensure! repository branch message (body changes))]
-              {:status :proposed :pushed? pushed? :pull-request url :opened? opened?})
+            (try
+              (let [[url opened?] (ensure! repository branch message (body changes))]
+                {:status :proposed :pushed? pushed? :pull-request url :opened? opened?})
+              (catch clojure.lang.ExceptionInfo e
+                (if (= :forge (:krei/problem (ex-data e)))
+                  {:status :pushed :pushed? pushed? :reason (:reason (ex-data e))}
+                  (throw e))))
             {:status :pushed :pushed? pushed?})))))

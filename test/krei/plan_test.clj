@@ -57,6 +57,18 @@
       (is (= {:status :pushed :pushed? true} (plan/sync! config (plan/inspect config rules repository))))
       (is (= "zero" (remote-file upstream "krei/sync" "LICENSE"))))))
 
+(deftest sync-keeps-the-push-when-the-forge-fails
+  (let [{:keys [upstream config rules repository]} (setup {"LICENSES/0BSD.txt" "zero"})
+        unauthenticated (fn [& _] (throw (ex-info "gh pr list: not logged in"
+                                                  {:krei/problem :forge :reason "not logged in"})))]
+    (binding [plan/*forge* {:supported? (constantly true) :ensure! unauthenticated}]
+      (is (= {:status :pushed :pushed? true :reason "not logged in"}
+             (plan/sync! config (plan/inspect config rules repository))))
+      (is (= "zero" (remote-file upstream "krei/sync" "LICENSE")))
+      (testing "a second run still names the reason"
+        (is (= {:status :pushed :pushed? false :reason "not logged in"}
+               (plan/sync! config (plan/inspect config rules repository))))))))
+
 (deftest inspect-starts-from-a-clean-checkout
   (let [{:keys [config rules repository]} (setup {"LICENSES/0BSD.txt" "zero"})
         {:keys [dir]} (plan/inspect config rules repository)]

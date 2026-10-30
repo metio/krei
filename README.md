@@ -19,7 +19,7 @@ krei sync [REPO...]     # commit the changes onto a branch, push it and open a p
 
 `REPO` is a glob over repository names or `host/path` ids, such as `aro` or `github.com/metio/*`. Without one, every managed repository is used, and a `REPO` that matches none is an error. The config is read from `$XDG_CONFIG_HOME/krei/config.edn` unless `--config` names another file.
 
-Each command works on a clone below `$XDG_CACHE_HOME/krei/<host>/<path>`, fetched and reset to the default branch on every run, so local clones elsewhere are never touched. `krei sync` commits onto the branch `krei/sync`, started from the default branch, and force-pushes it. When the branch on the remote already holds the same files, nothing is pushed. On `github.com` it then opens a pull request from that branch unless one is open already; on other hosts it pushes the branch and leaves the pull request to you. Commits are signed off and follow your git config, including commit signing.
+Each command works on a clone below `$XDG_CACHE_HOME/krei/<host>/<path>`, fetched and reset to the default branch on every run, so local clones elsewhere are never touched. `krei sync` commits onto the branch `krei/sync`, started from the default branch, and force-pushes it. When the branch on the remote already holds the same files, nothing is pushed. On `github.com` it then opens a pull request from that branch unless one is open already; on other hosts, or when `gh` fails, for example because it is not logged in, it pushes the branch and leaves the pull request to you, naming the reason `gh` gave. Commits are signed off and follow your git config, including commit signing.
 
 ## Configuration
 

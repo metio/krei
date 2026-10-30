@@ -3,4 +3,5 @@
 
 {:doc "SECURITY.md tells where to report a vulnerability: the address in :security-email."
  :when [:license :security-email]
+ :unless [:health-files-from]
  :files {"SECURITY.md" {:template "security/SECURITY.md.tmpl"}}}

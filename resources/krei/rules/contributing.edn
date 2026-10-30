@@ -3,4 +3,5 @@
 
 {:doc "CONTRIBUTING.md asks for a Developer Certificate of Origin sign-off on every commit."
  :when [:license]
+ :unless [:health-files-from]
  :files {"CONTRIBUTING.md" {:template "contributing/CONTRIBUTING.md.tmpl"}}}

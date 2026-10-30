@@ -97,3 +97,27 @@
   (is (= {} (render :go-sum-license devcontainers)))
   (is (= {"go.sum.license" "# SPDX-FileCopyrightText: The devcontainers Authors\n# SPDX-License-Identifier: 0BSD\n"}
          (render :go-sum-license (assoc devcontainers :go true)))))
+
+(def health-config
+  {"github.com/metio/*" {:health-files-from "github.com/metio/.github"}
+   "github.com/metio/.github" {:health-files-from nil :copyright "The metio Authors"}})
+
+(defn- health-changes [id]
+  (let [dir (support/path id)
+        facts (merge devcontainers (facts/configured health-config id))
+        health [:security :code-of-conduct :contributing :no-health-files]]
+    (fs/create-dirs dir)
+    (doseq [file ["SECURITY.md" "CODE_OF_CONDUCT.md" "CONTRIBUTING.md"]]
+      (spit (str (fs/path dir file)) "local copy\n"))
+    (sort (for [{:keys [action path rule]} (rules/changes (mapv #(rules/load-rule [] %) health) dir facts)]
+            [action path rule]))))
+
+(deftest health-files-come-from-the-org-repository
+  (testing "repositories of the organization drop their own copies"
+    (is (= [[:delete "CODE_OF_CONDUCT.md" :no-health-files]
+            [:delete "CONTRIBUTING.md" :no-health-files]
+            [:delete "SECURITY.md" :no-health-files]]
+           (health-changes "github.com/metio/reguloj"))))
+  (testing "the org repository keeps the files the others fall back to"
+    (is (= #{:code-of-conduct :contributing :security}
+           (set (map last (health-changes "github.com/metio/.github")))))))

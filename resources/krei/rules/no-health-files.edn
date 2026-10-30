@@ -1,0 +1,8 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "No SECURITY.md, CODE_OF_CONDUCT.md or CONTRIBUTING.md, so GitHub shows the defaults of the repository in :health-files-from."
+ :when [:health-files-from]
+ :files {"SECURITY.md" :absent
+         "CODE_OF_CONDUCT.md" :absent
+         "CONTRIBUTING.md" :absent}}

@@ -29,13 +29,16 @@ Each command works on a clone below `$XDG_CACHE_HOME/krei/<host>/<path>`, fetche
  :exclude ["github.com/metio/scratchpad"]
  :archived false
  :forks false
- :rules [:license :citation :authors :mailmap :security :code-of-conduct :editorconfig]
+ :rules [:license :citation :authors :mailmap :security :code-of-conduct :contributing
+         :no-health-files :editorconfig]
  :rule-dirs ["~/.config/krei/rules"]
  :facts {"*" {:authors [{:given-names "Ada" :family-names "Lovelace" :email "ada@example.org"
                          :old-emails ["ada@old.example.org"]}]
               :security-email "security@example.org"
               :conduct-email "conduct@example.org"}
-         "github.com/metio/*" {:skip [:editorconfig]}
+         "github.com/metio/*" {:health-files-from "github.com/metio/.github"}
+         "github.com/metio/.github" {:health-files-from nil :copyright "The metio Authors"}
+         "github.com/metio/legacy" {:skip [:editorconfig]}
          "github.com/metio/aro" {:license "0BSD" :keywords ["git" "tmux"]}}
  :branch "krei/sync"
  :message "chore: align repository files with krei rules"
@@ -58,6 +61,8 @@ Derived facts fill in whatever none of these set: `:title` is the `:name`, `:cop
 
 `:skip` names rules that do not apply to a repository.
 
+GitHub shows the `SECURITY.md`, `CODE_OF_CONDUCT.md` and `CONTRIBUTING.md` of an organization's public `.github` repository for every repository of the organization that has none of its own. `:health-files-from` names that repository: where it is set, `no-health-files` deletes the three files and `security`, `code-of-conduct` and `contributing` do not apply. The example sets it for every repository of `metio` and unsets it for `metio/.github`, so that one repository carries the files everyone else falls back to. The defaults appear only on GitHub, not in a clone or a source archive.
+
 ## Rules
 
 A rule is an EDN file named after the rule. krei looks for it in `:rule-dirs` first, then among the rules it ships:
@@ -72,6 +77,7 @@ A rule is an EDN file named after the rule. krei looks for it in `:rule-dirs` fi
 | `security` | `SECURITY.md`, where to report a vulnerability | `:license`, `:security-email` |
 | `code-of-conduct` | `CODE_OF_CONDUCT.md`, the Contributor Covenant 2.0 | `:license`, `:conduct-email` |
 | `contributing` | `CONTRIBUTING.md`, asking for a DCO sign-off | `:license` |
+| `no-health-files` | no `SECURITY.md`, `CODE_OF_CONDUCT.md` or `CONTRIBUTING.md` | `:health-files-from` |
 | `editorconfig` | `.editorconfig` with UTF-8, four spaces and a final newline | `:license` |
 | `gitattributes` | `.gitattributes` normalizing the line endings of text files | `:license` |
 | `go-sum-license` | `go.sum.license` declaring the license of `go.sum` | `:license`, `:go` |

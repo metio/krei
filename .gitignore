@@ -1,3 +1,8 @@
-target/
-/krei-docs/public/
-/krei-docs/resources/
+# SPDX-FileCopyrightText: The krei Authors
+# SPDX-License-Identifier: CC0-1.0
+
+.idea/
+.clj-kondo/
+.lsp/
+.cpcache/
+.claude/

@@ -1,7 +1,0 @@
-#navigation {
-    border: dotted gray;
-}
-
-a.active, li.active {
-    font-weight: bold;
-}

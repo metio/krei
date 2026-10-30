@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+# SPDX-FileCopyrightText: The krei Authors
+# SPDX-License-Identifier: CC0-1.0
+
+exec bb --config "$(dirname "$(readlink -f "$0")")/bb.edn" -m krei.main "$@"

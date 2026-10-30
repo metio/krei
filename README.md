@@ -1,22 +1,93 @@
-# krei [![Chat](https://img.shields.io/badge/matrix-%23krei:matrix.org-brightgreen.svg?style=social&label=Matrix)](https://matrix.to/#/#krei:matrix.org) [![Mailing List](https://img.shields.io/badge/email-krei%40metio.groups.io%20-brightgreen.svg?style=social&label=Mail)](https://metio.groups.io/g/krei/topics) [![SonarQube](https://sonarcloud.io/api/project_badges/measure?project=metio_krei&metric=alert_status)](https://sonarcloud.io/dashboard?id=metio_krei)
+<!--
+SPDX-FileCopyrightText: The krei Authors
+SPDX-License-Identifier: CC0-1.0
+-->
 
-Project-as-code approach for project creation & validation. Take a look at the [website](https://krei.projects.metio.wtf) for detailed information.
+# krei
+
+krei keeps files that many repositories share, such as a `LICENSE` or the absence of a retired config file, in line with rules written once. It reads the repositories from the inventory [aro](https://github.com/metio/aro) writes, compares each default branch with the rules, and proposes the difference as a pull request. It runs on [babashka](https://babashka.org) and calls `git` and, for pull requests on GitHub, `gh`.
+
+## Commands
+
+```shell
+krei rules              # list the configured rules
+krei list [REPO...]     # list the managed repositories
+krei plan [REPO...]     # show what each repository needs to follow its rules
+krei check [REPO...]    # like plan, exiting non-zero when anything differs
+krei sync [REPO...]     # commit the changes onto a branch, push it and open a pull request
+```
+
+`REPO` is a glob over repository names or `host/path` ids, such as `aro` or `github.com/metio/*`. Without one, every managed repository is used, and a `REPO` that matches none is an error. The config is read from `$XDG_CONFIG_HOME/krei/config.edn` unless `--config` names another file.
+
+Each command works on a clone below `$XDG_CACHE_HOME/krei/<host>/<path>`, fetched and reset to the default branch on every run, so local clones elsewhere are never touched. `krei sync` commits onto the branch `krei/sync`, started from the default branch, and force-pushes it. When the branch on the remote already holds the same files, nothing is pushed. On `github.com` it then opens a pull request from that branch unless one is open already; on other hosts it pushes the branch and leaves the pull request to you. Commits are signed off and follow your git config, including commit signing.
+
+## Configuration
+
+```clojure
+{:inventory "~/.local/state/aro/inventory.edn"
+ :include ["github.com/metio/*"]
+ :exclude ["github.com/metio/scratchpad"]
+ :archived false
+ :forks false
+ :rules [:license :no-golangci :editorconfig]
+ :rule-dirs ["~/.config/krei/rules"]
+ :facts {"*" {:owner "The {name} Authors"}
+         "github.com/metio/*" {:skip [:editorconfig]}
+         "github.com/metio/aro" {:license "0BSD"}}
+ :branch "krei/sync"
+ :message "chore: align repository files with krei rules"
+ :signoff true}
+```
+
+Every key is optional. Without them krei manages every repository of the inventory at `$XDG_STATE_HOME/aro/inventory.edn` with the `license` rule, reads rules from `$XDG_CONFIG_HOME/krei/rules`, and uses the branch, message and sign-off shown above. `:include` and `:exclude` take the same globs as `REPO`. Archived repositories and forks are left alone unless `:archived` or `:forks` is true.
+
+## Facts
+
+A rule reads what krei knows about a repository from its facts. Later sources override earlier ones:
+
+1. the inventory record: `:host`, `:path`, `:name`, `:namespace`, `:default-branch`, `:archived`, `:fork`, `:topics`;
+2. facts read from the checkout: `:license` is the identifier of the only file in `LICENSES/`, and unset when there are several or none;
+3. `:facts` under `"*"`;
+4. `:facts` under glob patterns, from the least to the most specific;
+5. `:facts` under the exact repository id.
+
+`:skip` names rules that do not apply to a repository.
+
+## Rules
+
+A rule is an EDN file named after the rule. krei looks for it in `:rule-dirs` first, then among the rules it ships:
+
+- `license`: `LICENSE` holds the text of the repository's only license in `LICENSES/`.
+- `no-golangci`: no `.golangci.yml`, `.golangci.yaml`, `.golangci.toml` or `.golangci.json`.
+
+```clojure
+{:doc "Every repository carries the shared editorconfig."
+ :when [:owner]
+ :unless [:custom-editorconfig]
+ :files {".editorconfig" {:template "editorconfig"}
+         "LICENSE" {:copy "LICENSES/{license}.txt"}
+         "NOTICE" {:text "Copyright {owner}\n"}
+         ".travis.yml" :absent}}
+```
+
+A rule applies when every fact in `:when` is set and none in `:unless` is. Each entry of `:files` maps a path to its content:
+
+- `{:copy path}` copies a file of the repository itself;
+- `{:template path}` reads a file next to the rule;
+- `{:text string}` is the content itself;
+- `:absent` deletes the file.
+
+Paths, templates and text take `{fact}` placeholders. A placeholder naming a fact that is not set is an error, so a rule never writes a half-filled file. Two rules that want different contents for one path are an error as well, and no path may leave the repository.
+
+## Development
+
+The `.breto.edn` names the `metio/toolchains` groups that pin babashka and the lint tools CI runs. With that registry under the `:registries` of the [breto](https://github.com/metio/breto) config, `breto env` links them into the project:
+
+```shell
+eval "$(breto env)"
+bb test
+```
 
 ## License
 
-```
-To the extent possible under law, the author(s) have dedicated all copyright
-and related and neighboring rights to this software to the public domain
-worldwide. This software is distributed without any warranty.
-
-You should have received a copy of the CC0 Public Domain Dedication along with
-this software. If not, see http://creativecommons.org/publicdomain/zero/1.0/.
-```
-
-## Mirrors
-
-- https://github.com/metio/krei
-- https://repo.or.cz/krei.git
-- https://codeberg.org/metio.wtf/krei
-- https://gitlab.com/metio.wtf/krei
-- https://bitbucket.org/metio-wtf/krei
+CC0-1.0, see [LICENSES/CC0-1.0.txt](LICENSES/CC0-1.0.txt).

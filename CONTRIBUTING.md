@@ -1,24 +1,16 @@
+<!--
+SPDX-FileCopyrightText: The krei Authors
+SPDX-License-Identifier: CC0-1.0
+-->
+
 # Contributor Guide
 
 Thank you so much for improving `krei`!
-Without a healthy community, any open source project is doomed.
 
-## How to become a contributor
+## Changes
 
-Take a look at the [first timer](https://krei.projects.metio.wtf/contributors/first-timer/) documentation.
+Issues and pull requests go to [GitHub](https://github.com/metio/krei). The `master` branch holds the latest release; every push to it that changes the tool publishes a new calendar-versioned release. The [README](README.md#development) describes how to run the tests.
 
-## Git Branching Model
+## Copyright
 
-The `master` branch always contains the latest public stable release.
-
-## Issue Management
-
-We are using the issue tracker over at [GitHub](https://github.com/metio/krei/issues) to track issues.
-
-## Release Process
-
-Take a look at the [release](https://krei.projects.metio.wtf/contributors/release/) documentation.
-
-## Building the Project
-
-Take a look at the [build](https://krei.projects.metio.wtf/contributors/build/) documentation.
+Contributions are dedicated to the public domain under [CC0-1.0](LICENSES/CC0-1.0.txt). Commits carry a `Signed-off-by` line (`git commit --signoff`) certifying the [Developer Certificate of Origin](https://developercertificate.org/), and contributors who want to state their waiver explicitly add a signed copy of [AUTHORS/WAIVER](AUTHORS/WAIVER) to `AUTHORS/`.

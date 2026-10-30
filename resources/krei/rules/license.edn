@@ -1,0 +1,6 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "LICENSE holds the text of the repository's only license in LICENSES/."
+ :when [:license]
+ :files {"LICENSE" {:copy "LICENSES/{license}.txt"}}}

@@ -1,0 +1,10 @@
+# SPDX-FileCopyrightText: The krei Authors
+# SPDX-License-Identifier: CC0-1.0
+
+version = 1
+
+[[annotations]]
+path = ["LICENSE", "AUTHORS/**", "renovate.json"]
+precedence = "override"
+SPDX-FileCopyrightText = "The krei Authors"
+SPDX-License-Identifier = "CC0-1.0"

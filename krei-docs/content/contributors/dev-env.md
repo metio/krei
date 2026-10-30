@@ -24,10 +24,9 @@ tags:
 - [Maven](https://maven.apache.org/) to build the project
 - [hugo](https://gohugo.io/) in order to create the website
 
-## ilo Setup
+## breto Setup
 
-- [ilo](https://github.com/metio/ilo) to open the predefined build environment
-- [podman](https://podman.io/) or [docker](https://www.docker.com/) as an `ilo` runtime
+- [breto](https://github.com/metio/breto) installs the JDK, Maven and Hugo versions `.breto.edn` names; `eval "$(breto env)"` puts them on `PATH`
 
 ## GitHub Packages
 

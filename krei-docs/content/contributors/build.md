@@ -25,14 +25,10 @@ $ mvn install
 $ mvn --projects krei-metio --also-make --activate-profiles jshell test
 ```
 
-In case you are using `ilo` call this:
+In case you are using [breto](https://github.com/metio/breto), the `.breto.edn` names the JDK, Maven and Hugo versions, and this puts them on `PATH`:
 
 ```shell script
-# build the project
-$ ilo @build/once
-
-# open a shell with a pre-defined build environment
-$ ilo @build/shell
+$ eval "$(breto env)"
 ```
 
 In case you want to build the website do this:

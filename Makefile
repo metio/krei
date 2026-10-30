@@ -53,14 +53,6 @@ site-watch: ##@hacking Build and watch website
 site-serve: ##@hacking Build and watch website
 	hugo server --minify --i18n-warnings --path-warnings --source krei-docs --watch
 
-.PHONY: build-env
-build-env: ##@hacking Open a new shell in a predefined build environment
-	ilo @build/shell
-
-.PHONY: build-once
-build-once: ##@hacking Build the entire project once in a predefined build environment
-	ilo @build/once
-
 .PHONY: sync-mirrors
 sync-mirrors: ##@contributing Synchronize changes to all git mirrors
 	git push mirrors master:master

@@ -1,18 +1,5 @@
 # krei build tooling
 
-This directory contains [ilo](https://ilo.projects.metio.wtf) argument files, a [Maven](maven.apache.org/) settings file, and a [Docker](docker.com/) image which contains all build dependencies.
+This directory contains the [Maven](https://maven.apache.org/) settings that connect to GitHub Packages, `settings.xml`.
 
 See https://krei.projects.metio.wtf/contributors/build/ for more.
-
-## ilo
-
-- `once`: `ilo` arguments to build the entire project once
-- `shell`: `ilo` arguments to open a new shell with all build dependencies
-
-## Maven
-
-- `settings.xml`: Maven settings that connects to GitHub Packages
-
-## Docker
-
-- `/env/`: Docker image with all build dependencies.

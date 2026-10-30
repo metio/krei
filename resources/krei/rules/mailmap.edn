@@ -1,0 +1,6 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc ".mailmap maps every earlier email address of an author in :old-emails to their current one."
+ :when [:license :authors]
+ :files {".mailmap" {:template "mailmap/mailmap.tmpl"}}}

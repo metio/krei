@@ -1,0 +1,33 @@
+<!--
+SPDX-FileCopyrightText: {{copyright}}
+SPDX-License-Identifier: {{license}}
+ -->
+
+# Authors
+
+This file lists all authors of this project. You can add yourself to this list once you contributed a patch to the project.
+{% if owners|not-empty %}
+## Owners
+
+Owners have administrator access to the project.
+
+{% for a in owners %}- {{a.given-names}} {{a.family-names}}{% if a.email %} <{{a.email}}>{% endif %}
+{% endfor %}{% endif %}{% if maintainers|not-empty %}
+## Maintainers
+
+Maintainers can push, review and merge changes sent by themselves or others.
+
+{% for a in maintainers %}- {{a.given-names}} {{a.family-names}}
+{% endfor %}{% endif %}{% if contributors|not-empty %}
+## Contributors
+
+Contributors sent at least one patch to the project.
+
+{% for a in contributors %}- {{a.given-names}} {{a.family-names}}
+{% endfor %}{% endif %}{% if translators|not-empty %}
+## Translators
+
+Translators translate user facing text of the project.
+
+{% for a in translators %}- {{a.given-names}} {{a.family-names}}
+{% endfor %}{% endif %}

@@ -29,11 +29,14 @@ Each command works on a clone below `$XDG_CACHE_HOME/krei/<host>/<path>`, fetche
  :exclude ["github.com/metio/scratchpad"]
  :archived false
  :forks false
- :rules [:license :no-golangci :editorconfig]
+ :rules [:license :citation :authors :mailmap :security :code-of-conduct :editorconfig]
  :rule-dirs ["~/.config/krei/rules"]
- :facts {"*" {:owner "The {name} Authors"}
+ :facts {"*" {:authors [{:given-names "Ada" :family-names "Lovelace" :email "ada@example.org"
+                         :old-emails ["ada@old.example.org"]}]
+              :security-email "security@example.org"
+              :conduct-email "conduct@example.org"}
          "github.com/metio/*" {:skip [:editorconfig]}
-         "github.com/metio/aro" {:license "0BSD"}}
+         "github.com/metio/aro" {:license "0BSD" :keywords ["git" "tmux"]}}
  :branch "krei/sync"
  :message "chore: align repository files with krei rules"
  :signoff true}
@@ -46,10 +49,12 @@ Every key is optional. Without them krei manages every repository of the invento
 A rule reads what krei knows about a repository from its facts. Later sources override earlier ones:
 
 1. the inventory record: `:host`, `:path`, `:name`, `:namespace`, `:default-branch`, `:archived`, `:fork`, `:topics`;
-2. facts read from the checkout: `:license` is the identifier of the only file in `LICENSES/`, and unset when there are several or none;
+2. facts read from the checkout: `:license` is the identifier of the only file in `LICENSES/`, and unset when there are several or none; `:go`, `:maven`, `:cargo`, `:npm`, `:babashka` and `:nix` are true when `go.mod`, `pom.xml`, `Cargo.toml`, `package.json`, `bb.edn` or `flake.nix` is at the top of the checkout;
 3. `:facts` under `"*"`;
 4. `:facts` under glob patterns, from the least to the most specific;
 5. `:facts` under the exact repository id.
+
+Derived facts fill in whatever none of these set: `:title` is the `:name`, `:copyright` is `The <title> Authors`, `:homepage` is `https://<host>/<path>/`, and `:keywords` are the `:topics`. Each of `:authors` is a map of `:given-names`, `:family-names`, an optional `:email`, `:old-emails` and a `:role` of `:owner`, `:maintainer`, `:contributor` or `:translator`, `:owner` when unset; `:owners`, `:maintainers`, `:contributors` and `:translators` list the authors of each role.
 
 `:skip` names rules that do not apply to a repository.
 
@@ -57,16 +62,27 @@ A rule reads what krei knows about a repository from its facts. Later sources ov
 
 A rule is an EDN file named after the rule. krei looks for it in `:rule-dirs` first, then among the rules it ships:
 
-- `license`: `LICENSE` holds the text of the repository's only license in `LICENSES/`.
-- `no-golangci`: no `.golangci.yml`, `.golangci.yaml`, `.golangci.toml` or `.golangci.json`.
+| Rule | File | Needs |
+|---|---|---|
+| `license` | `LICENSE`, the text of the only license in `LICENSES/` | `:license` |
+| `no-golangci` | no `.golangci.yml`, `.golangci.yaml`, `.golangci.toml` or `.golangci.json` | |
+| `citation` | `CITATION.cff` with title, authors, homepage, license and keywords | `:license`, `:authors` |
+| `authors` | `AUTHORS.md`, the authors by role | `:license`, `:authors` |
+| `mailmap` | `.mailmap`, each of `:old-emails` mapped to the current address | `:license`, `:authors` with `:email` |
+| `security` | `SECURITY.md`, where to report a vulnerability | `:license`, `:security-email` |
+| `code-of-conduct` | `CODE_OF_CONDUCT.md`, the Contributor Covenant 2.0 | `:license`, `:conduct-email` |
+| `contributing` | `CONTRIBUTING.md`, asking for a DCO sign-off | `:license` |
+| `editorconfig` | `.editorconfig` with UTF-8, four spaces and a final newline | `:license` |
+| `gitattributes` | `.gitattributes` normalizing the line endings of text files | `:license` |
+| `go-sum-license` | `go.sum.license` declaring the license of `go.sum` | `:license`, `:go` |
 
 ```clojure
 {:doc "Every repository carries the shared editorconfig."
- :when [:owner]
+ :when [:copyright]
  :unless [:custom-editorconfig]
  :files {".editorconfig" {:template "editorconfig"}
-         "LICENSE" {:copy "LICENSES/{license}.txt"}
-         "NOTICE" {:text "Copyright {owner}\n"}
+         "LICENSE" {:copy "LICENSES/{{license}}.txt"}
+         "NOTICE" {:text "Copyright {{copyright}}\n"}
          ".travis.yml" :absent}}
 ```
 
@@ -77,7 +93,7 @@ A rule applies when every fact in `:when` is set and none in `:unless` is. Each 
 - `{:text string}` is the content itself;
 - `:absent` deletes the file.
 
-Paths, templates and text take `{fact}` placeholders. A placeholder naming a fact that is not set is an error, so a rule never writes a half-filled file. Two rules that want different contents for one path are an error as well, and no path may leave the repository.
+Paths, templates and text are [Selmer](https://github.com/yogthos/Selmer) templates over the facts, so `{{license}}` is a fact, `{{a.email}}` a key of one, and `{% if %}` and `{% for %}` work as in Django. A `{{value}}` naming a fact that is not set is an error, so a rule never writes a half-filled file; `{% if %}` and `{% for %}` treat it as empty, and `{% if keywords|not-empty %}` tells an empty list from a full one. Nothing is escaped. Two rules that want different contents for one path are an error as well, and no path may leave the repository.
 
 ## Development
 

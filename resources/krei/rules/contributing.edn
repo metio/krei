@@ -1,0 +1,6 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "CONTRIBUTING.md asks for a Developer Certificate of Origin sign-off on every commit."
+ :when [:license]
+ :files {"CONTRIBUTING.md" {:template "contributing/CONTRIBUTING.md.tmpl"}}}

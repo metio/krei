@@ -1,0 +1,6 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "CODE_OF_CONDUCT.md holds the Contributor Covenant 2.0, with :conduct-email as the address to report to."
+ :when [:license :conduct-email]
+ :files {"CODE_OF_CONDUCT.md" {:template "code-of-conduct/CODE_OF_CONDUCT.md.tmpl"}}}

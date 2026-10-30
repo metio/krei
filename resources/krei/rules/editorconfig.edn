@@ -1,0 +1,6 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc ".editorconfig sets UTF-8, four spaces, trimmed trailing whitespace and a final newline, with tabs in Makefiles."
+ :when [:license]
+ :files {".editorconfig" {:template "editorconfig/editorconfig.tmpl"}}}

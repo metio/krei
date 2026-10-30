@@ -43,7 +43,7 @@
 (deftest rule-dirs-take-precedence-and-hold-templates
   (fs/create-dirs (support/path "rules"))
   (spit (support/path "rules" "license.edn") (pr-str {:files {"NOTICE" {:template "notice.txt"}}}))
-  (spit (support/path "rules" "notice.txt") "Copyright {owner}\n")
+  (spit (support/path "rules" "notice.txt") "Copyright {{owner}}\n")
   (let [rule (rules/load-rule [(support/path "rules")] :license)
         dir (repo {})
         changes (rules/changes [rule] dir {:owner "The aro Authors"})]
@@ -52,7 +52,7 @@
     (is (= "Copyright The aro Authors\n" (slurp (str (fs/path dir "NOTICE")))))))
 
 (deftest skip-when-and-unless-select-rules
-  (let [rule {:id :readme :when [:name] :unless [:private] :files {"README.md" {:text "# {name}\n"}}}
+  (let [rule {:id :readme :when [:name] :unless [:private] :files {"README.md" {:text "# {{name}}\n"}}}
         dir (repo {})]
     (is (= 1 (count (rules/changes [rule] dir {:name "aro"}))))
     (is (= [] (rules/changes [rule] dir {:name "aro" :private true})))

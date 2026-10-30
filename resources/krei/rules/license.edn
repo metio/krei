@@ -3,4 +3,4 @@
 
 {:doc "LICENSE holds the text of the repository's only license in LICENSES/."
  :when [:license]
- :files {"LICENSE" {:copy "LICENSES/{license}.txt"}}}
+ :files {"LICENSE" {:copy "LICENSES/{{license}}.txt"}}}

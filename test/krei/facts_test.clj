@@ -35,8 +35,35 @@
     (is (= "0BSD" (:license (facts/facts {:facts {}} repository support/*root*))))
     (is (= "MIT" (:license (facts/facts {:facts {"github.com/metio/aro" {:license "MIT"}}} repository support/*root*))))))
 
-(deftest render-fills-placeholders
-  (is (= "LICENSES/0BSD.txt for aro" (facts/render "LICENSES/{license}.txt for {name}" {:license "0BSD" :name "aro"})))
-  (is (= "kind: tool" (facts/render "kind: {kind}" {:kind :tool})))
-  (is (thrown-with-msg? clojure.lang.ExceptionInfo #"no fact owner"
-                        (facts/render "{owner}" {}))))
+(deftest render-fills-in-selmer-templates
+  (is (= "LICENSES/0BSD.txt for aro" (facts/render "LICENSES/{{license}}.txt for {{name}}" {:license "0BSD" :name "aro"})))
+  (is (= "kind: tool, tags: a b" (facts/render "kind: {{kind}}, tags:{% for t in tags %} {{t}}{% endfor %}" {:kind :tool :tags [:a :b]})))
+  (is (= "a & <b>" (facts/render "{{x}}" {:x "a & <b>"})))
+  (testing "an unknown value is an error, an unknown condition or loop is empty"
+    (is (thrown-with-msg? clojure.lang.ExceptionInfo #"no fact owner"
+                          (facts/render "{{owner}}" {})))
+    (is (thrown-with-msg? clojure.lang.ExceptionInfo #"no fact a.email"
+                          (facts/render "{{a.email}}" {:a {}})))
+    (is (= "[]" (facts/render "[{% if owner %}x{% endif %}{% for k in keywords %}{{k}}{% endfor %}]" {})))))
+
+(deftest detect-names-the-build-tools-present
+  (spit (support/path "go.mod") "module x")
+  (spit (support/path "bb.edn") "{}")
+  (is (= {:go true :babashka true} (facts/detect support/*root*))))
+
+(deftest derived-facts-fill-in-what-no-source-sets
+  (let [seb {:given-names "Sebastian" :family-names "Hoß"}
+        ann {:given-names "Ann" :family-names "Lee" :role :translator}
+        derived (facts/derive-facts {:name "aro" :host "github.com" :path "metio/aro" :topics ["git"] :authors [seb ann]})]
+    (is (= "aro" (:title derived)))
+    (is (= "The aro Authors" (:copyright derived)))
+    (is (= "https://github.com/metio/aro/" (:homepage derived)))
+    (is (= ["git"] (:keywords derived)))
+    (is (= [seb] (:owners derived)))
+    (is (= [ann] (:translators derived)))
+    (is (= [] (:maintainers derived))))
+  (testing "set facts win"
+    (let [derived (facts/derive-facts {:name "yosql" :title "YoSQL" :homepage "https://yosql.example/" :keywords []})]
+      (is (= "The YoSQL Authors" (:copyright derived)))
+      (is (= "https://yosql.example/" (:homepage derived)))
+      (is (= [] (:keywords derived))))))

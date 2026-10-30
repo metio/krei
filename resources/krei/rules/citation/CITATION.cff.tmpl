@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: {{copyright}}
+# SPDX-License-Identifier: {{license}}
+
+cff-version: 1.2.0
+title: {{title}}
+message: If you use this software, please cite it as below.
+type: software
+authors:
+{% for a in authors %}- family-names: {{a.family-names}}
+  given-names: {{a.given-names}}
+{% if a.email %}  email: {{a.email}}
+{% endif %}{% endfor %}url: {{homepage}}
+license: {{license}}
+{% if keywords|not-empty %}keywords:
+{% for k in keywords %}  - {{k}}
+{% endfor %}{% endif %}

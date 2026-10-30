@@ -1,0 +1,6 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "SECURITY.md tells where to report a vulnerability: the address in :security-email."
+ :when [:license :security-email]
+ :files {"SECURITY.md" {:template "security/SECURITY.md.tmpl"}}}

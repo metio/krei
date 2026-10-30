@@ -1,0 +1,6 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "CITATION.cff tells how to cite the repository: its title, authors, homepage, license and keywords."
+ :when [:license :authors]
+ :files {"CITATION.cff" {:template "citation/CITATION.cff.tmpl"}}}

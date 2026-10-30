@@ -1,0 +1,6 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "go.sum.license declares the copyright and license of go.sum, which cannot hold a comment."
+ :when [:license :go]
+ :files {"go.sum.license" {:template "go-sum-license/go.sum.license.tmpl"}}}

@@ -7,11 +7,11 @@
     {:doc \"…\"
      :when [:license]           ; facts that must be set
      :unless [:keep-license]    ; facts that must not be set
-     :files {\"LICENSE\" {:copy \"LICENSES/{license}.txt\"}}}
+     :files {\"LICENSE\" {:copy \"LICENSES/{{license}}.txt\"}}}
 
   A file is one of {:copy path-in-repository}, {:template path-beside-rule},
-  {:text string} or :absent. Paths and contents take {fact} placeholders.
-  Facts in :skip name rules that do not apply to a repository."
+  {:text string} or :absent. Paths and contents are Selmer templates over
+  the facts. Facts in :skip name rules that do not apply to a repository."
   (:require [babashka.fs :as fs]
             [clojure.edn :as edn]
             [clojure.java.io :as io]

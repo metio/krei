@@ -1,0 +1,6 @@
+# SPDX-FileCopyrightText: {{copyright}}
+# SPDX-License-Identifier: {{license}}
+
+{% for a in authors %}{{a.given-names}} {{a.family-names}} <{{a.email}}>
+{% for old in a.old-emails %}{{a.given-names}} {{a.family-names}} <{{a.email}}> <{{old}}>
+{% endfor %}{% endfor %}

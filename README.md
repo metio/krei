@@ -37,7 +37,8 @@ Each command works on a clone below `$XDG_CACHE_HOME/krei/<host>/<path>`, fetche
               :security-email "security@example.org"
               :conduct-email "conduct@example.org"}
          "github.com/metio/*" {:health-files-from "github.com/metio/.github"}
-         "github.com/metio/.github" {:health-files-from nil :copyright "The metio Authors"}
+         "github.com/metio/.github" {:health-files-from nil :copyright "The metio Authors"
+                                     :skip [:citation :authors :mailmap]}
          "github.com/metio/legacy" {:skip [:editorconfig]}
          "github.com/metio/aro" {:license "0BSD" :keywords ["git" "tmux"]}}
  :branch "krei/sync"

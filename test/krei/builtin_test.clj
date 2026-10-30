@@ -82,9 +82,14 @@
          (render :mailmap devcontainers))))
 
 (deftest security-and-conduct-name-their-addresses
-  (is (str/includes? (get (render :security devcontainers) "SECURITY.md") "Email security@metio.wtf with details"))
+  (is (str/includes? (get (render :security devcontainers) "SECURITY.md") "Email <security@metio.wtf> with details"))
   (is (str/includes? (get (render :code-of-conduct devcontainers) "CODE_OF_CONDUCT.md") "enforcement at\n<abuse@metio.wtf>."))
   (is (= {} (render :security (dissoc devcontainers :security-email)))))
+
+(deftest contributing-sets-up-the-tools-with-breto
+  (let [text (get (render :contributing devcontainers) "CONTRIBUTING.md")]
+    (is (str/includes? text "eval \"$(breto env)\""))
+    (is (not (str/includes? text "nix develop")))))
 
 (deftest static-files-carry-the-repository-header
   (doseq [rule [:editorconfig :gitattributes :contributing]

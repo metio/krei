@@ -1,15 +1,76 @@
 <!--
 SPDX-FileCopyrightText: {{copyright}}
 SPDX-License-Identifier: {{license}}
- -->
+-->
 
 # Contributor Guide
 
-Thank you so much for helping out! This project uses a [DCO](https://developercertificate.org/) to verify that each change is legally acceptable. Its text is as follows:
+Thank you for improving our projects! Without a healthy community, any open
+source project is doomed.
+
+## Issue management
+
+Each project tracks its work in its own GitHub issue tracker. Search the open
+issues before filing a new one, and include enough detail — versions, steps, and
+expected versus actual behavior — to reproduce the problem.
+
+## Branching model
+
+The `main` branch always holds the latest public stable release. Branch from it
+for your change and open a pull request back against it.
+
+## Development environment
+
+Projects list the tools they need in a `.breto.edn` file, which
+[breto](https://github.com/metio/breto) installs, so CI and your machine run the
+same tool versions. Most name a shared toolchain from
+[metio/toolchains](https://github.com/metio/toolchains), such as
+`{:packages ["@go"]}`. Install breto as its README describes, add the registry
+to `~/.config/breto/config.edn`:
+
+```clojure
+{:registries [{:github "metio/toolchains"}]}
+```
+
+and enter the project's environment from its checkout:
+
+```shell
+eval "$(breto env)"
+```
+
+In bash, `eval "$(breto hook bash)"` in `.bashrc` does this whenever the shell
+enters a project. breto runs on Linux and macOS; on Windows, work inside
+[WSL2](https://learn.microsoft.com/windows/wsl/). A project without a
+`.breto.edn` documents its own setup in its `README`.
+
+## Pull requests
+
+- Keep each pull request focused on a single change.
+- Write [Conventional Commits](https://www.conventionalcommits.org); the
+  changelog and the calendar-versioned release are generated from them.
+- Every file carries an SPDX license header (or an entry in `REUSE.toml`); the
+  REUSE check enforces it.
+- Sign off every commit (see below).
+- The `Verify` check must be green before a pull request can merge.
+
+## Developer Certificate of Origin
+
+Every commit carries a `Signed-off-by` trailer, which records your agreement to
+the [Developer Certificate of Origin](https://developercertificate.org/). Add it
+with the `--signoff` flag:
+
+```shell
+git commit --signoff
+```
+
+The `DCO` check verifies the trailer on every commit in a pull request, so a
+missing sign-off blocks the merge. To fix the last commit, amend it with
+`git commit --amend --signoff`; for a whole branch, use
+`git rebase --signoff main`.
+
+By signing off you certify that:
 
 ```text
-By making a contribution to this project, I certify that:
-
 (a) The contribution was created in whole or in part by me and I
     have the right to submit it under the open source license
     indicated in the file; or
@@ -33,4 +94,6 @@ By making a contribution to this project, I certify that:
     this project or the open source license(s) involved.
 ```
 
-In order to sign this DCO, simply use `git commit --signoff` while working on this project.
+## Code of conduct
+
+Participation is governed by our [Code of Conduct](CODE_OF_CONDUCT.md).

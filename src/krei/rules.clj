@@ -79,13 +79,29 @@
       (fs/regular-file? path) (fs/read-all-bytes path)
       :else (throw (ex-info (str "no file " source " to copy") {:krei/problem :rule})))))
 
+(defn- preserved
+  "`text` with every match of each `patterns` regex replaced by the match of
+  the existing file at `path` whose first group is the same, so a value such
+  as a pinned version stays as the repository has it once the file exists."
+  [text dir path patterns]
+  (let [p (fs/path dir path)]
+    (if (and (seq patterns) (fs/regular-file? p {:nofollow-links true}))
+      (let [existing (slurp (str p))]
+        (reduce (fn [text pattern]
+                  (let [re (re-pattern pattern)
+                        kept (into {} (for [[whole k] (re-seq re existing)] [k whole]))]
+                    (str/replace text re (fn [[whole k]] (get kept k whole)))))
+                text
+                patterns))
+      text)))
+
 (defn- content
-  "The bytes `spec` puts into a file of the checkout at `dir`, or :absent."
-  [rule dir spec facts pending]
+  "The bytes `spec` puts into the file `path` of the checkout at `dir`, or :absent."
+  [rule dir path spec facts pending]
   (cond
     (= :absent spec) :absent
     (:copy spec) (copied dir (relative-path (facts/render (:copy spec) facts)) pending)
-    (:template spec) (.getBytes ^String (facts/render (beside-rule rule (:template spec)) facts) "UTF-8")
+    (:template spec) (.getBytes ^String (preserved (facts/render (beside-rule rule (:template spec)) facts) dir path (:preserve spec)) "UTF-8")
     (:verbatim spec) (let [path (facts/render (:verbatim spec) facts)]
                        (if-let [text (template-text rule path)]
                          (.getBytes ^String text "UTF-8")
@@ -141,7 +157,7 @@
                  {:rule rule :path path :spec spec :facts scope})
         copy? #(and (map? (:spec %)) (:copy (:spec %)))
         resolve (fn [pending {:keys [rule path spec facts]}]
-                  {:rule (:id rule) :path path :content (content rule dir spec facts pending)})
+                  {:rule (:id rule) :path path :content (content rule dir path spec facts pending)})
         pending (into {} (map (juxt :path :content)) (map #(resolve {} %) (remove copy? claims)))
         wanted (remove #(= :skip (:content %)) (map #(resolve (if (copy? %) pending {}) %) claims))
         by-path (group-by :path wanted)]

@@ -3,4 +3,5 @@
 
 {:doc "A monthly release to Maven Central through metio/ci, on the day and for the paths :maven-central names."
  :when [:license :maven :breto :maven-central :ci]
- :files {".github/workflows/release.yml" {:template "maven-central-release/release.yml.tmpl"}}}
+ :files {".github/workflows/release.yml" {:template "maven-central-release/release.yml.tmpl"
+                                         :preserve ["uses: ([^@\\s]+)@[0-9a-f]{40}(?: # \\S+)?"]}}}

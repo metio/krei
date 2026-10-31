@@ -3,4 +3,5 @@
 
 {:doc "Pull requests run the metio/ci Maven pipeline, REUSE and actionlint behind the single Verify check; :maven-verify passes inputs to the pipeline."
  :when [:license :maven :breto :maven-verify :ci]
- :files {".github/workflows/verify.yml" {:template "maven-verify/verify.yml.tmpl"}}}
+ :files {".github/workflows/verify.yml" {:template "maven-verify/verify.yml.tmpl"
+                                        :preserve ["uses: ([^@\\s]+)@[0-9a-f]{40}(?: # \\S+)?"]}}}

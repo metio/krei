@@ -189,3 +189,23 @@
     (is (= #{"java.properties" ".github/actions/managed-java/action.yml" ".github/workflows/reuse.yml"}
            (set (map :path (rules/changes [(rules/load-rule [] :no-legacy-java-ci)] dir (assoc java-library :maven-verify {}))))))
     (is (empty? (rules/changes [(rules/load-rule [] :no-legacy-java-ci)] dir java-library)))))
+
+(deftest workflow-rules-keep-the-pins-the-repository-has
+  (let [dir (support/path "repo")
+        file (str dir "/.github/workflows/verify.yml")
+        fresh (get (render :maven-verify (assoc java-library :maven-verify {})) ".github/workflows/verify.yml")
+        bumped (-> fresh
+                   (str/replace #"actions/checkout@[0-9a-f]{40} # v7" "actions/checkout@1111111111111111111111111111111111111111 # v8"))]
+    (testing "a new file carries the template's pins"
+      (is (str/includes? fresh "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7")))
+    (fs/create-dirs (fs/parent file))
+    (spit file bumped)
+    (testing "an existing file keeps its own pins, so Renovate's bumps are no drift"
+      (is (empty? (rules/changes [(rules/load-rule [] :maven-verify)] dir (assoc java-library :maven-verify {})))))
+    (testing "everything else still follows the template"
+      (spit file (str/replace bumped "timeout-minutes: 5" "timeout-minutes: 9"))
+      (let [[change] (rules/changes [(rules/load-rule [] :maven-verify)] dir (assoc java-library :maven-verify {}))
+            text (String. ^bytes (:content change) "UTF-8")]
+        (is (= :update (:action change)))
+        (is (str/includes? text "timeout-minutes: 5"))
+        (is (str/includes? text "actions/checkout@1111111111111111111111111111111111111111 # v8"))))))

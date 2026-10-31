@@ -117,3 +117,22 @@
         changes (rules/changes [license texts] dir {:license "0BSD"})]
     (is (= [[:update "LICENSE" :license] [:update "LICENSES/0BSD.txt" :texts]] (summary changes)))
     (is (= "canonical" (String. ^bytes (:content (first changes)) "UTF-8")))))
+
+(deftest replacements-edit-the-files-a-glob-selects
+  (let [rule {:id :moved :files {".github/workflows/*.yml" {:replace [["metio/breto@[0-9a-f]+( # \\S+)?" "metio/ci/breto@{{ci.ref}} # {{ci.version}}"]]}}}
+        dir (repo {".github/workflows/verify.yml" "- uses: metio/breto@abc123 # 2026.1.1\n"
+                   ".github/workflows/release.yml" "- uses: metio/ci/breto@def456 # 2026.2.2\n"})
+        changes (rules/changes [rule] dir {:ci {:ref "fed789" :version "2026.3.3"}})]
+    (is (= [[:update ".github/workflows/verify.yml" :moved]] (summary changes)))
+    (is (= "- uses: metio/ci/breto@fed789 # 2026.3.3\n" (String. ^bytes (:content (first changes)) "UTF-8")))))
+
+(deftest replacements-skip-a-missing-file
+  (let [rule {:id :moved :files {"action.yml" {:replace [["a" "b"]]}}}]
+    (is (empty? (rules/changes [rule] (repo {"README.md" "a"}) {})))))
+
+(deftest replacements-edit-what-other-rules-write-in-the-same-run
+  (let [writer {:id :writer :files {"ci.yml" {:text "uses: old\nuses: old\n"}}}
+        rule {:id :moved :files {"ci.yml" {:replace [["old" "new"]]}}}
+        changes (rules/changes [writer rule] (repo {"ci.yml" "uses: older\n"}) {})]
+    (is (= [[:update "ci.yml" :moved]] (summary changes)))
+    (is (= "uses: new\nuses: new\n" (String. ^bytes (:content (first changes)) "UTF-8")))))

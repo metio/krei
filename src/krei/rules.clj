@@ -95,6 +95,26 @@
                 patterns))
       text)))
 
+(defn- current [dir path]
+  (let [p (fs/path dir path)]
+    (when (fs/exists? p {:nofollow-links true})
+      (if (fs/regular-file? p {:nofollow-links true}) (fs/read-all-bytes p) :other))))
+
+(defn- replaced
+  "The file `path` as the other rules of the run leave it, or as the
+  checkout at `dir` holds it, with each [pattern replacement] of
+  `replacements` applied to every match; a replacement refers to the groups
+  of its pattern as $1, $2 and so on."
+  [dir path replacements facts pending]
+  (let [before (get pending path (current dir path))]
+    (if (bytes? before)
+      (.getBytes ^String (reduce (fn [text [pattern replacement]]
+                                   (str/replace text (re-pattern pattern) (facts/render replacement facts)))
+                                 (String. ^bytes before "UTF-8")
+                                 replacements)
+                 "UTF-8")
+      :skip)))
+
 (defn- content
   "The bytes `spec` puts into the file `path` of the checkout at `dir`, or :absent."
   [rule dir path spec facts pending]
@@ -109,12 +129,9 @@
                            :skip
                            (throw (ex-info (str "no template " path) {:krei/problem :rule})))))
     (contains? spec :text) (.getBytes ^String (facts/render (:text spec) facts) "UTF-8")
+    (:replace spec) (replaced dir path (:replace spec) facts pending)
     :else (throw (ex-info (str "the rule " (name (:id rule)) " holds an unknown file " (pr-str spec)) {:krei/problem :rule}))))
 
-(defn- current [dir path]
-  (let [p (fs/path dir path)]
-    (when (fs/exists? p {:nofollow-links true})
-      (if (fs/regular-file? p {:nofollow-links true}) (fs/read-all-bytes p) :other))))
 
 (defn- comparable [content]
   (if (bytes? content) (vec content) content))
@@ -140,26 +157,45 @@
                 [facts])
         [path spec] (sort-by key (:files rule))
         :let [rendered (facts/render path scope)]
-        target (if (and (= :absent spec) (glob? rendered))
-                 (matching dir rendered)
-                 [(relative-path rendered)])]
+        target (cond
+                 (and (or (= :absent spec) (:replace spec)) (glob? rendered)) (matching dir rendered)
+                 (:replace spec) (if (current dir (relative-path rendered)) [(relative-path rendered)] [])
+                 :else [(relative-path rendered)])]
     [target spec scope]))
 
 (defn changes
   "What the checkout at `dir` needs for `rules` to hold, given `facts`:
   [{:rule :path :action :content}] with :action one of :create, :update or
   :delete. Two rules disagreeing about one file is an error. A copy reads
-  what the other rules write in the same run, so it never lags a run behind."
+  what the other rules write in the same run, so it never lags a run behind,
+  and a replacement edits the file as they leave it, one replacing rule
+  after another."
   [rules dir facts]
-  (let [claims (for [rule rules
-                     :when (applies? rule facts)
-                     [path spec scope] (entries rule dir facts)]
-                 {:rule rule :path path :spec spec :facts scope})
-        copy? #(and (map? (:spec %)) (:copy (:spec %)))
-        resolve (fn [pending {:keys [rule path spec facts]}]
-                  {:rule (:id rule) :path path :content (content rule dir path spec facts pending)})
-        pending (into {} (map (juxt :path :content)) (map #(resolve {} %) (remove copy? claims)))
-        wanted (remove #(= :skip (:content %)) (map #(resolve (if (copy? %) pending {}) %) claims))
+  (let [claims (map-indexed #(assoc %2 :order %1)
+                            (for [rule rules
+                                  :when (applies? rule facts)
+                                  [path spec scope] (entries rule dir facts)]
+                              {:rule rule :path path :spec spec :facts scope}))
+        kind #(cond (not (map? (:spec %))) :write (:copy (:spec %)) :copy (:replace (:spec %)) :replace :else :write)
+        resolve (fn [pending {:keys [rule path spec facts order]}]
+                  {:rule (:id rule) :path path :order order :content (content rule dir path spec facts pending)})
+        written (map #(resolve {} %) (filter #(= :write (kind %)) claims))
+        pending (into {} (map (juxt :path :content)) written)
+        copies (map #(resolve pending %) (filter #(= :copy (kind %)) claims))
+        pending (into pending (map (juxt :path :content)) copies)
+        [replacements _] (reduce (fn [[done pending] claim]
+                                   (let [change (resolve pending claim)]
+                                     (if (= :skip (:content change))
+                                       [done pending]
+                                       [(assoc done (:path change) change) (assoc pending (:path change) (:content change))])))
+                                 [{} pending]
+                                 (filter #(= :replace (kind %)) claims))
+        first-claim (into {} (map (juxt key (comp :order first val))) (group-by :path claims))
+        wanted (->> (concat (remove #(contains? replacements (:path %)) (concat written copies))
+                            (map #(assoc % :order (first-claim (:path %))) (vals replacements)))
+                    (remove #(= :skip (:content %)))
+                    (sort-by :order)
+                    (map #(dissoc % :order)))
         by-path (group-by :path wanted)]
     (doseq [[path claims] by-path
             :when (< 1 (count (distinct (map (comp comparable :content) claims))))]

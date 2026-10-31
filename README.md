@@ -144,6 +144,7 @@ A rule applies when every fact in `:when` is set and none in `:unless` is. Each 
 - `{:verbatim path}` reads a file next to the rule and writes it unrendered; with `:optional true`, a path the rule holds no file for is left alone;
 - `{:text string}` is the content itself;
 - `:absent` deletes the file; a path holding `*`, `?`, `[` or `{` deletes every file the glob matches.
+- `{:replace [[pattern replacement] …]}` edits the file in place: each regex `pattern` is replaced by its `replacement`, a template that refers to the groups of the pattern as `$1`, `$2` and so on. A path holding a glob edits every file it matches, and a file that does not exist is left alone. A replacement edits the file as the other rules of the run leave it, so it composes with a template, and a pattern matching only the old form of a line hands the new form to whoever maintains it, such as Renovate for a pinned action.
 
 A rule can also check what it cannot fix. `:expect` maps facts to the values they must have, and `:forbid` maps a glob to regexes no file it selects may match. `plan` and `check` report each breach as drift, naming the file and line, and `sync` reports it without changing anything, since a default branch or a hand-written workflow needs a decision of its own. `:allow` names a fact listing exceptions: a match whose first group is in that list is no breach, so `shared-toolchains` accepts a version in `.breto.edn` for exactly the packages in `:breto-pins`.
 

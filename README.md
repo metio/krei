@@ -79,6 +79,7 @@ Maps merge key by key, so `{:typos {:words ["edn"]}}` under `"*"` and `{:typos {
 | `:hugo` | `docs/hugo.toml`, `docs/hugo.yaml`, `docs/config.toml`, `docs/config.yaml` |
 | `:terraform-provider` | `terraform-registry-manifest.json` |
 | `:reuse-toml` | `REUSE.toml` |
+| `:reuse-workflow` | `.github/workflows/reuse.yml` |
 | `:vale` | `.vale.ini` |
 
 Derived facts fill in whatever none of these set: `:title` is the `:name`, `:copyright` is `The <title> Authors`, `:homepage` is `https://<host>/<path>/`, and `:keywords` are the `:topics`. Each of `:authors` is a map of `:given-names`, `:family-names`, an optional `:email`, `:old-emails` and a `:role` of `:owner`, `:maintainer`, `:contributor` or `:translator`, `:owner` when unset; `:owners`, `:maintainers`, `:contributors` and `:translators` list the authors of each role.
@@ -118,6 +119,8 @@ A rule is an EDN file named after the rule. krei looks for it in `:rule-dirs` fi
 | `no-intellij` | no file below `.idea/` | |
 | `no-codeql` | no CodeQL workflow | |
 | `no-dep5` | no `.reuse/dep5` | `:reuse-toml` |
+| `reuse-workflow` | `.github/workflows/reuse.yml` running the pinned reuse-action, which reads `REUSE.toml`, unless `:maven-verify` runs REUSE in `verify.yml` | `:license`, `:reuse-workflow` |
+| `pinned-reuse-action` | checks that every workflow runs reuse-action at a commit | |
 | `maven-central-release` | `.github/workflows/release.yml`, a monthly gated release to Maven Central | `:license`, `:maven`, `:breto`, `:maven-central`, `:ci` |
 | `maven-verify` | `.github/workflows/verify.yml`, the Maven pipeline, REUSE and actionlint behind one `Verify` check | `:license`, `:maven`, `:breto`, `:maven-verify`, `:ci` |
 | `main-branch` | checks that the default branch is `main` and that no workflow branch filter, `refs/heads/` ref or link to the repository's own files names `master` | |

@@ -33,6 +33,7 @@
    :hugo ["docs/hugo.toml" "docs/hugo.yaml" "docs/config.toml" "docs/config.yaml"]
    :terraform-provider ["terraform-registry-manifest.json"]
    :reuse-toml ["REUSE.toml"]
+   :reuse-workflow [".github/workflows/reuse.yml"]
    :vale [".vale.ini"]})
 
 (defn- holds? [dir pattern]

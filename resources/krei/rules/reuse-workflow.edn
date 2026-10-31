@@ -1,0 +1,8 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "A standalone REUSE workflow runs the pinned reuse-action, which reads REUSE.toml."
+ :when [:license :reuse-workflow]
+ :unless [:maven-verify]
+ :files {".github/workflows/reuse.yml" {:template "reuse-workflow/reuse.yml.tmpl"
+                                        :preserve ["uses: ([^@\\s]+)@[0-9a-f]{40}(?: # \\S+)?"]}}}

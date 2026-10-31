@@ -1,0 +1,5 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "Every workflow runs reuse-action at a commit, which Renovate keeps current."
+ :forbid {".github/**" ["fsfe/reuse-action@(?![0-9a-f]{40}\\b)\\S+"]}}

@@ -211,6 +211,33 @@
         (is (str/includes? text "timeout-minutes: 5"))
         (is (str/includes? text "actions/checkout@1111111111111111111111111111111111111111 # v8"))))))
 
+(deftest reuse-workflow-replaces-an-old-action-and-keeps-pins
+  (let [dir (support/path "repo")
+        file (str dir "/.github/workflows/reuse.yml")
+        facts (assoc devcontainers :default-branch "main" :reuse-workflow true)
+        changes #(rules/changes [(rules/load-rule [] :reuse-workflow)] dir %)]
+    (fs/create-dirs (fs/parent file))
+    (spit file "jobs:\n  reuse:\n    steps:\n      - uses: fsfe/reuse-action@v2\n")
+    (let [[change] (changes facts)
+          text (String. ^bytes (:content change) "UTF-8")]
+      (is (= :update (:action change)))
+      (is (str/includes? text "fsfe/reuse-action@676e2d560c9a403aa252096d99fcab3e1132b0f5 # v6\n"))
+      (is (str/includes? text "    branches: [main]\n"))
+      (spit file text))
+    (spit file (str/replace (slurp file) #"reuse-action@[0-9a-f]{40} # v6" "reuse-action@2222222222222222222222222222222222222222 # v7"))
+    (is (empty? (changes facts)))
+    (is (empty? (changes (assoc facts :maven-verify {}))))))
+
+(deftest pinned-reuse-action-reports-tags
+  (let [dir (support/path "repo")
+        rule [(rules/load-rule [] :pinned-reuse-action)]
+        file (str dir "/.github/workflows/verify.yml")]
+    (fs/create-dirs (fs/parent file))
+    (spit file "      - uses: fsfe/reuse-action@676e2d560c9a403aa252096d99fcab3e1132b0f5 # v6\n")
+    (is (empty? (rules/violations rule dir devcontainers)))
+    (spit file "      - uses: fsfe/reuse-action@v5\n")
+    (is (= [".github/workflows/verify.yml"] (map :path (rules/violations rule dir devcontainers))))))
+
 (deftest main-branch-reports-master-without-touching-files
   (let [dir (support/path "repo")
         rule [(rules/load-rule [] :main-branch)]

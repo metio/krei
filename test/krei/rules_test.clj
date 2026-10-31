@@ -88,3 +88,32 @@
   (is (thrown-with-msg? clojure.lang.ExceptionInfo #"no rule nope" (rules/load-rule [] :nope)))
   (is (thrown-with-msg? clojure.lang.ExceptionInfo #"unknown file"
                         (rules/changes [{:id :odd :files {"x" {:link "y"}}}] (repo {}) {}))))
+
+(defn- rule-in [dir id rule files]
+  (let [rules (support/path dir)]
+    (fs/create-dirs rules)
+    (spit (str (fs/path rules (str (name id) ".edn"))) (pr-str rule))
+    (doseq [[file content] files]
+      (fs/create-dirs (fs/parent (fs/path rules file)))
+      (spit (str (fs/path rules file)) content))
+    (rules/load-rule [(str rules)] id)))
+
+(deftest absent-globs-delete-every-match
+  (let [rule {:id :no-ide :files {".idea/**" :absent}}
+        dir (repo {".idea/codeStyles/Project.xml" "x" ".idea/.name" "aro" "README.md" "hi"})]
+    (is (= [[:delete ".idea/.name" :no-ide] [:delete ".idea/codeStyles/Project.xml" :no-ide]]
+           (summary (rules/changes [rule] dir {}))))))
+
+(deftest each-renders-the-files-once-per-element
+  (let [rule (rule-in "rules" :texts {:each :licenses :files {"LICENSES/{{each}}.txt" {:verbatim "texts/{{each}}.txt" :optional true}}}
+                      {"texts/0BSD.txt" "canonical zero" "texts/MIT.txt" "canonical mit"})
+        dir (repo {"LICENSES/0BSD.txt" "zero" "LICENSES/MIT.txt" "canonical mit" "LICENSES/LicenseRef-X.txt" "x"})]
+    (is (= [[:update "LICENSES/0BSD.txt" :texts]]
+           (summary (rules/changes [rule] dir {:licenses ["0BSD" "LicenseRef-X" "MIT"]}))))))
+
+(deftest copies-read-what-other-rules-write-in-the-same-run
+  (let [texts {:id :texts :files {"LICENSES/0BSD.txt" {:text "canonical"}}}
+        dir (repo {"LICENSES/0BSD.txt" "old" "LICENSE" "old"})
+        changes (rules/changes [license texts] dir {:license "0BSD"})]
+    (is (= [[:update "LICENSE" :license] [:update "LICENSES/0BSD.txt" :texts]] (summary changes)))
+    (is (= "canonical" (String. ^bytes (:content (first changes)) "UTF-8")))))

@@ -1,0 +1,5 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "No IntelliJ project files; .gitignore keeps them out."
+ :files {".idea/**" :absent}}

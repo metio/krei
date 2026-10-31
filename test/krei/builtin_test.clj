@@ -126,3 +126,31 @@
   (testing "the org repository keeps the files the others fall back to"
     (is (= #{:code-of-conduct :contributing :security}
            (set (map last (health-changes "github.com/metio/.github")))))))
+
+(deftest license-texts-and-license-follow-the-spdx-reference
+  (let [dir (support/path "repo")
+        spdx (slurp (clojure.java.io/resource "krei/rules/license-texts/0BSD.txt"))]
+    (fs/create-dirs (fs/path dir "LICENSES"))
+    (spit (str (fs/path dir "LICENSES" "0BSD.txt")) "wrapped variant")
+    (spit (str (fs/path dir "LICENSES" "LicenseRef-X.txt")) "own text")
+    (let [changes (rules/changes (mapv #(rules/load-rule [] %) [:license :license-texts]) dir
+                                 (assoc devcontainers :licenses ["0BSD" "LicenseRef-X"]))]
+      (is (= [["LICENSE" spdx] ["LICENSES/0BSD.txt" spdx]]
+             (map (juxt :path #(String. ^bytes (:content %) "UTF-8")) changes))))))
+
+(deftest renovate-extends-the-shared-preset-and-keeps-additions
+  (let [facts (assoc devcontainers :renovate {"$schema" "https://docs.renovatebot.com/renovate-schema.json"
+                                              "extends" ["github>metio/renovate-config"]
+                                              "git-submodules" {"enabled" true}})]
+    (is (= (str "// SPDX-FileCopyrightText: The devcontainers Authors\n"
+                "// SPDX-License-Identifier: 0BSD\n"
+                "{\n"
+                "  \"$schema\": \"https://docs.renovatebot.com/renovate-schema.json\",\n"
+                "  \"extends\": [\n"
+                "    \"github>metio/renovate-config\"\n"
+                "  ],\n"
+                "  \"git-submodules\": {\n"
+                "    \"enabled\": true\n"
+                "  }\n"
+                "}\n")
+           (get (render :renovate facts) "renovate.json5")))))

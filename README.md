@@ -53,10 +53,30 @@ Every key is optional. Without them krei manages every repository of the invento
 A rule reads what krei knows about a repository from its facts. Later sources override earlier ones:
 
 1. the inventory record: `:host`, `:path`, `:name`, `:namespace`, `:default-branch`, `:archived`, `:fork`, `:topics`;
-2. facts read from the checkout: `:license` is the identifier of the only file in `LICENSES/`, and unset when there are several or none; `:go`, `:maven`, `:cargo`, `:npm`, `:babashka` and `:nix` are true when `go.mod`, `pom.xml`, `Cargo.toml`, `package.json`, `bb.edn` or `flake.nix` is at the top of the checkout;
+2. facts read from the checkout: `:licenses` lists the identifiers of the files in `LICENSES/`, and `:license` is the only one, unset when there are several or none; the facts in the table below are true when one of their files is present;
 3. `:facts` under `"*"`;
 4. `:facts` under glob patterns, from the least to the most specific;
-5. `:facts` under the exact repository id.
+5. `:facts` under the exact repository id;
+6. the repository's own `.krei.edn`, a map of facts kept next to the files they shape.
+
+Maps merge key by key, so `{:typos {:words ["edn"]}}` under `"*"` and `{:typos {:exclude ["vendor/"]}}` for one repository give that repository both; any other value replaces the one before it.
+
+| Fact | Files |
+|---|---|
+| `:go` | `go.mod` |
+| `:maven` | `pom.xml` |
+| `:cargo` | `Cargo.toml` |
+| `:npm` | `package.json` |
+| `:babashka` | `bb.edn` |
+| `:clojure` | `deps.edn` |
+| `:nix` | `flake.nix`, `shell.nix` |
+| `:breto` | `.breto.edn` |
+| `:container` | `Dockerfile`, `Containerfile` |
+| `:helm` | `Chart.yaml`, `charts/*/Chart.yaml` |
+| `:hugo` | `docs/hugo.toml`, `docs/hugo.yaml`, `docs/config.toml`, `docs/config.yaml` |
+| `:terraform-provider` | `terraform-registry-manifest.json` |
+| `:reuse-toml` | `REUSE.toml` |
+| `:vale` | `.vale.ini` |
 
 Derived facts fill in whatever none of these set: `:title` is the `:name`, `:copyright` is `The <title> Authors`, `:homepage` is `https://<host>/<path>/`, and `:keywords` are the `:topics`. Each of `:authors` is a map of `:given-names`, `:family-names`, an optional `:email`, `:old-emails` and a `:role` of `:owner`, `:maintainer`, `:contributor` or `:translator`, `:owner` when unset; `:owners`, `:maintainers`, `:contributors` and `:translators` list the authors of each role.
 
@@ -82,6 +102,17 @@ A rule is an EDN file named after the rule. krei looks for it in `:rule-dirs` fi
 | `editorconfig` | `.editorconfig` with UTF-8, four spaces and a final newline | `:license` |
 | `gitattributes` | `.gitattributes` normalizing the line endings of text files | `:license` |
 | `go-sum-license` | `go.sum.license` declaring the license of `go.sum` | `:license`, `:go` |
+| `license-texts` | each file in `LICENSES/` holds the SPDX reference text, for the licenses of license-list-data v3.29.0 krei ships | `:licenses` |
+| `renovate` | `renovate.json5` printing `:renovate` as JSON, and no `renovate.json` | `:license`, `:renovate` |
+| `no-dependabot` | no `.github/dependabot.yml` or Dependabot auto-merge workflow | `:renovate` |
+| `markdownlint` | `.markdownlint.yaml`, plus the rules in `:markdownlint :disable` turned off | `:license` |
+| `yamllint` | `.yamllint.yaml`, ignoring `docs/public/` for Hugo, `node_modules/` for npm and the paths in `:yamllint :ignore` | `:license` |
+| `typos` | `.typos.toml` with the words in `:typos :words` and `:identifiers`, the patterns in `:ignore-re` and the paths in `:exclude` | `:license` |
+| `vale` | `.vale.ini` reading the released metio/vale-config package | `:license`, `:vale` |
+| `gitignore` | `.gitignore` with a section per detected tool and the lines in `:gitignore` | `:license` |
+| `no-intellij` | no file below `.idea/` | |
+| `no-codeql` | no CodeQL workflow | |
+| `no-dep5` | no `.reuse/dep5` | `:reuse-toml` |
 
 ```clojure
 {:doc "Every repository carries the shared editorconfig."
@@ -97,10 +128,13 @@ A rule applies when every fact in `:when` is set and none in `:unless` is. Each 
 
 - `{:copy path}` copies a file of the repository itself;
 - `{:template path}` reads a file next to the rule;
+- `{:verbatim path}` reads a file next to the rule and writes it unrendered; with `:optional true`, a path the rule holds no file for is left alone;
 - `{:text string}` is the content itself;
-- `:absent` deletes the file.
+- `:absent` deletes the file; a path holding `*`, `?`, `[` or `{` deletes every file the glob matches.
 
-Paths, templates and text are [Selmer](https://github.com/yogthos/Selmer) templates over the facts, so `{{license}}` is a fact, `{{a.email}}` a key of one, and `{% if %}` and `{% for %}` work as in Django. A `{{value}}` naming a fact that is not set is an error, so a rule never writes a half-filled file; `{% if %}` and `{% for %}` treat it as empty, and `{% if keywords|not-empty %}` tells an empty list from a full one. Nothing is escaped. Two rules that want different contents for one path are an error as well, and no path may leave the repository.
+`:each` names a fact holding a list, and the rule's files are then rendered once per element, which templates read as `{{each}}`. A copy reads what the other rules write in the same run, so `LICENSE` follows a `LICENSES/` file another rule rewrites.
+
+Paths, copy sources, templates, verbatim paths and text are [Selmer](https://github.com/yogthos/Selmer) templates over the facts, so `{{license}}` is a fact, `{{a.email}}` a key of one, and `{% if %}` and `{% for %}` work as in Django. A `{{value}}` naming a fact that is not set is an error, so a rule never writes a half-filled file; `{% if %}` and `{% for %}` treat it as empty, and `{% if keywords|not-empty %}` tells an empty list from a full one. The `json` filter prints a fact as JSON with sorted keys. Nothing is escaped. Two rules that want different contents for one path are an error as well, and no path may leave the repository.
 
 ## Development
 

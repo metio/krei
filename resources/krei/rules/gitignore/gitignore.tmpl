@@ -1,0 +1,32 @@
+# SPDX-FileCopyrightText: {{copyright}}
+# SPDX-License-Identifier: {{license}}
+
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.DS_Store
+{% if breto %}.breto.local.edn
+{% endif %}{% if vale %}.vale/styles/
+{% endif %}{% if hugo %}docs/public/
+docs/resources/_gen/
+.hugo_build.lock
+{% endif %}{% if go %}*.test
+*.out
+go.work
+go.work.sum
+{% endif %}{% if any maven cargo %}target/
+{% endif %}{% if maven %}pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+.mvn/timing.properties
+{% endif %}{% if npm %}node_modules/
+{% endif %}{% if any clojure babashka %}.cpcache/
+.clj-kondo/.cache/
+.lsp/.cache/
+.nrepl-port
+{% endif %}{% for line in gitignore %}{{line}}
+{% endfor %}

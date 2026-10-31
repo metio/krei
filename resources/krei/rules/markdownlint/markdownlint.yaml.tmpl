@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: {{copyright}}
+# SPDX-License-Identifier: {{license}}
+
+default: true
+MD010:
+  code_blocks: false
+MD013: false
+MD024:
+  siblings_only: true
+MD025:
+  front_matter_title: ""
+MD033: false
+MD060: false
+{% for rule in markdownlint.disable %}{{rule}}: false
+{% endfor %}

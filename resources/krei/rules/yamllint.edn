@@ -1,0 +1,6 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "The shared .yamllint.yaml, with the additions the facts name."
+ :when [:license]
+ :files {".yamllint.yaml" {:template "yamllint/yamllint.yaml.tmpl"}}}

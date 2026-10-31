@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: {{copyright}}
+# SPDX-License-Identifier: {{license}}
+
+[default]
+extend-ignore-re = [{% for re in typos.ignore-re %}'{{re}}'{% if not forloop.last %}, {% endif %}{% endfor %}]
+
+[default.extend-words]
+edn = "edn"
+{% for word in typos.words %}{{word}} = "{{word}}"
+{% endfor %}
+[default.extend-identifiers]
+{% for word in typos.identifiers %}{{word}} = "{{word}}"
+{% endfor %}
+[files]
+extend-exclude = ["LICENSES/"{% if go %}, "go.mod", "go.sum"{% endif %}{% if hugo %}, "docs/themes/"{% endif %}{% for path in typos.exclude %}, "{{path}}"{% endfor %}]

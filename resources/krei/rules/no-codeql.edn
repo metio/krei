@@ -1,0 +1,6 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "No CodeQL workflow."
+ :files {".github/workflows/codeql-analysis.yml" :absent
+         ".github/workflows/codeql.yml" :absent}}

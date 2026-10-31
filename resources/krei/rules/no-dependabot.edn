@@ -1,0 +1,7 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "No Dependabot where Renovate updates the dependencies."
+ :when [:renovate]
+ :files {".github/dependabot.yml" :absent
+         ".github/workflows/dependabot-automerge.yml" :absent}}

@@ -12,10 +12,16 @@
 (deftest detect-reads-the-only-license
   (fs/create-dirs (support/path "LICENSES"))
   (spit (support/path "LICENSES" "0BSD.txt") "text")
-  (is (= {:license "0BSD"} (facts/detect support/*root*)))
+  (is (= {:license "0BSD" :licenses ["0BSD"]} (facts/detect support/*root*)))
   (testing "several licenses leave the fact unset"
     (spit (support/path "LICENSES" "MIT.txt") "text")
-    (is (= {} (facts/detect support/*root*)))))
+    (is (= {:licenses ["0BSD" "MIT"]} (facts/detect support/*root*)))))
+
+(deftest detect-matches-marker-globs
+  (fs/create-dirs (support/path "charts" "app"))
+  (spit (support/path "charts" "app" "Chart.yaml") "name: app")
+  (spit (support/path ".breto.edn") "{}")
+  (is (= {:helm true :breto true} (facts/detect support/*root*))))
 
 (deftest configured-facts-merge-from-least-to-most-specific
   (let [config {"*" {:owner "everyone" :level 0}
@@ -27,6 +33,16 @@
            (facts/configured config "github.com/metio/aro")))
     (is (= {:owner "everyone" :level 2 :host-wide true}
            (facts/configured config "github.com/metio/krei")))))
+
+(deftest configured-maps-merge-key-by-key
+  (is (= {:renovate {"extends" ["base"] "packageRules" [1]} :skip [:b]}
+         (facts/configured {"*" {:renovate {"extends" ["base"]} :skip [:a]}
+                            "github.com/metio/aro" {:renovate {"packageRules" [1]} :skip [:b]}}
+                           "github.com/metio/aro"))))
+
+(deftest json-prints-facts-with-sorted-keys
+  (is (= "{\n  \"$schema\": \"s\",\n  \"extends\": [\n    \"a\"\n  ]\n}"
+         (facts/render "{{r|json}}" {:r {"extends" ["a"] "$schema" "s"}}))))
 
 (deftest facts-prefer-config-over-detection-over-inventory
   (fs/create-dirs (support/path "LICENSES"))
@@ -67,3 +83,10 @@
       (is (= "The YoSQL Authors" (:copyright derived)))
       (is (= "https://yosql.example/" (:homepage derived)))
       (is (= [] (:keywords derived))))))
+
+(deftest the-repository-states-its-own-facts-last
+  (spit (support/path ".krei.edn") "{:typos {:words [\"edn\"]} :title \"Aro\"}")
+  (let [config {:facts {"*" {:typos {:exclude ["LICENSES/"]} :title "aro"}}}
+        facts (facts/facts config {:id "github.com/metio/aro" :name "aro"} support/*root*)]
+    (is (= {:words ["edn"] :exclude ["LICENSES/"]} (:typos facts)))
+    (is (= "Aro" (:title facts)))))

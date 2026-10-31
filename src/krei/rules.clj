@@ -10,8 +10,13 @@
      :files {\"LICENSE\" {:copy \"LICENSES/{{license}}.txt\"}}}
 
   A file is one of {:copy path-in-repository}, {:template path-beside-rule},
-  {:text string} or :absent. Paths and contents are Selmer templates over
-  the facts. Facts in :skip name rules that do not apply to a repository."
+  {:verbatim path-beside-rule}, {:text string} or :absent. A verbatim file
+  with :optional true is left alone when the rule holds no such file. Paths, copy
+  sources, templates and text are Selmer templates over the facts; a
+  verbatim file is written as it is. An :absent path may be a glob, which
+  deletes every file it matches. :each names a fact holding a list: the
+  files are then rendered once per element, bound to {{each}}. Facts in
+  :skip name rules that do not apply to a repository."
   (:require [babashka.fs :as fs]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
@@ -51,24 +56,42 @@
       (throw (ex-info (str "the path " path " leaves the repository") {:krei/problem :rule})))
     path))
 
-(defn- template-text [{:keys [dir resource-dir]} template]
+(defn- template-text
+  "The text of the file `template` beside the rule, or nil when there is none."
+  [{:keys [dir resource-dir]} template]
   (relative-path template)
   (if dir
-    (slurp (str (fs/path dir template)))
-    (slurp (or (io/resource (str resource-dir "/" template))
-               (throw (ex-info (str "no template " template) {:krei/problem :rule}))))))
+    (let [p (fs/path dir template)] (when (fs/regular-file? p) (slurp (str p))))
+    (some-> (io/resource (str resource-dir "/" template)) slurp)))
+
+(defn- beside-rule [rule template]
+  (or (template-text rule template)
+      (throw (ex-info (str "no template " template) {:krei/problem :rule}))))
+
+(defn- copied
+  "The bytes of `source`, as another rule writes it in this run if one does,
+  else as the checkout at `dir` holds it."
+  [dir source pending]
+  (let [planned (get pending source)
+        path (fs/path dir source)]
+    (cond
+      (bytes? planned) planned
+      (fs/regular-file? path) (fs/read-all-bytes path)
+      :else (throw (ex-info (str "no file " source " to copy") {:krei/problem :rule})))))
 
 (defn- content
   "The bytes `spec` puts into a file of the checkout at `dir`, or :absent."
-  [rule dir spec facts]
+  [rule dir spec facts pending]
   (cond
     (= :absent spec) :absent
-    (:copy spec) (let [source (relative-path (facts/render (:copy spec) facts))
-                       path (fs/path dir source)]
-                   (when-not (fs/regular-file? path)
-                     (throw (ex-info (str "no file " source " to copy") {:krei/problem :rule})))
-                   (fs/read-all-bytes path))
-    (:template spec) (.getBytes ^String (facts/render (template-text rule (:template spec)) facts) "UTF-8")
+    (:copy spec) (copied dir (relative-path (facts/render (:copy spec) facts)) pending)
+    (:template spec) (.getBytes ^String (facts/render (beside-rule rule (:template spec)) facts) "UTF-8")
+    (:verbatim spec) (let [path (facts/render (:verbatim spec) facts)]
+                       (if-let [text (template-text rule path)]
+                         (.getBytes ^String text "UTF-8")
+                         (if (:optional spec)
+                           :skip
+                           (throw (ex-info (str "no template " path) {:krei/problem :rule})))))
     (contains? spec :text) (.getBytes ^String (facts/render (:text spec) facts) "UTF-8")
     :else (throw (ex-info (str "the rule " (name (:id rule)) " holds an unknown file " (pr-str spec)) {:krei/problem :rule}))))
 
@@ -80,17 +103,47 @@
 (defn- comparable [content]
   (if (bytes? content) (vec content) content))
 
+(defn- glob? [path]
+  (boolean (re-find #"[*?\[{]" path)))
+
+(defn- matching
+  "The files of the checkout at `dir` the glob `pattern` matches."
+  [dir pattern]
+  (->> (fs/glob dir pattern {:hidden true})
+       (filter #(fs/regular-file? % {:nofollow-links true}))
+       (map #(str (fs/relativize dir %)))
+       (remove #(some #{".git"} (map str (seq (fs/path %)))))
+       sort))
+
+(defn- entries
+  "Every [path spec facts] that `rule` holds for the facts `facts`, with
+  :each expanded and :absent globs resolved against the checkout at `dir`."
+  [rule dir facts]
+  (for [scope (if-let [each (:each rule)]
+                (map #(assoc facts :each %) (get facts each))
+                [facts])
+        [path spec] (sort-by key (:files rule))
+        :let [rendered (facts/render path scope)]
+        target (if (and (= :absent spec) (glob? rendered))
+                 (matching dir rendered)
+                 [(relative-path rendered)])]
+    [target spec scope]))
+
 (defn changes
   "What the checkout at `dir` needs for `rules` to hold, given `facts`:
   [{:rule :path :action :content}] with :action one of :create, :update or
-  :delete. Two rules disagreeing about one file is an error."
+  :delete. Two rules disagreeing about one file is an error. A copy reads
+  what the other rules write in the same run, so it never lags a run behind."
   [rules dir facts]
-  (let [wanted (for [rule rules
+  (let [claims (for [rule rules
                      :when (applies? rule facts)
-                     [path spec] (sort-by key (:files rule))]
-                 {:rule (:id rule)
-                  :path (relative-path (facts/render path facts))
-                  :content (content rule dir spec facts)})
+                     [path spec scope] (entries rule dir facts)]
+                 {:rule rule :path path :spec spec :facts scope})
+        copy? #(and (map? (:spec %)) (:copy (:spec %)))
+        resolve (fn [pending {:keys [rule path spec facts]}]
+                  {:rule (:id rule) :path path :content (content rule dir spec facts pending)})
+        pending (into {} (map (juxt :path :content)) (map #(resolve {} %) (remove copy? claims)))
+        wanted (remove #(= :skip (:content %)) (map #(resolve (if (copy? %) pending {}) %) claims))
         by-path (group-by :path wanted)]
     (doseq [[path claims] by-path
             :when (< 1 (count (distinct (map (comp comparable :content) claims))))]

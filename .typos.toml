@@ -4,3 +4,6 @@
 [default.extend-words]
 edn = "edn"
 juxt = "juxt"
+
+[files]
+extend-exclude = ["LICENSES/", "resources/krei/rules/license-texts/"]

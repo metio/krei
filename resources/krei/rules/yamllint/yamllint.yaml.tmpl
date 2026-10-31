@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: {{copyright}}
+# SPDX-License-Identifier: {{license}}
+
+extends: default
+rules:
+  line-length:
+    max: 160
+    level: warning
+  document-start: disable
+  comments:
+    min-spaces-from-content: 1
+  truthy:
+    check-keys: false
+{% if any hugo npm yamllint.ignore %}ignore:
+{% if hugo %}  - docs/public/
+{% endif %}{% if npm %}  - node_modules/
+{% endif %}{% for path in yamllint.ignore %}  - {{path}}
+{% endfor %}{% endif %}

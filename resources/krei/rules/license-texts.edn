@@ -1,0 +1,7 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "LICENSES/ holds the SPDX reference text of each license krei knows, from license-list-data v3.29.0."
+ :when [:licenses]
+ :each :licenses
+ :files {"LICENSES/{{each}}.txt" {:verbatim "license-texts/{{each}}.txt" :optional true}}}

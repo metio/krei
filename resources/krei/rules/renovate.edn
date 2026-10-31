@@ -1,0 +1,9 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "Renovate reads renovate.json5, built from :renovate, the shared preset plus what the repository adds."
+ :when [:license :renovate]
+ :files {"renovate.json5" {:template "renovate/renovate.json5.tmpl"}
+         "renovate.json" :absent
+         ".github/renovate.json" :absent
+         ".github/renovate.json5" :absent}}

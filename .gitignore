@@ -2,7 +2,18 @@
 # SPDX-License-Identifier: CC0-1.0
 
 .idea/
-.clj-kondo/
-.lsp/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.project
+.classpath
+.DS_Store
+.claude/settings.local.json
+.breto.local.edn
 .cpcache/
-.claude/
+.clj-kondo/.cache/
+.lsp/.cache/
+.nrepl-port
+/krei-docs/public/
+/krei-docs/resources/

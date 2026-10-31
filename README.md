@@ -120,6 +120,7 @@ A rule is an EDN file named after the rule. krei looks for it in `:rule-dirs` fi
 | `no-dep5` | no `.reuse/dep5` | `:reuse-toml` |
 | `maven-central-release` | `.github/workflows/release.yml`, a monthly gated release to Maven Central | `:license`, `:maven`, `:breto`, `:maven-central`, `:ci` |
 | `maven-verify` | `.github/workflows/verify.yml`, the Maven pipeline, REUSE and actionlint behind one `Verify` check | `:license`, `:maven`, `:breto`, `:maven-verify`, `:ci` |
+| `main-branch` | checks that the default branch is `main` and that no workflow branch filter, `refs/heads/` ref or link to the repository's own files names `master` | |
 | `no-legacy-java-ci` | no `java.properties`, `managed-java`/`managed-maven` actions, `update-parent.yml` or `reuse.yml` | `:maven-verify` |
 
 ```clojure
@@ -139,6 +140,8 @@ A rule applies when every fact in `:when` is set and none in `:unless` is. Each 
 - `{:verbatim path}` reads a file next to the rule and writes it unrendered; with `:optional true`, a path the rule holds no file for is left alone;
 - `{:text string}` is the content itself;
 - `:absent` deletes the file; a path holding `*`, `?`, `[` or `{` deletes every file the glob matches.
+
+A rule can also check what it cannot fix. `:expect` maps facts to the values they must have, and `:forbid` maps a glob to regexes no file it selects may match. `plan` and `check` report each breach as drift, naming the file and line, and `sync` reports it without changing anything, since a default branch or a hand-written workflow needs a decision of its own.
 
 `:each` names a fact holding a list, and the rule's files are then rendered once per element, which templates read as `{{each}}`. A copy reads what the other rules write in the same run, so `LICENSE` follows a `LICENSES/` file another rule rewrites.
 

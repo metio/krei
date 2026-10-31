@@ -47,19 +47,24 @@ The config defaults to $XDG_CONFIG_HOME/krei/config.edn.")
   (each-repository
    repositories
    (fn [repository]
-     (let [{:keys [changes]} (plan/inspect config rules repository)]
-       (if (empty? changes)
+     (let [{:keys [changes violations]} (plan/inspect config rules repository)]
+       (if (and (empty? changes) (empty? violations))
          (ok (:id repository) " follows its rules")
-         (doseq [change changes]
-           (drift (:id repository) ": " (plan/describe change))))
-       (if (empty? changes) :in-sync :drift)))))
+         (do (doseq [change changes]
+               (drift (:id repository) ": " (plan/describe change)))
+             (doseq [v violations]
+               (drift (:id repository) ": " (plan/violation v)))))
+       (if (and (empty? changes) (empty? violations)) :in-sync :drift)))))
 
 (defn- sync-all! [config repositories rules]
   (each-repository
    repositories
    (fn [repository]
      (let [id (:id repository)
-           {:keys [status pushed? pull-request opened? reason]} (plan/sync! config (plan/inspect config rules repository))
+           inspection (plan/inspect config rules repository)
+           _ (doseq [v (:violations inspection)]
+               (drift id ": " (plan/violation v) "; fix it by hand"))
+           {:keys [status pushed? pull-request opened? reason]} (plan/sync! config inspection)
            by-hand (str "; open a pull request for it by hand" (when reason (str " (" reason ")")))]
        (case status
          :in-sync (ok id " follows its rules")

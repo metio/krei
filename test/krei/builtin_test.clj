@@ -6,6 +6,7 @@
             [clojure.string :as str]
             [clojure.test :refer [deftest is testing use-fixtures]]
             [krei.facts :as facts]
+            [krei.plan :as plan]
             [krei.rules :as rules]
             [krei.support :as support]))
 
@@ -209,3 +210,23 @@
         (is (= :update (:action change)))
         (is (str/includes? text "timeout-minutes: 5"))
         (is (str/includes? text "actions/checkout@1111111111111111111111111111111111111111 # v8"))))))
+
+(deftest main-branch-reports-master-without-touching-files
+  (let [dir (support/path "repo")
+        rule [(rules/load-rule [] :main-branch)]
+        write (fn [path text]
+                (fs/create-dirs (fs/parent (fs/path dir path)))
+                (spit (str (fs/path dir path)) text))]
+    (fs/create-dirs dir)
+    (is (empty? (rules/violations rule dir (assoc devcontainers :default-branch "main"))))
+    (is (= ["default-branch is \"master\", expected \"main\" (main-branch)"]
+           (map plan/violation (rules/violations rule dir (assoc devcontainers :default-branch "master")))))
+    (write ".github/workflows/verify.yml" "on:\n  pull_request:\n    branches: [master]\n")
+    (write ".github/workflows/release.yml" "on:\n  push:\n    branches:\n      - main\n      - master\n")
+    (write "README.md" "See https://github.com/metio/devcontainers/blob/master/README.md\n")
+    (write "docs/guide.md" "Uses https://github.com/metio/devcontainers/tree/master/docs\n")
+    (write ".github/workflows/publish.yml" "      - uses: wjdp/htmltest-action@master\n")
+    (is (= [".github/workflows/release.yml" ".github/workflows/verify.yml" "README.md" "docs/guide.md"]
+           (sort (distinct (map :path (rules/violations rule dir (assoc devcontainers :default-branch "main"))))))
+        "a third-party action on its master branch is fine")
+    (is (empty? (rules/changes rule dir (assoc devcontainers :default-branch "master"))))))

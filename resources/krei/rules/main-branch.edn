@@ -1,0 +1,9 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "The default branch is main, and no workflow, ref or link of the repository names a master branch of its own."
+ :expect {:default-branch "main"}
+ :forbid {".github/**" ["branches:\\s*\\[[^\\]]*\\bmaster\\b"
+                        "(?m)^\\s*branches:\\s*\\n(?:\\s+-\\s*\\S+\\s*\\n)*?\\s+-\\s*master\\s*$"
+                        "refs/heads/master\\b"]
+          "{*,**/*}.{md,yml,yaml,json,json5,toml,edn,xml,cff}" ["github\\.com/metio/[^/\\s]+/(?:blob|tree|raw|commits)/master\\b"]}}

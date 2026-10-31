@@ -206,12 +206,29 @@
           (recur)
           (inc (count (filter #{\newline} (subs text 0 (.start m))))))))))
 
+(defn- glob-matches? [pattern path]
+  (.matches (.getPathMatcher (java.nio.file.FileSystems/getDefault) (str "glob:" pattern)) (fs/path path)))
+
 (defn violations
   "What the checkout at `dir` breaks of the checks in `rules`, which krei
   reports but cannot fix: a fact of :expect with another value, and a match
   of a :forbid pattern in a file its glob selects, unless the first group
-  of the match is listed in the fact :allow names. [{:rule :path :message}]"
-  [rules dir facts]
+  of the match is listed in the fact :allow names. The files are read as
+  `changes` leave them, so a breach the same run fixes is none.
+  [{:rule :path :message}]"
+  ([rules dir facts] (violations rules dir facts []))
+  ([rules dir facts changes]
+  (let [changed (into {} (map (juxt :path identity)) changes)
+        files (fn [glob]
+                (->> (concat (matching dir glob)
+                             (filter #(glob-matches? glob %) (keys changed)))
+                     distinct
+                     (remove #(= :delete (:action (changed %))))
+                     sort))
+        text (fn [path]
+               (if-let [{:keys [content]} (changed path)]
+                 (String. ^bytes content "UTF-8")
+                 (slurp (str (fs/path dir path)))))]
   (vec
    (concat
     (for [rule rules
@@ -223,10 +240,10 @@
     (for [rule rules
           :when (applies? rule facts)
           [glob patterns] (sort-by key (:forbid rule))
-          path (matching dir glob)
-          :let [text (slurp (str (fs/path dir path)))
+          path (files glob)
+          :let [content (text path)
                 allowed (set (map str (get facts (:allow rule))))]
           pattern patterns
-          :let [line (first-match pattern text allowed)]
+          :let [line (first-match pattern content allowed)]
           :when line]
-      {:rule (:id rule) :path path :message (str path ":" line " matches " pattern)}))))
+      {:rule (:id rule) :path path :message (str path ":" line " matches " pattern)}))))))

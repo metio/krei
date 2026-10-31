@@ -238,6 +238,26 @@
     (spit file "      - uses: fsfe/reuse-action@v5\n")
     (is (= [".github/workflows/verify.yml"] (map :path (rules/violations rule dir devcontainers))))))
 
+(deftest checks-read-the-files-as-the-changes-leave-them
+  (let [dir (support/path "repo")
+        file (str dir "/.github/workflows/reuse.yml")
+        facts (assoc devcontainers :default-branch "main" :reuse-workflow true)
+        rules [(rules/load-rule [] :reuse-workflow) (rules/load-rule [] :pinned-reuse-action)]]
+    (fs/create-dirs (fs/parent file))
+    (spit file "      - uses: fsfe/reuse-action@v2\n")
+    (testing "the tree as it stands breaks the check"
+      (is (= 1 (count (rules/violations rules dir facts)))))
+    (testing "the change that pins the action fixes it in the same run"
+      (is (empty? (rules/violations rules dir facts (rules/changes rules dir facts)))))
+    (testing "a file the changes create is checked too"
+      (is (= [".github/workflows/new.yml"]
+             (map :path (rules/violations rules dir facts
+                                          (conj (rules/changes rules dir facts)
+                                                {:rule :x :path ".github/workflows/new.yml" :action :create
+                                                 :content (.getBytes "uses: fsfe/reuse-action@v5\n" "UTF-8")}))))))
+    (testing "a file the changes delete is not"
+      (is (empty? (rules/violations rules dir facts [{:rule :x :path ".github/workflows/reuse.yml" :action :delete}]))))))
+
 (deftest shared-toolchains-reports-own-pins
   (let [dir (support/path "repo")
         rule [(rules/load-rule [] :shared-toolchains)]

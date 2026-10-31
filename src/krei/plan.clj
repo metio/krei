@@ -16,11 +16,12 @@
   [config rules repository]
   (let [dir (git/cache-dir (:cache config) repository)]
     (git/checkout! dir repository)
-    (let [facts (facts/facts config repository dir)]
+    (let [facts (facts/facts config repository dir)
+          changes (rules/changes rules dir facts)]
       {:repository repository
        :dir dir
-       :changes (rules/changes rules dir facts)
-       :violations (rules/violations rules dir facts)})))
+       :changes changes
+       :violations (rules/violations rules dir facts changes)})))
 
 (defn apply-into!
   "Writes the changes `repository` needs for `rules` into the working tree at

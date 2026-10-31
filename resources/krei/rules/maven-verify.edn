@@ -1,0 +1,6 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "Pull requests run the metio/ci Maven pipeline, REUSE and actionlint behind the single Verify check; :maven-verify passes inputs to the pipeline."
+ :when [:license :maven :breto :maven-verify :ci]
+ :files {".github/workflows/verify.yml" {:template "maven-verify/verify.yml.tmpl"}}}

@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: {{copyright}}
+# SPDX-License-Identifier: {{license}}
+
+name: Release
+on:
+  schedule:
+    - cron: 23 4 {{maven-central.day}} * *
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: {% verbatim %}${{ github.workflow }}{% endverbatim %}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Release
+    uses: metio/ci/.github/workflows/maven-central-release.yml@{{ci.ref}} # {{ci.version}}
+    with:
+      paths: {{maven-central.paths}}
+{% if maven-central.deploy-args %}      deploy-args: {{maven-central.deploy-args}}
+{% endif %}    secrets: inherit

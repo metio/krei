@@ -154,3 +154,38 @@
                 "  }\n"
                 "}\n")
            (get (render :renovate facts) "renovate.json5")))))
+
+(def java-library
+  (merge devcontainers {:default-branch "main" :maven true :breto true
+                        :ci {:ref "abc123" :version "2026.11.1"}
+                        :maven-central {:day 3 :paths "src/main/java pom.xml"}}))
+
+(deftest maven-central-release-calls-the-shared-workflow-on-its-day
+  (let [release (get (render :maven-central-release java-library) ".github/workflows/release.yml")]
+    (is (str/includes? release "    - cron: 23 4 3 * *\n"))
+    (is (str/includes? release "  group: ${{ github.workflow }}\n"))
+    (is (str/includes? release "maven-central-release.yml@abc123 # 2026.11.1\n    with:\n      paths: src/main/java pom.xml\n    secrets: inherit\n"))
+    (testing "deploy-args only when set"
+      (is (not (str/includes? release "deploy-args")))
+      (is (str/includes? (get (render :maven-central-release (assoc-in java-library [:maven-central :deploy-args] "--projects a"))
+                              ".github/workflows/release.yml")
+                         "      deploy-args: --projects a\n    secrets: inherit\n")))
+    (testing "needs the opt-in fact"
+      (is (empty? (render :maven-central-release (dissoc java-library :maven-central)))))))
+
+(deftest maven-verify-passes-inputs-only-when-set
+  (let [verify #(get (render :maven-verify (assoc java-library :maven-verify %)) ".github/workflows/verify.yml")]
+    (is (str/includes? (verify {}) "maven.yml@abc123 # 2026.11.1\n  reuse:\n"))
+    (is (str/includes? (verify {:goals "--activate-profiles=native verify"})
+                       "    with:\n      goals: --activate-profiles=native verify\n  reuse:\n"))
+    (is (str/includes? (verify {}) "    branches: [main]\n"))
+    (is (str/includes? (verify {}) "          NEEDS: ${{ toJSON(needs) }}\n"))))
+
+(deftest no-legacy-java-ci-only-once-maven-verify-runs
+  (let [dir (support/path "repo")]
+    (doseq [f ["java.properties" ".github/actions/managed-java/action.yml" ".github/workflows/reuse.yml"]]
+      (fs/create-dirs (fs/parent (fs/path dir f)))
+      (spit (str (fs/path dir f)) "x"))
+    (is (= #{"java.properties" ".github/actions/managed-java/action.yml" ".github/workflows/reuse.yml"}
+           (set (map :path (rules/changes [(rules/load-rule [] :no-legacy-java-ci)] dir (assoc java-library :maven-verify {}))))))
+    (is (empty? (rules/changes [(rules/load-rule [] :no-legacy-java-ci)] dir java-library)))))

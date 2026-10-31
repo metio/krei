@@ -2,7 +2,8 @@
 ;; SPDX-License-Identifier: CC0-1.0
 
 (ns krei.plan-test
-  (:require [clojure.string :as str]
+  (:require [babashka.fs :as fs]
+            [clojure.string :as str]
             [clojure.test :refer [deftest is testing use-fixtures]]
             [krei.config :as config]
             [krei.plan :as plan]
@@ -27,6 +28,18 @@
         {:keys [changes]} (plan/inspect config rules repository)]
     (is (= ["create LICENSE (license)" "delete .golangci.yml (no-golangci)"]
            (map plan/describe changes)))))
+
+(deftest apply-into-writes-the-changes-beside-local-edits
+  (let [{:keys [config rules repository]} (setup {"README.md" "x"})
+        dir (support/path "work")]
+    (doseq [[file content] {"LICENSES/0BSD.txt" "zero" ".golangci.yml" "x" "pom.xml" "local"}]
+      (fs/create-dirs (fs/parent (fs/path dir file)))
+      (spit (str (fs/path dir file)) content))
+    (is (= ["create LICENSE (license)" "delete .golangci.yml (no-golangci)"]
+           (map plan/describe (plan/apply-into! config rules repository dir))))
+    (is (= "zero" (slurp (str dir "/LICENSE"))))
+    (is (not (fs/exists? (fs/path dir ".golangci.yml"))))
+    (is (= "local" (slurp (str dir "/pom.xml"))))))
 
 (deftest sync-pushes-the-branch-and-proposes-it-once
   (let [{:keys [upstream config rules repository]} (setup {"LICENSES/0BSD.txt" "zero"})

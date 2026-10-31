@@ -18,6 +18,8 @@ Commands:
   plan    Show what each repository needs to follow its rules
   check   Like plan, exiting non-zero when anything differs
   sync    Commit the changes onto a branch, push it and open a pull request
+  apply   Write the changes of one REPOSITORY into the working tree DIR:
+          krei apply DIR REPOSITORY
 
 REPOSITORY is a repository name or a glob over host/path ids, such as
 github.com/metio/*. Without one, every managed repository is used.
@@ -71,6 +73,20 @@ The config defaults to $XDG_CONFIG_HOME/krei/config.edn.")
                      :else (skipped id ": " pull-request " already holds these changes")))
        status))))
 
+(defn- apply! [config repositories rules dir]
+  (cond
+    (nil? dir) (do (error "apply needs a working tree: krei apply DIR REPOSITORY") [:error])
+    (not= 1 (count repositories)) (do (error "apply needs exactly one repository, got " (count repositories)) [:error])
+    :else (each-repository
+           repositories
+           (fn [repository]
+             (let [changes (plan/apply-into! config rules repository dir)]
+               (if (empty? changes)
+                 (ok (:id repository) " follows its rules")
+                 (doseq [change changes]
+                   (ok (:id repository) ": " (plan/describe change))))
+               :applied)))))
+
 (defn- list! [repositories]
   (doseq [{:keys [id default-branch]} repositories]
     (println (str id " " default-branch)))
@@ -91,7 +107,8 @@ The config defaults to $XDG_CONFIG_HOME/krei/config.edn.")
 (defn -main [& argv]
   (let [{:keys [args opts]} (cli/parse-args argv {:spec {:config {:desc "The config file"}
                                                          :help {:coerce :boolean :alias :h}}})
-        [command & filters] args]
+        [command & filters] args
+        [dir filters] (if (= "apply" command) [(first filters) (rest filters)] [nil filters])]
     (if (or (:help opts) (nil? command))
       (println usage)
       (try
@@ -104,6 +121,7 @@ The config defaults to $XDG_CONFIG_HOME/krei/config.edn.")
                         "plan" (plan! config @repositories @rules)
                         "check" (plan! config @repositories @rules)
                         "sync" (sync-all! config @repositories @rules)
+                        "apply" (apply! config @repositories @rules dir)
                         (do (error "unknown command " command) (println usage) [:error]))
               results (concat (when (realized? repositories) (unmatched @repositories filters)) results)
               failed? (some #{:error} results)

@@ -15,11 +15,14 @@ krei list [REPO...]     # list the managed repositories
 krei plan [REPO...]     # show what each repository needs to follow its rules
 krei check [REPO...]    # like plan, exiting non-zero when anything differs
 krei sync [REPO...]     # commit the changes onto a branch, push it and open a pull request
+krei apply DIR REPO     # write the changes of one repository into the working tree DIR
 ```
 
 `REPO` is a glob over repository names or `host/path` ids, such as `aro` or `github.com/metio/*`. Without one, every managed repository is used, and a `REPO` that matches none is an error. The config is read from `$XDG_CONFIG_HOME/krei/config.edn` unless `--config` names another file.
 
 Each command works on a clone below `$XDG_CACHE_HOME/krei/<host>/<path>`, fetched and reset to the default branch on every run, so local clones elsewhere are never touched. `krei sync` commits onto the branch `krei/sync`, started from the default branch, and force-pushes it. When the branch on the remote already holds the same files, nothing is pushed. On `github.com` it then opens a pull request from that branch unless one is open already; on other hosts, or when `gh` fails, for example because it is not logged in, it pushes the branch and leaves the pull request to you, naming the reason `gh` gave. Commits are signed off and follow your git config, including commit signing.
+
+`krei apply` writes into a working tree of your own instead, reading the facts from it, and leaves everything else in it as it is. Use it when a change needs edits of its own beside the rule output, such as a `pom.xml` moving to a new parent in the same commit that replaces the workflows depending on the old one.
 
 ## Configuration
 
@@ -82,6 +85,8 @@ Derived facts fill in whatever none of these set: `:title` is the `:name`, `:cop
 
 `:skip` names rules that do not apply to a repository.
 
+`:ci` pins the metio/ci reusable workflows the generated workflows call, as `{:ref "<commit>" :version "<tag>"}`. `:maven-central` marks a repository that releases to Maven Central: `:day` is its day of the month, `:paths` the paths whose changes warrant a release, and `:deploy-args` optional extra arguments for the deploy. `:maven-verify` opts a Maven repository into the generated `verify.yml`; its optional `:goals` and `:maven-args` are passed to the pipeline.
+
 GitHub shows the `SECURITY.md`, `CODE_OF_CONDUCT.md` and `CONTRIBUTING.md` of an organization's public `.github` repository for every repository of the organization that has none of its own. `:health-files-from` names that repository: where it is set, `no-health-files` deletes the three files and `security`, `code-of-conduct` and `contributing` do not apply. The example sets it for every repository of `metio` and unsets it for `metio/.github`, so that one repository carries the files everyone else falls back to. The defaults appear only on GitHub, not in a clone or a source archive.
 
 ## Rules
@@ -113,6 +118,9 @@ A rule is an EDN file named after the rule. krei looks for it in `:rule-dirs` fi
 | `no-intellij` | no file below `.idea/` | |
 | `no-codeql` | no CodeQL workflow | |
 | `no-dep5` | no `.reuse/dep5` | `:reuse-toml` |
+| `maven-central-release` | `.github/workflows/release.yml`, a monthly gated release to Maven Central | `:license`, `:maven`, `:breto`, `:maven-central`, `:ci` |
+| `maven-verify` | `.github/workflows/verify.yml`, the Maven pipeline, REUSE and actionlint behind one `Verify` check | `:license`, `:maven`, `:breto`, `:maven-verify`, `:ci` |
+| `no-legacy-java-ci` | no `java.properties`, `managed-java`/`managed-maven` actions, `update-parent.yml` or `reuse.yml` | `:maven-verify` |
 
 ```clojure
 {:doc "Every repository carries the shared editorconfig."

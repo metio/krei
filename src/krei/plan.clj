@@ -20,6 +20,15 @@
      :dir dir
      :changes (rules/changes rules dir (facts/facts config repository dir))}))
 
+(defn apply-into!
+  "Writes the changes `repository` needs for `rules` into the working tree at
+  `dir`, reading the facts from that tree, and returns them. The tree keeps
+  whatever else it holds, so rule output and changes of its own land together."
+  [config rules repository dir]
+  (let [changes (rules/changes rules dir (facts/facts config repository dir))]
+    (rules/apply! dir changes)
+    changes))
+
 (defn describe [{:keys [action path rule]}]
   (str (name action) " " path " (" (name rule) ")"))
 

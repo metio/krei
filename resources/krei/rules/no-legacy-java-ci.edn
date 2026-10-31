@@ -1,0 +1,10 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "No java.properties, managed-java or managed-maven actions, parent-update or standalone REUSE workflow once maven-verify runs."
+ :when [:maven-verify]
+ :files {"java.properties" :absent
+         ".github/actions/managed-java/**" :absent
+         ".github/actions/managed-maven/**" :absent
+         ".github/workflows/update-parent.yml" :absent
+         ".github/workflows/reuse.yml" :absent}}

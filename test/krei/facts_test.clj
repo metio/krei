@@ -80,7 +80,8 @@
     (is (= [] (:maintainers derived))))
   (testing "set facts win"
     (let [derived (facts/derive-facts {:name "yosql" :title "YoSQL" :homepage "https://yosql.example/" :keywords []})]
-      (is (= "The YoSQL Authors" (:copyright derived)))
+      (is (= "YoSQL" (:title derived)))
+      (is (= "The yosql Authors" (:copyright derived)))
       (is (= "https://yosql.example/" (:homepage derived)))
       (is (= [] (:keywords derived))))))
 

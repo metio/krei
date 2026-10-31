@@ -75,7 +75,7 @@
 
 (defn derive-facts
   "`facts` with the derived ones it does not set itself: :title is the
-  name, :copyright names the title's authors, :homepage is the web page of
+  name, :copyright names the authors of the name, :homepage is the web page of
   the repository, :keywords are its topics, and :owners, :maintainers,
   :contributors and :translators split :authors by their :role, which is
   :owner unless set."
@@ -83,7 +83,8 @@
   (let [title (or (:title facts) name)
         by-role (group-by #(keyword (or (:role %) :owner)) authors)]
     (merge (cond-> {:keywords (vec topics)}
-             title (assoc :title title :copyright (str "The " title " Authors"))
+             title (assoc :title title)
+             name (assoc :copyright (str "The " name " Authors"))
              (and host path) (assoc :homepage (str "https://" host "/" path "/")))
            (into {} (for [[role fact] roles] [fact (vec (get by-role role))]))
            facts)))

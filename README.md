@@ -82,7 +82,7 @@ Maps merge key by key, so `{:typos {:words ["edn"]}}` under `"*"` and `{:typos {
 | `:reuse-workflow` | `.github/workflows/reuse.yml` |
 | `:vale` | `.vale.ini` |
 
-Derived facts fill in whatever none of these set: `:title` is the `:name`, `:copyright` is `The <title> Authors`, `:homepage` is `https://<host>/<path>/`, and `:keywords` are the `:topics`. Each of `:authors` is a map of `:given-names`, `:family-names`, an optional `:email`, `:old-emails` and a `:role` of `:owner`, `:maintainer`, `:contributor` or `:translator`, `:owner` when unset; `:owners`, `:maintainers`, `:contributors` and `:translators` list the authors of each role.
+Derived facts fill in whatever none of these set: `:title` is the `:name`, `:copyright` is `The <name> Authors`, `:homepage` is `https://<host>/<path>/`, and `:keywords` are the `:topics`. Each of `:authors` is a map of `:given-names`, `:family-names`, an optional `:email`, `:old-emails` and a `:role` of `:owner`, `:maintainer`, `:contributor` or `:translator`, `:owner` when unset; `:owners`, `:maintainers`, `:contributors` and `:translators` list the authors of each role.
 
 `:skip` names rules that do not apply to a repository.
 

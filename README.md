@@ -163,4 +163,4 @@ bb test
 
 ## License
 
-CC0-1.0, see [LICENSES/CC0-1.0.txt](LICENSES/CC0-1.0.txt).
+[CC0-1.0](LICENSES/CC0-1.0.txt).

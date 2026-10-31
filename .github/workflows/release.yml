@@ -23,10 +23,10 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - id: gate
-        uses: metio/ci/needs-release@14ad475c5f5c4c0df727df1a22345298604e66ba # 2026.10.26174650
+        uses: metio/ci/needs-release@21ce4ec08a0516b39fcd5985472f0d53ec11e338 # 2026.10.31095959
         with:
           paths: src resources bb.edn krei .breto.edn README.md
-      - uses: metio/breto@8605569953d2162ace55fb0f2a9f61ad78b2de0f # 2026.10.30102245
+      - uses: metio/breto@3d35cbfa61e9b8e98fe3d92113390a6db219b66c # 2026.10.30182439
         if: steps.gate.outputs.needed == 'true'
         with:
           registries: github:metio/toolchains
@@ -35,11 +35,11 @@ jobs:
         run: bb test
       - id: version
         if: steps.gate.outputs.needed == 'true'
-        uses: metio/ci/calver@14ad475c5f5c4c0df727df1a22345298604e66ba # 2026.10.26174650
+        uses: metio/ci/calver@21ce4ec08a0516b39fcd5985472f0d53ec11e338 # 2026.10.31095959
       - id: notes
         name: Generate release notes
         if: steps.gate.outputs.needed == 'true'
-        uses: metio/ci/release-notes@14ad475c5f5c4c0df727df1a22345298604e66ba # 2026.10.26174650
+        uses: metio/ci/release-notes@21ce4ec08a0516b39fcd5985472f0d53ec11e338 # 2026.10.31095959
         with:
           version: ${{ steps.version.outputs.version }}
           previous: ${{ steps.gate.outputs.last }}

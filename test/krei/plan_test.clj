@@ -60,6 +60,11 @@
         (support/push! upstream "more" {"README.md" "hello"})
         (is (true? (:pushed? (plan/sync! config (plan/inspect config rules repository)))))
         (is (= "hello" (remote-file upstream "krei/sync" "README.md"))))
+      (testing "the branch moves onto a new default branch that leaves the same files"
+        (support/push! upstream "same files" {"LICENSE" "other"})
+        (is (true? (:pushed? (plan/sync! config (plan/inspect config rules repository)))))
+        (is (= (support/git support/*root* "--git-dir" (:url upstream) "rev-parse" "main")
+               (support/git support/*root* "--git-dir" (:url upstream) "rev-parse" "krei/sync^"))))
       (testing "once merged the repository follows its rules"
         (support/push! upstream "merge" {"LICENSE" "zero"})
         (is (= {:status :in-sync} (plan/sync! config (plan/inspect config rules repository))))))))

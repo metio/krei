@@ -52,8 +52,8 @@
     (git! dir "clean" "--quiet" "--force" "-d" "-x")
     (git! dir "rev-parse" "HEAD")))
 
-(defn- remote-tree [dir branch]
-  (let [{:keys [exit out]} (git dir "rev-parse" "--verify" "--quiet" (str "refs/remotes/origin/" branch "^{tree}"))]
+(defn- remote-rev [dir branch suffix]
+  (let [{:keys [exit out]} (git dir "rev-parse" "--verify" "--quiet" (str "refs/remotes/origin/" branch suffix))]
     (when (zero? exit) (str/trim out))))
 
 (defn commit!
@@ -66,9 +66,12 @@
 
 (defn publish!
   "Pushes `branch` to origin, replacing what is there. Returns false when
-  origin already holds the same files there, so nothing was pushed."
+  origin already holds the same files there on the same base commit, so
+  nothing was pushed. A branch on an older base is pushed even with the same
+  files, since it could not be fast-forwarded onto the default branch."
   [dir branch]
-  (if (= (remote-tree dir branch) (git! dir "rev-parse" "HEAD^{tree}"))
+  (if (and (= (remote-rev dir branch "^{tree}") (git! dir "rev-parse" "HEAD^{tree}"))
+           (= (remote-rev dir branch "^") (git! dir "rev-parse" "HEAD^")))
     false
     (do (git! dir "push" "--quiet" "--force" "origin" (str "HEAD:refs/heads/" branch))
         true)))

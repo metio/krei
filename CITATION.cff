@@ -13,9 +13,6 @@ url: https://github.com/metio/krei/
 license: CC0-1.0
 keywords:
   - generator
-  - java
-  - jshell
-  - maven
   - project-as-code
   - project-generator
   - project-scaffolding

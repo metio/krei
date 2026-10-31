@@ -238,6 +238,24 @@
     (spit file "      - uses: fsfe/reuse-action@v5\n")
     (is (= [".github/workflows/verify.yml"] (map :path (rules/violations rule dir devcontainers))))))
 
+(deftest shared-toolchains-reports-own-pins
+  (let [dir (support/path "repo")
+        rule [(rules/load-rule [] :shared-toolchains)]
+        file (str dir "/.breto.edn")
+        facts (assoc devcontainers :breto true)]
+    (fs/create-dirs dir)
+    (spit file "{:packages [\"@go\" \"@lint\" \"jq\"]}\n")
+    (is (empty? (rules/violations rule dir facts)))
+    (spit file "{:packages [\"@go\" \"helm@3.19.0\"]}\n")
+    (is (= [".breto.edn"] (map :path (rules/violations rule dir facts))))
+    (testing "a package in :breto-pins may carry its own version, the others may not"
+      (is (empty? (rules/violations rule dir (assoc facts :breto-pins ["helm"]))))
+      (spit file "{:packages [\"helm@3.19.0\" \"kind@0.31.0\"]}\n")
+      (is (= [".breto.edn:1 matches \"([A-Za-z0-9._+-]+)@[0-9][^\"]*\" (shared-toolchains)"]
+             (map plan/violation (rules/violations rule dir (assoc facts :breto-pins ["helm"])))))
+      (spit file "{:packages [\"kind@0.31.0\" \"helm@3.19.0\"]}\n")
+      (is (= 1 (count (rules/violations rule dir (assoc facts :breto-pins ["helm"]))))))))
+
 (deftest main-branch-reports-master-without-touching-files
   (let [dir (support/path "repo")
         rule [(rules/load-rule [] :main-branch)]

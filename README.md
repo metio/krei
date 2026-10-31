@@ -86,7 +86,7 @@ Derived facts fill in whatever none of these set: `:title` is the `:name`, `:cop
 
 `:skip` names rules that do not apply to a repository.
 
-`:ci` pins the metio/ci reusable workflows the generated workflows call, as `{:ref "<commit>" :version "<tag>"}`. `:maven-central` marks a repository that releases to Maven Central: `:day` is its day of the month, `:paths` the paths whose changes warrant a release, and `:deploy-args` optional extra arguments for the deploy. `:maven-verify` opts a Maven repository into the generated `verify.yml`; its optional `:goals` and `:maven-args` are passed to the pipeline.
+`:ci` pins the metio/ci reusable workflows the generated workflows call, as `{:ref "<commit>" :version "<tag>"}`. `:maven-central` marks a repository that releases to Maven Central: `:day` is its day of the month, `:paths` the paths whose changes warrant a release, and `:deploy-args` optional extra arguments for the deploy. `:maven-verify` opts a Maven repository into the generated `verify.yml`; its optional `:goals` and `:maven-args` are passed to the pipeline. `:breto-pins` lists the packages whose version a repository's `.breto.edn` may pin itself, for the rare case the registry groups cannot serve.
 
 GitHub shows the `SECURITY.md`, `CODE_OF_CONDUCT.md` and `CONTRIBUTING.md` of an organization's public `.github` repository for every repository of the organization that has none of its own. `:health-files-from` names that repository: where it is set, `no-health-files` deletes the three files and `security`, `code-of-conduct` and `contributing` do not apply. The example sets it for every repository of `metio` and unsets it for `metio/.github`, so that one repository carries the files everyone else falls back to. The defaults appear only on GitHub, not in a clone or a source archive.
 
@@ -120,6 +120,7 @@ A rule is an EDN file named after the rule. krei looks for it in `:rule-dirs` fi
 | `no-codeql` | no CodeQL workflow | |
 | `no-dep5` | no `.reuse/dep5` | `:reuse-toml` |
 | `reuse-workflow` | `.github/workflows/reuse.yml` running the pinned reuse-action, which reads `REUSE.toml`, unless `:maven-verify` runs REUSE in `verify.yml` | `:license`, `:reuse-workflow` |
+| `shared-toolchains` | checks that `.breto.edn` takes its versions from the registry groups and pins only the packages in `:breto-pins` | `:breto` |
 | `pinned-reuse-action` | checks that every workflow runs reuse-action at a commit | |
 | `maven-central-release` | `.github/workflows/release.yml`, a monthly gated release to Maven Central | `:license`, `:maven`, `:breto`, `:maven-central`, `:ci` |
 | `maven-verify` | `.github/workflows/verify.yml`, the Maven pipeline, REUSE and actionlint behind one `Verify` check | `:license`, `:maven`, `:breto`, `:maven-verify`, `:ci` |
@@ -144,7 +145,7 @@ A rule applies when every fact in `:when` is set and none in `:unless` is. Each 
 - `{:text string}` is the content itself;
 - `:absent` deletes the file; a path holding `*`, `?`, `[` or `{` deletes every file the glob matches.
 
-A rule can also check what it cannot fix. `:expect` maps facts to the values they must have, and `:forbid` maps a glob to regexes no file it selects may match. `plan` and `check` report each breach as drift, naming the file and line, and `sync` reports it without changing anything, since a default branch or a hand-written workflow needs a decision of its own.
+A rule can also check what it cannot fix. `:expect` maps facts to the values they must have, and `:forbid` maps a glob to regexes no file it selects may match. `plan` and `check` report each breach as drift, naming the file and line, and `sync` reports it without changing anything, since a default branch or a hand-written workflow needs a decision of its own. `:allow` names a fact listing exceptions: a match whose first group is in that list is no breach, so `shared-toolchains` accepts a version in `.breto.edn` for exactly the packages in `:breto-pins`.
 
 `:each` names a fact holding a list, and the rule's files are then rendered once per element, which templates read as `{{each}}`. A copy reads what the other rules write in the same run, so `LICENSE` follows a `LICENSES/` file another rule rewrites.
 

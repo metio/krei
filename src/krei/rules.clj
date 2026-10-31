@@ -196,16 +196,21 @@
       (fs/write-bytes p content))))
 
 (defn- first-match
-  "The 1-based line of the first match of `pattern` in `text`, or nil."
-  [pattern text]
+  "The 1-based line of the first match of `pattern` in `text` whose first
+  group is not in `allowed`, or nil."
+  [pattern text allowed]
   (let [m (re-matcher (re-pattern pattern) text)]
-    (when (.find m)
-      (inc (count (filter #{\newline} (subs text 0 (.start m))))))))
+    (loop []
+      (when (.find m)
+        (if (and (pos? (.groupCount m)) (contains? allowed (.group m 1)))
+          (recur)
+          (inc (count (filter #{\newline} (subs text 0 (.start m))))))))))
 
 (defn violations
   "What the checkout at `dir` breaks of the checks in `rules`, which krei
   reports but cannot fix: a fact of :expect with another value, and a match
-  of a :forbid pattern in a file its glob selects. [{:rule :path :message}]"
+  of a :forbid pattern in a file its glob selects, unless the first group
+  of the match is listed in the fact :allow names. [{:rule :path :message}]"
   [rules dir facts]
   (vec
    (concat
@@ -219,8 +224,9 @@
           :when (applies? rule facts)
           [glob patterns] (sort-by key (:forbid rule))
           path (matching dir glob)
-          :let [text (slurp (str (fs/path dir path)))]
+          :let [text (slurp (str (fs/path dir path)))
+                allowed (set (map str (get facts (:allow rule))))]
           pattern patterns
-          :let [line (first-match pattern text)]
+          :let [line (first-match pattern text allowed)]
           :when line]
       {:rule (:id rule) :path path :message (str path ":" line " matches " pattern)}))))

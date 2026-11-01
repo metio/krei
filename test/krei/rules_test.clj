@@ -136,3 +136,11 @@
         changes (rules/changes [writer rule] (repo {"ci.yml" "uses: older\n"}) {})]
     (is (= [[:update "ci.yml" :moved]] (summary changes)))
     (is (= "uses: new\nuses: new\n" (String. ^bytes (:content (first changes)) "UTF-8")))))
+
+(deftest markdown-edits-compose-with-other-rules
+  (let [header {:id :header :files {"README.md" {:markdown {:header "# {{title}}\n\n"}}}}
+        license {:id :license :files {"README.md" {:markdown {:sections [{:heading "License" :body "[{{license}}](LICENSES/{{license}}.txt)." :place :end}]}}}}
+        changes (rules/changes [header license] (repo {"README.md" "# old\n\n## License\n\nMIT\n\n## Usage\n\nRun it.\n"}) {:title "app" :license "0BSD"})]
+    (is (= [[:update "README.md" :license]] (summary changes)))
+    (is (= "# app\n\n## Usage\n\nRun it.\n\n## License\n\n[0BSD](LICENSES/0BSD.txt).\n" (String. ^bytes (:content (first changes)) "UTF-8")))
+    (is (empty? (rules/changes [header license] (repo {"README.md" (String. ^bytes (:content (first changes)) "UTF-8")}) {:title "app" :license "0BSD"})))))

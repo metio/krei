@@ -10,7 +10,8 @@
      :files {\"LICENSE\" {:copy \"LICENSES/{{license}}.txt\"}}}
 
   A file is one of {:copy path-in-repository}, {:template path-beside-rule},
-  {:verbatim path-beside-rule}, {:text string} or :absent. A verbatim file
+  {:verbatim path-beside-rule}, {:text string}, :absent, or an edit of the file in place,
+  {:replace [[pattern replacement] …]} or {:markdown …} (see krei.markdown). A verbatim file
   with :optional true is left alone when the rule holds no such file. Paths, copy
   sources, templates and text are Selmer templates over the facts; a
   verbatim file is written as it is. An :absent path may be a glob, which
@@ -21,7 +22,8 @@
             [clojure.edn :as edn]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [krei.facts :as facts]))
+            [krei.facts :as facts]
+            [krei.markdown :as markdown]))
 
 (defn- rule-file [rule-dirs rule]
   (let [file (str (name rule) ".edn")]
@@ -100,20 +102,35 @@
     (when (fs/exists? p {:nofollow-links true})
       (if (fs/regular-file? p {:nofollow-links true}) (fs/read-all-bytes p) :other))))
 
-(defn- replaced
+(defn- edited
   "The file `path` as the other rules of the run leave it, or as the
-  checkout at `dir` holds it, with each [pattern replacement] of
-  `replacements` applied to every match; a replacement refers to the groups
-  of its pattern as $1, $2 and so on."
-  [dir path replacements facts pending]
+  checkout at `dir` holds it, with `f` applied to its text."
+  [dir path f pending]
   (let [before (get pending path (current dir path))]
     (if (bytes? before)
-      (.getBytes ^String (reduce (fn [text [pattern replacement]]
-                                   (str/replace text (re-pattern pattern) (facts/render replacement facts)))
-                                 (String. ^bytes before "UTF-8")
-                                 replacements)
-                 "UTF-8")
+      (.getBytes ^String (f (String. ^bytes before "UTF-8")) "UTF-8")
       :skip)))
+
+(defn- replaced
+  "`text` with each [pattern replacement] of `replacements` applied to every
+  match; a replacement refers to the groups of its pattern as $1, $2 and so on."
+  [text replacements facts]
+  (reduce (fn [text [pattern replacement]]
+            (str/replace text (re-pattern pattern) (facts/render replacement facts)))
+          text
+          replacements))
+
+(defn- rendered-markdown
+  "The :markdown `spec` with its header and section bodies rendered."
+  [spec facts]
+  (cond-> (update spec :sections (fn [sections]
+                                   (mapv #(cond-> % (string? (:body %)) (update :body facts/render facts)) sections)))
+    (:header spec) (update :header facts/render facts)))
+
+(defn- edit?
+  "Whether `spec` edits a file in place instead of writing all of it."
+  [spec]
+  (boolean (and (map? spec) (or (:replace spec) (:markdown spec)))))
 
 (defn- content
   "The bytes `spec` puts into the file `path` of the checkout at `dir`, or :absent."
@@ -129,7 +146,10 @@
                            :skip
                            (throw (ex-info (str "no template " path) {:krei/problem :rule})))))
     (contains? spec :text) (.getBytes ^String (facts/render (:text spec) facts) "UTF-8")
-    (:replace spec) (replaced dir path (:replace spec) facts pending)
+    (edit? spec) (edited dir path #(cond-> %
+                                     (:replace spec) (replaced (:replace spec) facts)
+                                     (:markdown spec) (markdown/edit (rendered-markdown (:markdown spec) facts)))
+                         pending)
     :else (throw (ex-info (str "the rule " (name (:id rule)) " holds an unknown file " (pr-str spec)) {:krei/problem :rule}))))
 
 
@@ -158,8 +178,8 @@
         [path spec] (sort-by key (:files rule))
         :let [rendered (facts/render path scope)]
         target (cond
-                 (and (or (= :absent spec) (:replace spec)) (glob? rendered)) (matching dir rendered)
-                 (:replace spec) (if (current dir (relative-path rendered)) [(relative-path rendered)] [])
+                 (and (or (= :absent spec) (edit? spec)) (glob? rendered)) (matching dir rendered)
+                 (edit? spec) (if (current dir (relative-path rendered)) [(relative-path rendered)] [])
                  :else [(relative-path rendered)])]
     [target spec scope]))
 
@@ -176,7 +196,7 @@
                                   :when (applies? rule facts)
                                   [path spec scope] (entries rule dir facts)]
                               {:rule rule :path path :spec spec :facts scope}))
-        kind #(cond (not (map? (:spec %))) :write (:copy (:spec %)) :copy (:replace (:spec %)) :replace :else :write)
+        kind #(cond (not (map? (:spec %))) :write (:copy (:spec %)) :copy (edit? (:spec %)) :replace :else :write)
         resolve (fn [pending {:keys [rule path spec facts order]}]
                   {:rule (:id rule) :path path :order order :content (content rule dir path spec facts pending)})
         written (map #(resolve {} %) (filter #(= :write (kind %)) claims))

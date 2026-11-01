@@ -26,7 +26,7 @@ jobs:
       - id: gate
         uses: metio/ci/needs-release@bfcb1a4d37c4fd4d5d9c27181191dcad0d04f90c # 2026.11.1211658
         with:
-          paths: src resources bb.edn krei .breto.edn README.md
+          paths: .github/workflows/release.yml src resources bb.edn krei .breto.edn README.md
       - uses: metio/ci/breto@bfcb1a4d37c4fd4d5d9c27181191dcad0d04f90c # 2026.11.1211658
         if: steps.gate.outputs.needed == 'true'
         with:

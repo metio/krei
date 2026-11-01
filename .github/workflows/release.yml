@@ -17,16 +17,17 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: write
+      id-token: write # cosign keyless sign-blob
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 0
           persist-credentials: false
       - id: gate
-        uses: metio/ci/needs-release@d4a165ac035d1fa1a7aee5b27192d0aed9c7a0b0 # 2026.11.1111906
+        uses: metio/ci/needs-release@bfcb1a4d37c4fd4d5d9c27181191dcad0d04f90c # 2026.11.1211658
         with:
           paths: src resources bb.edn krei .breto.edn README.md
-      - uses: metio/ci/breto@d4a165ac035d1fa1a7aee5b27192d0aed9c7a0b0 # 2026.11.1111906
+      - uses: metio/ci/breto@bfcb1a4d37c4fd4d5d9c27181191dcad0d04f90c # 2026.11.1211658
         if: steps.gate.outputs.needed == 'true'
         with:
           registries: github:metio/toolchains
@@ -35,14 +36,29 @@ jobs:
         run: bb test
       - id: version
         if: steps.gate.outputs.needed == 'true'
-        uses: metio/ci/calver@d4a165ac035d1fa1a7aee5b27192d0aed9c7a0b0 # 2026.11.1111906
+        uses: metio/ci/calver@bfcb1a4d37c4fd4d5d9c27181191dcad0d04f90c # 2026.11.1211658
       - id: notes
         name: Generate release notes
         if: steps.gate.outputs.needed == 'true'
-        uses: metio/ci/release-notes@d4a165ac035d1fa1a7aee5b27192d0aed9c7a0b0 # 2026.11.1111906
+        uses: metio/ci/release-notes@bfcb1a4d37c4fd4d5d9c27181191dcad0d04f90c # 2026.11.1211658
         with:
           version: ${{ steps.version.outputs.version }}
           previous: ${{ steps.gate.outputs.last }}
+      - name: Build the uberjar
+        if: steps.gate.outputs.needed == 'true'
+        run: bb uberjar target/krei.jar -m krei.main
+      - id: executable
+        if: steps.gate.outputs.needed == 'true'
+        uses: metio/ci/babashka-executable@bfcb1a4d37c4fd4d5d9c27181191dcad0d04f90c # 2026.11.1211658
+        with:
+          name: krei
+          jar: target/krei.jar
+          version: ${{ steps.version.outputs.version }}
+      - name: Sign the checksums
+        if: steps.gate.outputs.needed == 'true'
+        uses: metio/ci/cosign-sign-blob@bfcb1a4d37c4fd4d5d9c27181191dcad0d04f90c # 2026.11.1211658
+        with:
+          file: ${{ steps.executable.outputs.checksums }}
       - name: Tag and publish the GitHub release
         if: steps.gate.outputs.needed == 'true'
         env:
@@ -50,4 +66,4 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
           SHA: ${{ github.sha }}
           NOTES: ${{ steps.notes.outputs.file }}
-        run: gh release create "$VERSION" --target "$SHA" --notes-file "$NOTES" --title "$VERSION"
+        run: gh release create "$VERSION" --target "$SHA" --notes-file "$NOTES" --title "$VERSION" dist/*

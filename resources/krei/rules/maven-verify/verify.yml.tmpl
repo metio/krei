@@ -16,16 +16,7 @@ jobs:
 {% if any maven-verify.goals maven-verify.maven-args %}    with:
 {% if maven-verify.goals %}      goals: {{maven-verify.goals}}
 {% endif %}{% if maven-verify.maven-args %}      maven-args: {{maven-verify.maven-args}}
-{% endif %}{% endif %}  reuse:
-    name: reuse
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - uses: fsfe/reuse-action@676e2d560c9a403aa252096d99fcab3e1132b0f5 # v6
-  github-actions:
+{% endif %}{% endif %}  github-actions:
     name: github-actions
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -39,7 +30,7 @@ jobs:
           filter_mode: nofilter
   verify:
     name: Verify
-    needs: [maven, reuse, github-actions]
+    needs: [maven, github-actions]
     if: always()
     runs-on: ubuntu-latest
     timeout-minutes: 5

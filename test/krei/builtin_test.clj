@@ -176,10 +176,12 @@
 
 (deftest maven-verify-passes-inputs-only-when-set
   (let [verify #(get (render :maven-verify (assoc java-library :maven-verify %)) ".github/workflows/verify.yml")]
-    (is (str/includes? (verify {}) "maven.yml@abc123 # 2026.11.1\n  reuse:\n"))
+    (is (str/includes? (verify {}) "maven.yml@abc123 # 2026.11.1\n  github-actions:\n"))
     (is (str/includes? (verify {:goals "--activate-profiles=native verify"})
-                       "    with:\n      goals: --activate-profiles=native verify\n  reuse:\n"))
+                       "    with:\n      goals: --activate-profiles=native verify\n  github-actions:\n"))
     (is (str/includes? (verify {}) "    branches: [main]\n"))
+    (is (not (str/includes? (verify {}) "reuse")))
+    (is (str/includes? (verify {}) "    needs: [maven, github-actions]\n"))
     (is (str/includes? (verify {}) "          NEEDS: ${{ toJSON(needs) }}\n"))))
 
 (deftest no-legacy-java-ci-only-once-maven-verify-runs

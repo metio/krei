@@ -297,3 +297,27 @@
            (sort (distinct (map :path (rules/violations rule dir (assoc devcontainers :default-branch "main"))))))
         "a third-party action on its master branch is fine")
     (is (empty? (rules/changes rule dir (assoc devcontainers :default-branch "master"))))))
+
+(deftest verify-gate-reports-a-gate-a-failure-can-pass
+  (let [dir (support/path "repo")
+        rule [(rules/load-rule [] :verify-gate)]
+        file (str dir "/.github/workflows/verify.yml")
+        write #(spit file %)]
+    (fs/create-dirs (fs/parent (fs/path file)))
+    (testing "a repository without the workflow has nothing to check"
+      (is (empty? (rules/violations rule dir devcontainers))))
+    (write "jobs:\n  lint:\n    runs-on: ubuntu-latest\n  test:\n    runs-on: ubuntu-latest\n  verify:\n    name: Verify\n    needs: [lint, test]\n    if: always()\n")
+    (is (empty? (rules/violations rule dir devcontainers)))
+    (testing "a job named Verify by its key counts as well"
+      (write "jobs:\n  lint:\n    runs-on: ubuntu-latest\n  Verify:\n    needs: lint\n    if: ${{ always() }}\n")
+      (is (empty? (rules/violations rule dir devcontainers))))
+    (write "jobs:\n  lint:\n    runs-on: ubuntu-latest\n  test:\n    needs: lint\n  verify:\n    name: Verify\n    needs: test\n")
+    (is (= [".github/workflows/verify.yml runs Verify only when every job it needs succeeds, so a failure skips it, which passes a required check; give it if: always() (verify-gate)"
+            ".github/workflows/verify.yml lets Verify pass without lint, which it does not need (verify-gate)"]
+           (map plan/violation (rules/violations rule dir devcontainers))))
+    (write "jobs:\n  build:\n    name: Build ${{ matrix.target }}\n")
+    (is (= [".github/workflows/verify.yml has no job named Verify (verify-gate)"]
+           (map plan/violation (rules/violations rule dir devcontainers))))
+    (write "jobs: [\n")
+    (is (= [".github/workflows/verify.yml is no valid YAML (verify-gate)"]
+           (map plan/violation (rules/violations rule dir devcontainers))))))

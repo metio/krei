@@ -21,6 +21,7 @@
   (:require [babashka.fs :as fs]
             [clojure.edn :as edn]
             [clojure.java.io :as io]
+            [clj-yaml.core :as yaml]
             [clojure.string :as str]
             [krei.facts :as facts]
             [krei.markdown :as markdown]))
@@ -265,12 +266,36 @@
 (defn- glob-matches? [pattern path]
   (.matches (.getPathMatcher (java.nio.file.FileSystems/getDefault) (str "glob:" pattern)) (fs/path path)))
 
+(defn gate-problems
+  "What keeps the job named `gate` in the workflow `text` from failing
+  whenever another job of the workflow fails. GitHub counts a skipped job as
+  passing a required check, so the gate has to run always, and it has to
+  need every other job itself, since a job skipped behind a failed one
+  would otherwise pass it."
+  [text gate]
+  (let [jobs (try (get (yaml/parse-string text :keywords false) "jobs")
+                  (catch Exception _ ::invalid))
+        [id job] (when (map? jobs)
+                   (first (filter (fn [[id job]] (= gate (get job "name" id))) jobs)))
+        needs (let [n (get job "needs")] (set (if (string? n) [n] n)))
+        missing (sort (remove (conj needs id) (keys (when (map? jobs) jobs))))]
+    (cond
+      (= ::invalid jobs) ["is no valid YAML"]
+      (nil? job) [(str "has no job named " gate)]
+      :else (cond-> []
+              (not (str/includes? (str (get job "if")) "always()"))
+              (conj (str "runs " gate " only when every job it needs succeeds, so a failure skips it, which passes a required check; give it if: always()"))
+              (seq missing)
+              (conj (str "lets " gate " pass without " (str/join ", " missing) ", which it does not need"))))))
+
 (defn violations
   "What the checkout at `dir` breaks of the checks in `rules`, which krei
-  reports but cannot fix: a fact of :expect with another value, and a match
-  of a :forbid pattern in a file its glob selects, unless the first group
-  of the match is listed in the fact :allow names. The files are read as
-  `changes` leave them, so a breach the same run fixes is none.
+  reports but cannot fix: a fact of :expect with another value, a match of
+  a :forbid pattern in a file its glob selects, unless the first group of
+  the match is listed in the fact :allow names, and a workflow a glob of
+  :gates selects whose gate job can pass while another job fails (see
+  `gate-problems`). The files are read as `changes` leave them, so a
+  breach the same run fixes is none.
   [{:rule :path :message}]"
   ([rules dir facts] (violations rules dir facts []))
   ([rules dir facts changes]
@@ -302,4 +327,10 @@
           pattern patterns
           :let [line (first-match pattern content allowed)]
           :when line]
-      {:rule (:id rule) :path path :message (str path ":" line " matches " pattern)}))))))
+      {:rule (:id rule) :path path :message (str path ":" line " matches " pattern)})
+    (for [rule rules
+          :when (applies? rule facts)
+          [glob gate] (sort-by key (:gates rule))
+          path (files glob)
+          problem (gate-problems (text path) gate)]
+      {:rule (:id rule) :path path :message (str path " " problem)}))))))

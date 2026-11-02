@@ -1,0 +1,5 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "The Verify job of the Verify workflow fails whenever another of its jobs fails, so a ruleset can require that one check."
+ :gates {".github/workflows/verify.yml" "Verify"}}

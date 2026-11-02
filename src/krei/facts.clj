@@ -26,7 +26,6 @@
    :npm ["package.json"]
    :babashka ["bb.edn"]
    :clojure ["deps.edn"]
-   :nix ["flake.nix" "shell.nix"]
    :breto [".breto.edn"]
    :container ["Dockerfile" "Containerfile"]
    :helm ["Chart.yaml" "charts/*/Chart.yaml"]

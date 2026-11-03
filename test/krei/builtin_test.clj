@@ -172,12 +172,12 @@
   (let [release (get (render :maven-central-release java-library) ".github/workflows/release.yml")]
     (is (str/includes? release "on:\n  schedule:\n    - cron: 23 4 3 * *\n  workflow_dispatch:\n"))
     (is (str/includes? release "  group: ${{ github.workflow }}\n"))
-    (is (str/includes? release "maven-central-release.yml@abc123 # 2026.11.1\n    with:\n      paths: src/main/java pom.xml\n    secrets: inherit\n"))
+    (is (str/includes? release "maven-central-release.yml@abc123 # 2026.11.1\n    with:\n      paths: src/main/java pom.xml\n    secrets:\n      MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}\n"))
     (testing "deploy-args only when set"
       (is (not (str/includes? release "deploy-args")))
       (is (str/includes? (get (render :maven-central-release (assoc-in java-library [:maven-central :deploy-args] "--projects a"))
                               ".github/workflows/release.yml")
-                         "      deploy-args: --projects a\n    secrets: inherit\n")))
+                         "      deploy-args: --projects a\n    secrets:\n")))
     (testing "on every push without a slot"
       (is (str/includes? (get (render :maven-central-release (assoc java-library :release {:cadence :push}))
                               ".github/workflows/release.yml")

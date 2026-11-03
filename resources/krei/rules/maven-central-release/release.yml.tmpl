@@ -24,4 +24,8 @@ jobs:
     with:
       paths: {{maven-central.paths}}
 {% if maven-central.deploy-args %}      deploy-args: {{maven-central.deploy-args}}
-{% endif %}    secrets: inherit
+{% endif %}    secrets:
+      MAVEN_CENTRAL_USERNAME: {% verbatim %}${{ secrets.MAVEN_CENTRAL_USERNAME }}{% endverbatim %}
+      MAVEN_CENTRAL_TOKEN: {% verbatim %}${{ secrets.MAVEN_CENTRAL_TOKEN }}{% endverbatim %}
+      GPG_SECRET_KEY_BASE64: {% verbatim %}${{ secrets.GPG_SECRET_KEY_BASE64 }}{% endverbatim %}
+      GPG_SECRET_KEY_PASSWORD: {% verbatim %}${{ secrets.GPG_SECRET_KEY_PASSWORD }}{% endverbatim %}

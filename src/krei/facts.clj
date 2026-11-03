@@ -4,10 +4,11 @@
 (ns krei.facts
   "What krei knows about one repository. Later sources override earlier
   ones: the inventory record, facts read from the checkout, then the config
-  under \"*\", under glob patterns from the least to the most specific,
-  under the exact repository id, and the repository's own .krei.edn. Maps
-  merge key by key. Facts derived from others fill in last, for whatever
-  none of the sources set."
+  under \"*\", under custom properties from those naming the fewest, under
+  glob patterns from the least to the most specific, under the exact
+  repository id, and the repository's own .krei.edn. Maps merge key by key.
+  Facts derived from others fill in last, for whatever none of the sources
+  set."
   (:require [babashka.fs :as fs]
             [clojure.edn :as edn]
             [clojure.string :as str]
@@ -61,15 +62,30 @@
   [& ms]
   (apply merge-with (fn [a b] (if (and (map? a) (map? b)) (deep-merge a b) b)) ms))
 
+(defn- properties-hold?
+  "Whether `repository` has every custom property `wanted` names with its
+  value, which for a multi-select property is one of the values it holds."
+  [repository wanted]
+  (every? (fn [[k v]]
+            (let [actual (get-in repository [:properties (keyword (name k))])]
+              (if (sequential? actual) (some #{v} actual) (= v actual))))
+          wanted))
+
 (defn configured
-  "The facts the config `facts` holds for repository `id`, merged in order
-  of specificity."
-  [facts id]
-  (let [patterns (->> (keys facts)
+  "The facts the config `facts` holds for `repository`, merged in order of
+  specificity. A key that is a map selects the repositories by their custom
+  properties, a string by their id."
+  [facts {:keys [id] :as repository}]
+  (let [selectors (->> (keys facts)
+                       (filter map?)
+                       (filter #(properties-hold? repository %))
+                       (sort-by (juxt count pr-str)))
+        patterns (->> (keys facts)
+                      (filter string?)
                       (remove #{"*" id})
                       (filter #(inventory/glob-matches? % id))
                       (sort-by (juxt specificity identity)))]
-    (apply deep-merge (get facts "*") (concat (map #(get facts %) patterns) [(get facts id)]))))
+    (apply deep-merge (get facts "*") (concat (map #(get facts %) (concat selectors patterns)) [(get facts id)]))))
 
 (def ^:private roles
   {:owner :owners :maintainer :maintainers :contributor :contributors :translator :translators})
@@ -117,7 +133,7 @@
   "Every fact about `repository`, checked out at `dir`, under `config`, whose
   :calendar holds the release slots."
   [config repository dir]
-  (-> (deep-merge (dissoc repository :url) (detect dir) (configured (:facts config) (:id repository)) (own dir))
+  (-> (deep-merge (dissoc repository :url) (detect dir) (configured (:facts config) repository) (own dir))
       (scheduled (:calendar config))
       derive-facts))
 

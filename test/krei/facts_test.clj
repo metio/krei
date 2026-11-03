@@ -30,15 +30,34 @@
                 "github.com/metio/aro" {:level 3}
                 "codeberg.org/*/*" {:level 9}}]
     (is (= {:owner "everyone" :level 3 :host-wide true}
-           (facts/configured config "github.com/metio/aro")))
+           (facts/configured config {:id "github.com/metio/aro"})))
     (is (= {:owner "everyone" :level 2 :host-wide true}
-           (facts/configured config "github.com/metio/krei")))))
+           (facts/configured config {:id "github.com/metio/krei"})))))
 
 (deftest configured-maps-merge-key-by-key
   (is (= {:renovate {"extends" ["base"] "packageRules" [1]} :skip [:b]}
          (facts/configured {"*" {:renovate {"extends" ["base"]} :skip [:a]}
                             "github.com/metio/aro" {:renovate {"packageRules" [1]} :skip [:b]}}
-                           "github.com/metio/aro"))))
+                           {:id "github.com/metio/aro"}))))
+
+(deftest configured-facts-select-repositories-by-their-custom-properties
+  (let [config {"*" {:level 0}
+                {:lifecycle "maintenance"} {:level 1 :quiet true}
+                {:lifecycle "maintenance" :language "java"} {:level 2}
+                {:lifecycle "active"} {:level 9}
+                "github.com/metio/*" {:glob true}
+                "github.com/metio/reguloj" {:own true}}]
+    (is (= {:level 2 :quiet true :glob true :own true}
+           (facts/configured config {:id "github.com/metio/reguloj"
+                                     :properties {:lifecycle "maintenance" :language "java"}})))
+    (testing "globs override properties"
+      (is (= {:level 3 :quiet true}
+             (facts/configured (assoc config "github.com/metio/*" {:level 3}) {:id "github.com/metio/ilo" :properties {:lifecycle "maintenance"}}))))
+    (testing "a multi-select property holds when one of its values is the one named"
+      (is (= {:level 1 :quiet true :glob true}
+             (facts/configured config {:id "github.com/metio/ilo" :properties {:lifecycle ["maintenance" "other"]}}))))
+    (testing "a repository without the property gets none of its facts"
+      (is (= {:level 0 :glob true} (facts/configured config {:id "github.com/metio/krei"}))))))
 
 (deftest json-prints-facts-with-sorted-keys
   (is (= "{\n  \"$schema\": \"s\",\n  \"extends\": [\n    \"a\"\n  ]\n}"

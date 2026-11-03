@@ -60,6 +60,12 @@
 (deftest a-glob-gives-many-repositories-a-cadence
   (is (= #{"a" "b"} (set (keys (calendar/calendar {:facts {"*" {:release {:cadence :weekly}}}} (repositories ["a" "b"])))))))
 
+(deftest custom-properties-give-repositories-a-cadence
+  (is (= {"a" :quarterly}
+         (update-vals (calendar/calendar {:facts {{:lifecycle "maintenance"} {:release {:cadence :quarterly}}}}
+                                         [{:id "a" :properties {:lifecycle "maintenance"}} {:id "b" :properties {:lifecycle "active"}}])
+                      :cadence))))
+
 (deftest broken-releases-are-errors
   (is (thrown-with-msg? clojure.lang.ExceptionInfo #"needs a :cadence" (plan {"a" {:release {:cadence :daily}}})))
   (is (thrown-with-msg? clojure.lang.ExceptionInfo #"needs a :cadence" (plan {"a" {:release :monthly}})))

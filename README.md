@@ -55,12 +55,15 @@ Every key is optional. Without them krei manages every repository of the invento
 
 A rule reads what krei knows about a repository from its facts. Later sources override earlier ones:
 
-1. the inventory record: `:host`, `:path`, `:name`, `:namespace`, `:default-branch`, `:archived`, `:fork`, `:topics`;
+1. the inventory record: `:host`, `:path`, `:name`, `:namespace`, `:default-branch`, `:archived`, `:fork`, `:topics`, and `:properties`, the custom properties of a GitHub repository;
 2. facts read from the checkout: `:licenses` lists the identifiers of the files in `LICENSES/`, and `:license` is the only one, unset when there are several or none; the facts in the table below are true when one of their files is present;
 3. `:facts` under `"*"`;
-4. `:facts` under glob patterns, from the least to the most specific;
-5. `:facts` under the exact repository id;
-6. the repository's own `.krei.edn`, a map of facts kept next to the files they shape.
+4. `:facts` under custom properties, from those naming the fewest to those naming the most;
+5. `:facts` under glob patterns, from the least to the most specific;
+6. `:facts` under the exact repository id;
+7. the repository's own `.krei.edn`, a map of facts kept next to the files they shape.
+
+A key of `:facts` that is a map selects repositories by their custom properties: `{:lifecycle "maintenance"} {:release {:cadence :quarterly}}` applies to every repository whose `lifecycle` is `maintenance`, and a multi-select property holds when one of its values is the one named. A rule or template reads the properties themselves as `{{properties.lifecycle}}`.
 
 Maps merge key by key, so `{:typos {:words ["edn"]}}` under `"*"` and `{:typos {:exclude ["vendor/"]}}` for one repository give that repository both; any other value replaces the one before it.
 

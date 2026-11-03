@@ -110,7 +110,7 @@
 
 (defn- health-changes [id]
   (let [dir (support/path id)
-        facts (merge devcontainers (facts/configured health-config id))
+        facts (merge devcontainers (facts/configured health-config {:id id}))
         health [:security :code-of-conduct :contributing :no-health-files]]
     (fs/create-dirs dir)
     (doseq [file ["SECURITY.md" "CODE_OF_CONDUCT.md" "CONTRIBUTING.md"]]

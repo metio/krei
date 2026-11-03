@@ -48,8 +48,8 @@
   checked."
   [config repositories]
   (let [found (into (sorted-map)
-                    (for [{:keys [id]} repositories
-                          :let [release (:release (facts/configured (:facts config) id))]
+                    (for [{:keys [id] :as repository} repositories
+                          :let [release (:release (facts/configured (:facts config) repository))]
                           :when release]
                       [id release]))]
     (doseq [[id {:keys [cadence after] :as release}] found]

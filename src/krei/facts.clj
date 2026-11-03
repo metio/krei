@@ -92,17 +92,20 @@
 
 (defn derive-facts
   "`facts` with the derived ones it does not set itself: :title is the
-  name, :copyright names the authors of the name, :homepage is the web page of
-  the repository, :keywords are its topics, and :owners, :maintainers,
+  name, :copyright names the authors of the name, :homepage is the page of a
+  Terraform provider in the Terraform Registry and the web page of any other
+  repository, :keywords are its topics, and :owners, :maintainers,
   :contributors and :translators split :authors by their :role, which is
   :owner unless set."
-  [{:keys [name host path topics authors] :as facts}]
+  [{:keys [name namespace host path topics authors terraform-provider] :as facts}]
   (let [title (or (:title facts) name)
-        by-role (group-by #(keyword (or (:role %) :owner)) authors)]
+        by-role (group-by #(keyword (or (:role %) :owner)) authors)
+        provider (when (and terraform-provider namespace name) (second (re-matches #"terraform-provider-(.+)" name)))]
     (merge (cond-> {:keywords (vec topics)}
              title (assoc :title title)
              name (assoc :copyright (str "The " name " Authors"))
-             (and host path) (assoc :homepage (str "https://" host "/" path "/")))
+             (and host path) (assoc :homepage (str "https://" host "/" path "/"))
+             provider (assoc :homepage (str "https://registry.terraform.io/providers/" namespace "/" provider "/")))
            (into {} (for [[role fact] roles] [fact (vec (get by-role role))]))
            facts)))
 

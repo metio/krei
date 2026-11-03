@@ -111,6 +111,13 @@
     (is (= [seb] (:owners derived)))
     (is (= [ann] (:translators derived)))
     (is (= [] (:maintainers derived))))
+  (testing "a Terraform provider's homepage is its page in the Terraform Registry"
+    (is (= "https://registry.terraform.io/providers/metio/git/"
+           (:homepage (facts/derive-facts {:name "terraform-provider-git" :namespace "metio" :host "github.com"
+                                           :path "metio/terraform-provider-git" :terraform-provider true}))))
+    (is (= "https://github.com/metio/git-tools/"
+           (:homepage (facts/derive-facts {:name "git-tools" :namespace "metio" :host "github.com"
+                                           :path "metio/git-tools" :terraform-provider true})))))
   (testing "set facts win"
     (let [derived (facts/derive-facts {:name "yosql" :title "YoSQL" :homepage "https://yosql.example/" :keywords []})]
       (is (= "YoSQL" (:title derived)))

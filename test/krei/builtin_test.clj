@@ -159,11 +159,12 @@
 (def java-library
   (merge devcontainers {:default-branch "main" :maven true :breto true
                         :ci {:ref "abc123" :version "2026.11.1"}
-                        :maven-central {:day 3 :paths "src/main/java pom.xml"}}))
+                        :maven-central {:paths "src/main/java pom.xml"}
+                        :release {:cadence :monthly :cron "23 4 3 * *"}}))
 
-(deftest maven-central-release-calls-the-shared-workflow-on-its-day
+(deftest maven-central-release-calls-the-shared-workflow-on-its-slot
   (let [release (get (render :maven-central-release java-library) ".github/workflows/release.yml")]
-    (is (str/includes? release "    - cron: 23 4 3 * *\n"))
+    (is (str/includes? release "on:\n  schedule:\n    - cron: 23 4 3 * *\n  workflow_dispatch:\n"))
     (is (str/includes? release "  group: ${{ github.workflow }}\n"))
     (is (str/includes? release "maven-central-release.yml@abc123 # 2026.11.1\n    with:\n      paths: src/main/java pom.xml\n    secrets: inherit\n"))
     (testing "deploy-args only when set"
@@ -171,8 +172,13 @@
       (is (str/includes? (get (render :maven-central-release (assoc-in java-library [:maven-central :deploy-args] "--projects a"))
                               ".github/workflows/release.yml")
                          "      deploy-args: --projects a\n    secrets: inherit\n")))
-    (testing "needs the opt-in fact"
-      (is (empty? (render :maven-central-release (dissoc java-library :maven-central)))))))
+    (testing "on every push without a slot"
+      (is (str/includes? (get (render :maven-central-release (assoc java-library :release {:cadence :push}))
+                              ".github/workflows/release.yml")
+                         "on:\n  push:\n    branches:\n      - main\n  workflow_dispatch:\n")))
+    (testing "needs the opt-in facts"
+      (is (empty? (render :maven-central-release (dissoc java-library :maven-central))))
+      (is (empty? (render :maven-central-release (dissoc java-library :release)))))))
 
 (deftest maven-verify-passes-inputs-only-when-set
   (let [verify #(get (render :maven-verify (assoc java-library :maven-verify %)) ".github/workflows/verify.yml")]

@@ -51,6 +51,16 @@
     (is (= "0BSD" (:license (facts/facts {:facts {}} repository support/*root*))))
     (is (= "MIT" (:license (facts/facts {:facts {"github.com/metio/aro" {:license "MIT"}}} repository support/*root*))))))
 
+(deftest facts-take-the-release-slot-from-the-calendar
+  (let [repository {:id "github.com/metio/aro" :name "aro"}
+        config {:facts {"github.com/metio/aro" {:release {:cadence :monthly}}}
+                :calendar {"github.com/metio/aro" {:cadence :monthly :cron "1 2 3 * *"}}}]
+    (is (= {:cadence :monthly :cron "1 2 3 * *"} (:release (facts/facts config repository support/*root*))))
+    (testing "a :release the calendar does not hold is an error"
+      (spit (support/path ".krei.edn") "{:release {:cadence :weekly}}")
+      (is (thrown-with-msg? clojure.lang.ExceptionInfo #"belongs in the config"
+                            (facts/facts config repository support/*root*))))))
+
 (deftest render-fills-in-selmer-templates
   (is (= "LICENSES/0BSD.txt for aro" (facts/render "LICENSES/{{license}}.txt for {{name}}" {:license "0BSD" :name "aro"})))
   (is (= "kind: tool, tags: a b" (facts/render "kind: {{kind}}, tags:{% for t in tags %} {{t}}{% endfor %}" {:kind :tool :tags [:a :b]})))

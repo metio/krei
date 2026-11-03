@@ -3,9 +3,12 @@
 
 name: Release
 on:
-  schedule:
-    - cron: 23 4 {{maven-central.day}} * *
-  workflow_dispatch:
+{% if release.cron %}  schedule:
+    - cron: {{release.cron}}
+{% else %}  push:
+    branches:
+      - {{default-branch}}
+{% endif %}  workflow_dispatch:
 
 permissions:
   contents: write

@@ -4,6 +4,7 @@
 (ns krei.main
   (:require [babashka.cli :as cli]
             [clojure.string :as str]
+            [krei.calendar :as calendar]
             [krei.config :as config]
             [krei.inventory :as inventory]
             [krei.plan :as plan]
@@ -119,14 +120,16 @@ The config defaults to $XDG_CONFIG_HOME/krei/config.edn.")
       (try
         (let [config (config/load-config (or (:config opts) (config/default-path)))
               rules (delay (rules/load-rules config))
-              repositories (delay (inventory/select config (inventory/read-inventory (:inventory config)) filters))
+              inventory (delay (inventory/read-inventory (:inventory config)))
+              repositories (delay (inventory/select config @inventory filters))
+              planned (delay (assoc config :calendar (calendar/calendar config (inventory/select config @inventory nil))))
               results (case command
                         "rules" (rules! @rules)
                         "list" (list! @repositories)
-                        "plan" (plan! config @repositories @rules)
-                        "check" (plan! config @repositories @rules)
-                        "sync" (sync-all! config @repositories @rules)
-                        "apply" (apply! config @repositories @rules dir)
+                        "plan" (plan! @planned @repositories @rules)
+                        "check" (plan! @planned @repositories @rules)
+                        "sync" (sync-all! @planned @repositories @rules)
+                        "apply" (apply! @planned @repositories @rules dir)
                         (do (error "unknown command " command) (println usage) [:error]))
               results (concat (when (realized? repositories) (unmatched @repositories filters)) results)
               failed? (some #{:error} results)

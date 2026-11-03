@@ -99,10 +99,25 @@
           (throw (ex-info ".krei.edn holds no map" {:krei/problem :fact})))
         x))))
 
+(defn- scheduled
+  "`facts` with the :cron of its :release from `calendar`, which krei plans
+  from the config alone, so a :release set anywhere else is an error."
+  [facts calendar]
+  (if-let [{:keys [cadence]} (:release facts)]
+    (let [slot (get calendar (:id facts))]
+      (when-not (= cadence (:cadence slot))
+        (throw (ex-info (str "the :release of " (:id facts) " belongs in the config, where krei plans the release calendar")
+                        {:krei/problem :fact})))
+      (update facts :release merge (select-keys slot [:cron])))
+    facts))
+
 (defn facts
-  "Every fact about `repository`, checked out at `dir`, under `config`."
+  "Every fact about `repository`, checked out at `dir`, under `config`, whose
+  :calendar holds the release slots."
   [config repository dir]
-  (derive-facts (deep-merge (dissoc repository :url) (detect dir) (configured (:facts config) (:id repository)) (own dir))))
+  (-> (deep-merge (dissoc repository :url) (detect dir) (configured (:facts config) (:id repository)) (own dir))
+      (scheduled (:calendar config))
+      derive-facts))
 
 (defn- plain
   "`x` with every keyword value turned into its name, so templates print

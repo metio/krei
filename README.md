@@ -85,7 +85,14 @@ Derived facts fill in whatever none of these set: `:title` is the `:name`, `:cop
 
 `:skip` names rules that do not apply to a repository.
 
-`:ci` pins the metio/ci reusable workflows the generated workflows call, as `{:ref "<commit>" :version "<tag>"}`. `:maven-central` marks a repository that releases to Maven Central: `:day` is its day of the month, `:paths` the paths whose changes warrant a release, and `:deploy-args` optional extra arguments for the deploy. `:maven-verify` opts a Maven repository into the generated `verify.yml`; its optional `:goals` and `:maven-args` are passed to the pipeline. `:breto-pins` lists the packages whose version a repository's `.breto.edn` may pin itself, for the rare case the registry groups cannot serve.
+`:ci` pins the metio/ci reusable workflows the generated workflows call, as `{:ref "<commit>" :version "<tag>"}`. `:maven-central` marks a repository that releases to Maven Central: `:paths` are the paths whose changes warrant a release, and `:deploy-args` optional extra arguments for the deploy. `:maven-verify` opts a Maven repository into the generated `verify.yml`; its optional `:goals` and `:maven-args` are passed to the pipeline. `:breto-pins` lists the packages whose version a repository's `.breto.edn` may pin itself, for the rare case the registry groups cannot serve.
+
+`:release` says how often a repository releases, and krei plans when. Its `:cadence` is `:weekly`, `:monthly`, `:quarterly` or `:push`, for a release on every push to the default branch. krei gives every repository of a scheduled cadence a slot, a day of the week, of the month or of the quarter, and adds it to the fact as a `:cron` expression; months count 28 days, so every slot comes around in every month. The slot comes from a SHA-256 of the repository id, so it stays put while other repositories come and go. A slot another repository of the cadence already holds passes on to the next free one, in id order, and when every slot is taken, to the next one the fewest repositories share. `:after` lists repositories of the same cadence whose releases come first, such as the parent POM the others build on; the repository takes the first free slot after the latest of theirs. krei plans the calendar over every managed repository at once, so `:release` belongs in the config: one in `.krei.edn` is an error.
+
+```clojure
+"github.com/metio/maven-parent" {:release {:cadence :monthly}}
+"github.com/metio/reguloj" {:release {:cadence :monthly :after ["github.com/metio/maven-parent"]}}
+```
 
 GitHub shows the `SECURITY.md`, `CODE_OF_CONDUCT.md` and `CONTRIBUTING.md` of an organization's public `.github` repository for every repository of the organization that has none of its own. `:health-files-from` names that repository: where it is set, `no-health-files` deletes the three files and `security`, `code-of-conduct` and `contributing` do not apply. The example sets it for every repository of `metio` and unsets it for `metio/.github`, so that one repository carries the files everyone else falls back to. The defaults appear only on GitHub, not in a clone or a source archive.
 
@@ -121,7 +128,7 @@ A rule is an EDN file named after the rule. krei looks for it in `:rule-dirs` fi
 | `reuse-workflow` | `.github/workflows/reuse.yml` running the pinned reuse-action, which reads `REUSE.toml`, unless `:maven-verify` runs REUSE in `verify.yml` | `:license`, `:reuse-workflow` |
 | `shared-toolchains` | checks that `.breto.edn` takes its versions from the registry groups and pins only the packages in `:breto-pins` | `:breto` |
 | `pinned-reuse-action` | checks that every workflow runs reuse-action at a commit | |
-| `maven-central-release` | `.github/workflows/release.yml`, a monthly gated release to Maven Central | `:license`, `:maven`, `:breto`, `:maven-central`, `:ci` |
+| `maven-central-release` | `.github/workflows/release.yml`, a gated release to Maven Central on the slot of `:release` | `:license`, `:maven`, `:breto`, `:maven-central`, `:release`, `:ci` |
 | `maven-verify` | `.github/workflows/verify.yml`, the Maven pipeline, REUSE and actionlint behind one `Verify` check | `:license`, `:maven`, `:breto`, `:maven-verify`, `:ci` |
 | `verify-gate` | checks that the `Verify` job of `.github/workflows/verify.yml` runs with `if: always()` and needs every other job of the workflow, so that one required check covers them all | |
 | `main-branch` | checks that the default branch is `main` and that no workflow branch filter, `refs/heads/` ref or link to the repository's own files names `master` | |

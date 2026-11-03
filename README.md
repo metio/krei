@@ -76,6 +76,8 @@ Maps merge key by key, so `{:typos {:words ["edn"]}}` under `"*"` and `{:typos {
 | `:container` | `Dockerfile`, `Containerfile` |
 | `:helm` | `Chart.yaml`, `charts/*/Chart.yaml` |
 | `:hugo` | `docs/hugo.toml`, `docs/hugo.yaml`, `docs/config.toml`, `docs/config.yaml` |
+| `:nix` | `flake.nix`, `shell.nix` |
+| `:terraform` | a `.tf` file anywhere in the repository |
 | `:terraform-provider` | `terraform-registry-manifest.json` |
 | `:reuse-toml` | `REUSE.toml` |
 | `:reuse-workflow` | `.github/workflows/reuse.yml` |

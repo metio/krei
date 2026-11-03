@@ -11,6 +11,9 @@
 .DS_Store
 .claude/settings.local.json
 {% if breto %}.breto.local.edn
+{% endif %}{% if nix %}result
+result-*
+.direnv/
 {% endif %}{% if vale %}.vale/
 {% endif %}{% if hugo %}docs/public/
 docs/resources/
@@ -24,7 +27,8 @@ docs/.hugo_build.lock
 *.out
 go.work
 go.work.sum
-{% endif %}{% if terraform-provider %}**/.terraform/*
+{% endif %}{% if any terraform terraform-provider %}**/.terraform/*
+*.tfplan
 *.tfstate
 *.tfstate.*
 crash.log

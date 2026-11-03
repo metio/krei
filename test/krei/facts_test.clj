@@ -75,7 +75,11 @@
 (deftest detect-names-the-build-tools-present
   (spit (support/path "go.mod") "module x")
   (spit (support/path "bb.edn") "{}")
-  (is (= {:go true :babashka true} (facts/detect support/*root*))))
+  (is (= {:go true :babashka true} (facts/detect support/*root*)))
+  (testing "a .tf file at any depth marks Terraform"
+    (fs/create-dirs (support/path "stacks" "app"))
+    (spit (support/path "stacks" "app" "main.tf") "")
+    (is (:terraform (facts/detect support/*root*)))))
 
 (deftest derived-facts-fill-in-what-no-source-sets
   (let [seb {:given-names "Sebastian" :family-names "Hoß"}

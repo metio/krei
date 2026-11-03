@@ -156,6 +156,12 @@
                 "}\n")
            (get (render :renovate facts) "renovate.json5")))))
 
+(deftest gitignore-follows-the-detected-tools
+  (let [gitignore #(get (render :gitignore (merge devcontainers %)) ".gitignore")]
+    (is (str/includes? (gitignore {:terraform true}) "**/.terraform/*\n*.tfplan\n*.tfstate\n"))
+    (is (str/includes? (gitignore {:nix true}) "result\nresult-*\n.direnv/\n"))
+    (is (not-any? #(str/includes? (gitignore {}) %) [".tfplan" ".direnv/"]))))
+
 (def java-library
   (merge devcontainers {:default-branch "main" :maven true :breto true
                         :ci {:ref "abc123" :version "2026.11.1"}

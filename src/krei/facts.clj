@@ -30,6 +30,8 @@
    :container ["Dockerfile" "Containerfile"]
    :helm ["Chart.yaml" "charts/*/Chart.yaml"]
    :hugo ["docs/hugo.toml" "docs/hugo.yaml" "docs/config.toml" "docs/config.yaml"]
+   :nix ["flake.nix" "shell.nix"]
+   :terraform ["**.tf"]
    :terraform-provider ["terraform-registry-manifest.json"]
    :reuse-toml ["REUSE.toml"]
    :reuse-workflow [".github/workflows/reuse.yml"]

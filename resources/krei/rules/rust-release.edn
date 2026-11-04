@@ -1,0 +1,7 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "A Rust tool releases its cosign-signed archives on the slot :release gets in the calendar, when :rust-release :paths changed since the last release."
+ :when [:license :cargo :rust-release :release :ci]
+ :files {".github/workflows/release.yml" {:template "rust-release/release.yml.tmpl"
+                                         :preserve ["uses: ([^@\\s]+)@[0-9a-f]{40}(?: # \\S+)?"]}}}

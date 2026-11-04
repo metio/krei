@@ -236,6 +236,31 @@
       (is (empty? (render :terraform-provider-release (dissoc terraform-provider :terraform-provider-release))))
       (is (empty? (render :terraform-provider-release (dissoc terraform-provider :release)))))))
 
+(def rust-tool
+  (merge devcontainers {:name "pasejo" :cargo true
+                        :ci {:ref "abc123" :version "2026.11.1"}
+                        :release {:cadence :weekly :cron "7 3 * * 1"}
+                        :rust-release {}}))
+
+(deftest rust-release-archives-every-target
+  (let [release #(get (render :rust-release (assoc rust-tool :rust-release %)) ".github/workflows/release.yml")]
+    (is (str/includes? (release {}) "on:\n  schedule:\n    - cron: 7 3 * * 1\n  workflow_dispatch:\n"))
+    (is (str/includes? (release {}) "          PATHS: src Cargo.toml Cargo.lock\n"))
+    (is (= 9 (count (re-seq #"- target: " (release {})))))
+    (is (str/includes? (release {}) "          binary=pasejo\n"))
+    (is (str/includes? (release {}) "metio/ci/cosign-sign-blob@abc123 # 2026.11.1\n"))
+    (is (str/ends-with? (release {}) "          GH_TOKEN: ${{ github.token }}\n"))
+    (testing "targets, paths, crates.io and notifications when set"
+      (is (str/includes? (release {:targets [{:target "x86_64-unknown-linux-gnu" :os "ubuntu-latest" :cross true}]})
+                         "          - target: x86_64-unknown-linux-gnu\n            os: ubuntu-latest\n            cross: true\n    env:"))
+      (is (str/includes? (release {:paths "src Cargo.lock"}) "          PATHS: src Cargo.lock\n"))
+      (is (str/includes? (release {:crates-io true}) "      - name: Publish to crates.io\n"))
+      (is (str/ends-with? (release {:crates-io true}) "          RUSTFLAGS: -A warnings\n"))
+      (is (str/ends-with? (release {:notify true}) "          server: ${{ secrets.MATRIX_SERVER }}\n")))
+    (testing "needs the opt-in fact and a slot"
+      (is (empty? (render :rust-release (dissoc rust-tool :rust-release))))
+      (is (empty? (render :rust-release (dissoc rust-tool :release)))))))
+
 (deftest maven-verify-passes-inputs-only-when-set
   (let [verify #(get (render :maven-verify (assoc java-library :maven-verify %)) ".github/workflows/verify.yml")]
     (is (str/includes? (verify {}) "maven.yml@abc123 # 2026.11.1\n  github-actions:\n"))

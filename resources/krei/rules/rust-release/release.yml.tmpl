@@ -1,0 +1,193 @@
+# SPDX-FileCopyrightText: {{copyright}}
+# SPDX-License-Identifier: {{license}}
+
+name: Release
+on:
+  schedule:
+    - cron: {{release.cron}}
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: {% verbatim %}${{ github.workflow }}{% endverbatim %}
+  cancel-in-progress: false
+jobs:
+  prepare:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      release_version: {% verbatim %}${{ steps.release.outputs.version }}{% endverbatim %}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: last_release
+        name: Fetch Last Release
+        run: echo "tag=$(gh release view --json tagName --jq '.tagName' || true)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: {% verbatim %}${{ github.token }}{% endverbatim %}
+      - id: commits
+        name: Count Commits
+        run: |
+          if [ -n "$LAST_RELEASE" ]; then range="$LAST_RELEASE..HEAD"; else range=HEAD; fi
+          # shellcheck disable=SC2086 # PATHS is deliberately word-split
+          echo "count=$(git rev-list --count "$range" -- $PATHS)" >> "$GITHUB_OUTPUT"
+        env:
+          LAST_RELEASE: {% verbatim %}${{ steps.last_release.outputs.tag }}{% endverbatim %}
+          PATHS: {% if rust-release.paths %}{{rust-release.paths}}{% else %}src Cargo.toml Cargo.lock{% endif %}
+      - id: release
+        name: Create Release Version
+        if: steps.commits.outputs.count > 0
+        run: echo "version=$(date +'%Y.%-m.%-d')" >> "$GITHUB_OUTPUT"
+  build:
+    name: Build {% verbatim %}${{ matrix.target }}{% endverbatim %}
+    needs: prepare
+    if: needs.prepare.outputs.release_version != ''
+    runs-on: {% verbatim %}${{ matrix.os }}{% endverbatim %}
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        include:
+{% for t in rust-release.targets %}          - target: {{t.target}}
+            os: {{t.os}}
+            cross: {% if t.cross %}true{% else %}false{% endif %}
+{% empty %}          - target: aarch64-apple-darwin
+            os: macos-latest
+            cross: false
+          - target: x86_64-apple-darwin
+            os: macos-latest
+            cross: false
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+            cross: false
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-latest
+            cross: false
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            cross: false
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+            cross: false
+          - target: x86_64-pc-windows-gnu
+            os: windows-latest
+            cross: false
+          - target: aarch64-pc-windows-msvc
+            os: windows-latest
+            cross: false
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            cross: false
+{% endfor %}    env:
+      TARGET: {% verbatim %}${{ matrix.target }}{% endverbatim %}
+      VERSION: {% verbatim %}${{ needs.prepare.outputs.release_version }}{% endverbatim %}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Install the linkers
+        if: startsWith(matrix.os, 'ubuntu') && !matrix.cross
+        run: |
+          case "$TARGET" in
+            aarch64-unknown-linux-gnu)  sudo apt-get -y update; sudo apt-get -y install gcc-aarch64-linux-gnu ;;
+            aarch64-unknown-linux-musl) sudo apt-get -y update; sudo apt-get -y install gcc-aarch64-linux-gnu musl-tools ;;
+            x86_64-unknown-linux-musl)  sudo apt-get -y update; sudo apt-get -y install musl-tools ;;
+          esac
+      - name: Point cargo at the linkers
+        if: startsWith(matrix.os, 'ubuntu') && !matrix.cross
+        run: |
+          case "$TARGET" in
+            aarch64-unknown-linux-gnu)
+              echo JEMALLOC_SYS_WITH_LG_PAGE=16 >> "$GITHUB_ENV" ;;
+            aarch64-unknown-linux-musl)
+              echo CC=aarch64-linux-gnu-gcc >> "$GITHUB_ENV"
+              echo CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER=aarch64-linux-gnu-gcc >> "$GITHUB_ENV"
+              echo CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_RUSTFLAGS="-Clink-self-contained=yes -Clinker=rust-lld" >> "$GITHUB_ENV"
+              echo JEMALLOC_SYS_WITH_LG_PAGE=16 >> "$GITHUB_ENV" ;;
+          esac
+      - name: Install cross
+        if: matrix.cross
+        uses: taiki-e/install-action@68a389c788b2cd04016ce8c80ee23b80d2ab3d68 # v2.88.1
+        with:
+          tool: cross
+      - name: Set the release version
+        shell: bash
+        run: sed -i -e "0,/authors/s/^version = .*/version = \"$VERSION\"/" Cargo.toml
+      - name: Build
+        shell: bash
+        run: |
+          if [ "$CROSS" = true ]; then
+            cross build --release --target "$TARGET"
+          else
+            rustup target add "$TARGET"
+            cargo build --release --target "$TARGET"
+          fi
+        env:
+          CROSS: {% verbatim %}${{ matrix.cross }}{% endverbatim %}
+      - name: Archive
+        shell: bash
+        run: |
+          binary={{name}}
+          case "$TARGET" in *windows*) binary="$binary.exe" ;; esac
+          mv "target/$TARGET/release/$binary" "./$binary"
+          tar --create --gzip --file "{{name}}-$TARGET.tar.gz" "$binary" LICENSE README.md
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: {{name}}-{% verbatim %}${{ matrix.target }}{% endverbatim %}
+          path: {{name}}-{% verbatim %}${{ matrix.target }}{% endverbatim %}.tar.gz
+  release:
+    name: GitHub Release
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      id-token: write # cosign keyless sign-blob
+    env:
+      VERSION: {% verbatim %}${{ needs.prepare.outputs.release_version }}{% endverbatim %}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          path: dist
+          pattern: {{name}}-*
+          merge-multiple: true
+      - name: Calculate Checksums
+        run: sha256sum ./*.tar.gz > SHA256SUMS
+        working-directory: dist
+      - uses: metio/ci/cosign-sign-blob@{{ci.ref}} # {{ci.version}}
+        with:
+          file: dist/SHA256SUMS
+      - name: Create Release
+        run: gh release create "$VERSION" --target "$GITHUB_SHA" --title "$VERSION" --generate-notes dist/*
+        env:
+          GH_TOKEN: {% verbatim %}${{ github.token }}{% endverbatim %}{% if rust-release.crates-io %}
+      - name: Publish to crates.io
+        run: |
+          sed -i -e "0,/authors/s/^version = .*/version = \"$VERSION\"/" Cargo.toml
+          cargo publish --allow-dirty --jobs 1 --no-verify
+        env:
+          CARGO_REGISTRY_TOKEN: {% verbatim %}${{ secrets.CRATES_IO_TOKEN }}{% endverbatim %}
+          RUSTFLAGS: -A warnings{% endif %}{% if rust-release.notify %}
+      - name: Send Mail
+        uses: dawidd6/action-send-mail@47af4a10b540781705f283a2cf1a9650713ac795 # v23
+        with:
+          server_address: {% verbatim %}${{ secrets.MAIL_SERVER }}{% endverbatim %}
+          server_port: {% verbatim %}${{ secrets.MAIL_PORT }}{% endverbatim %}
+          username: {% verbatim %}${{ secrets.MAIL_USERNAME }}{% endverbatim %}
+          password: {% verbatim %}${{ secrets.MAIL_PASSWORD }}{% endverbatim %}
+          subject: {% verbatim %}${{ github.event.repository.name }} version ${{ needs.prepare.outputs.release_version }}{% endverbatim %} published
+          body: See {% verbatim %}${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.prepare.outputs.release_version }}{% endverbatim %} for details.
+          to: {% verbatim %}${{ secrets.MAIL_RECIPIENT }}{% endverbatim %}
+          from: {% verbatim %}${{ secrets.MAIL_SENDER }}{% endverbatim %}
+      - name: Send Matrix Message
+        uses: s3krit/matrix-message-action@70ad3fb812ee0e45ff8999d6af11cafad11a6ecf # v0.0.3
+        with:
+          room_id: {% verbatim %}${{ secrets.MATRIX_ROOM_ID }}{% endverbatim %}
+          access_token: {% verbatim %}${{ secrets.MATRIX_ACCESS_TOKEN }}{% endverbatim %}
+          message: {% verbatim %}${{ github.event.repository.name }} version [${{ needs.prepare.outputs.release_version }}](${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.prepare.outputs.release_version }}) published{% endverbatim %}
+          server: {% verbatim %}${{ secrets.MATRIX_SERVER }}{% endverbatim %}{% endif %}

@@ -1,0 +1,71 @@
+# SPDX-FileCopyrightText: {{copyright}}
+# SPDX-License-Identifier: {{license}}
+
+name: Release
+on:
+{% if release.cron %}  schedule:
+    - cron: {{release.cron}}
+{% else %}  push:
+    branches: [{{default-branch}}]
+{% endif %}  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: {% verbatim %}${{ github.workflow }}{% endverbatim %}
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      id-token: write # cosign keyless sign-blob
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: gate
+        uses: metio/ci/needs-release@{{ci.ref}} # {{ci.version}}
+        with:
+          paths: .github/workflows/release.yml {% if babashka-release.paths %}{{babashka-release.paths}}{% else %}src bb.edn {{name}}{% endif %} .breto.edn README.md
+      - uses: metio/ci/breto@{{ci.ref}} # {{ci.version}}
+        if: steps.gate.outputs.needed == 'true'
+        with:
+          registries: github:metio/toolchains
+      - name: Run the test suite before releasing
+        if: steps.gate.outputs.needed == 'true'
+        run: bb test
+      - id: version
+        if: steps.gate.outputs.needed == 'true'
+        uses: metio/ci/calver@{{ci.ref}} # {{ci.version}}
+      - id: notes
+        name: Generate release notes
+        if: steps.gate.outputs.needed == 'true'
+        uses: metio/ci/release-notes@{{ci.ref}} # {{ci.version}}
+        with:
+          version: {% verbatim %}${{ steps.version.outputs.version }}{% endverbatim %}
+          previous: {% verbatim %}${{ steps.gate.outputs.last }}{% endverbatim %}
+      - name: Build the uberjar
+        if: steps.gate.outputs.needed == 'true'
+        run: {% if babashka-release.build %}{{babashka-release.build}}{% else %}bb uberjar target/{{name}}.jar -m {{name}}.main{% endif %}
+      - id: executable
+        if: steps.gate.outputs.needed == 'true'
+        uses: metio/ci/babashka-executable@{{ci.ref}} # {{ci.version}}
+        with:
+          name: {{name}}
+          jar: target/{{name}}.jar
+          version: {% verbatim %}${{ steps.version.outputs.version }}{% endverbatim %}
+      - name: Sign the checksums
+        if: steps.gate.outputs.needed == 'true'
+        uses: metio/ci/cosign-sign-blob@{{ci.ref}} # {{ci.version}}
+        with:
+          file: {% verbatim %}${{ steps.executable.outputs.checksums }}{% endverbatim %}
+      - name: Tag and publish the GitHub release
+        if: steps.gate.outputs.needed == 'true'
+        env:
+          GH_TOKEN: {% verbatim %}${{ github.token }}{% endverbatim %}
+          VERSION: {% verbatim %}${{ steps.version.outputs.version }}{% endverbatim %}
+          SHA: {% verbatim %}${{ github.sha }}{% endverbatim %}
+          NOTES: {% verbatim %}${{ steps.notes.outputs.file }}{% endverbatim %}
+        run: gh release create "$VERSION" --target "$SHA" --notes-file "$NOTES" --title "$VERSION" dist/*

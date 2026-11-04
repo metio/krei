@@ -186,6 +186,28 @@
       (is (empty? (render :maven-central-release (dissoc java-library :maven-central))))
       (is (empty? (render :maven-central-release (dissoc java-library :release)))))))
 
+(def babashka-tool
+  (merge devcontainers {:name "aro" :default-branch "main" :babashka true :breto true
+                        :ci {:ref "abc123" :version "2026.11.1"}
+                        :babashka-release {}}))
+
+(deftest babashka-release-builds-the-tool-it-is-named-after
+  (let [release #(get (render :babashka-release (assoc babashka-tool :babashka-release %)) ".github/workflows/release.yml")]
+    (is (str/includes? (release {}) "on:\n  push:\n    branches: [main]\n  workflow_dispatch:\n"))
+    (is (str/includes? (release {}) "          paths: .github/workflows/release.yml src bb.edn aro .breto.edn README.md\n"))
+    (is (str/includes? (release {}) "        run: bb uberjar target/aro.jar -m aro.main\n"))
+    (is (str/includes? (release {}) "babashka-executable@abc123 # 2026.11.1\n        with:\n          name: aro\n          jar: target/aro.jar\n"))
+    (is (str/includes? (release {}) "          version: ${{ steps.version.outputs.version }}\n"))
+    (testing "paths and build when set"
+      (is (str/includes? (release {:paths "src resources bb.edn aro"}) " src resources bb.edn aro .breto.edn README.md\n"))
+      (is (str/includes? (release {:build "bb build"}) "        run: bb build\n")))
+    (testing "on its slot when it has one"
+      (is (str/includes? (get (render :babashka-release (assoc babashka-tool :release {:cadence :weekly :cron "7 3 * * 1"}))
+                              ".github/workflows/release.yml")
+                         "on:\n  schedule:\n    - cron: 7 3 * * 1\n  workflow_dispatch:\n")))
+    (testing "needs the opt-in fact"
+      (is (empty? (render :babashka-release (dissoc babashka-tool :babashka-release)))))))
+
 (deftest maven-verify-passes-inputs-only-when-set
   (let [verify #(get (render :maven-verify (assoc java-library :maven-verify %)) ".github/workflows/verify.yml")]
     (is (str/includes? (verify {}) "maven.yml@abc123 # 2026.11.1\n  github-actions:\n"))

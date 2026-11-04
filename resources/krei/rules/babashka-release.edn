@@ -1,0 +1,7 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "A babashka tool releases a signed executable through the metio/ci actions whenever :babashka-release :paths change; :build replaces the uberjar build."
+ :when [:license :babashka :breto :babashka-release :ci]
+ :files {".github/workflows/release.yml" {:template "babashka-release/release.yml.tmpl"
+                                         :preserve ["uses: ([^@\\s]+)@[0-9a-f]{40}(?: # \\S+)?"]}}}

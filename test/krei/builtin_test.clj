@@ -261,6 +261,31 @@
       (is (empty? (render :rust-release (dissoc rust-tool :rust-release))))
       (is (empty? (render :rust-release (dissoc rust-tool :release)))))))
 
+(def controller
+  (merge devcontainers {:name "jaas" :default-branch "main" :go true :breto true :container true
+                        :ci {:ref "abc123" :version "2026.11.1"}
+                        :controller-release {:upgrading "https://jaas.example/upgrading/"
+                                             :verifying "https://jaas.example/verifying/"}}))
+
+(deftest controller-release-ships-the-image-and-binaries
+  (let [release #(get (render :controller-release (update controller :controller-release merge %)) ".github/workflows/release.yml")]
+    (is (str/includes? (release {}) "on:\n  push:\n    branches: [main]\n  workflow_dispatch:\n"))
+    (is (str/includes? (release {}) "          paths: go.mod main.go internal api config Dockerfile\n"))
+    (is (str/includes? (release {}) "          pack jaas .\n        env:"))
+    (is (str/includes? (release {}) "Pull the container from \\`ghcr.io/metio/jaas:${VERSION}\\`."))
+    (is (str/includes? (release {}) "See **Upgrading** — https://jaas.example/upgrading/ —"))
+    (is (str/includes? (release {}) "Prebuilt binaries are attached below:\n"))
+    (is (str/includes? (release {}) "metio/ci/container-release@abc123 # 2026.11.1\n"))
+    (is (str/ends-with? (release {}) "          NOTES: ${{ steps.notes.outputs.file }}\n"))
+    (testing "binaries, paths and usage when set"
+      (let [two (release {:binaries [{:name "ctl" :package "./cmd"} {:name "ctlcli" :package "./cmd/cli"}]})]
+        (is (str/includes? two "          pack ctl ./cmd\n          pack ctlcli ./cmd/cli\n        env:"))
+        (is (str/includes? two "attached below for \\`ctl\\` and \\`ctlcli\\`:\n")))
+      (is (str/includes? (release {:paths "go.mod cmd"}) "          paths: go.mod cmd\n"))
+      (is (str/includes? (release {:usage "Rename it."}) "\n\n          Rename it.\n\n          ## Verify")))
+    (testing "needs the opt-in fact"
+      (is (empty? (render :controller-release (dissoc controller :controller-release)))))))
+
 (deftest maven-verify-passes-inputs-only-when-set
   (let [verify #(get (render :maven-verify (assoc java-library :maven-verify %)) ".github/workflows/verify.yml")]
     (is (str/includes? (verify {}) "maven.yml@abc123 # 2026.11.1\n  github-actions:\n"))

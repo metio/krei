@@ -1,0 +1,7 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "A Kubernetes controller releases its signed container image and binaries through the metio/ci actions whenever :controller-release :paths change."
+ :when [:license :go :breto :container :controller-release :ci]
+ :files {".github/workflows/release.yml" {:template "controller-release/release.yml.tmpl"
+                                         :preserve ["uses: ([^@\\s]+)@[0-9a-f]{40}(?: # \\S+)?"]}}}

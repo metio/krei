@@ -1,0 +1,7 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "A Terraform provider releases its signed archives for the registry on the slot :release gets in the calendar, when commits landed since the last release."
+ :when [:license :go :breto :terraform-provider :terraform-provider-release :release :ci]
+ :files {".github/workflows/release.yml" {:template "terraform-provider-release/release.yml.tmpl"
+                                         :preserve ["uses: ([^@\\s]+)@[0-9a-f]{40}(?: # \\S+)?"]}}}

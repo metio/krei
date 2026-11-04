@@ -208,6 +208,34 @@
     (testing "needs the opt-in fact"
       (is (empty? (render :babashka-release (dissoc babashka-tool :babashka-release)))))))
 
+(def terraform-provider
+  (merge devcontainers {:name "terraform-provider-git" :go true :breto true :terraform-provider true
+                        :ci {:ref "abc123" :version "2026.11.1"}
+                        :release {:cadence :weekly :cron "7 3 * * 1"}
+                        :terraform-provider-release {}}))
+
+(deftest terraform-provider-release-builds-every-platform-go-supports
+  (let [release #(get (render :terraform-provider-release (assoc terraform-provider :terraform-provider-release %)) ".github/workflows/release.yml")]
+    (is (str/includes? (release {}) "on:\n  schedule:\n    - cron: 7 3 * * 1\n  workflow_dispatch:\n"))
+    (is (str/includes? (release {}) "binary=\"terraform-provider-git_v${VERSION}\"\n"))
+    (is (str/includes? (release {}) "metio/ci/breto@abc123 # 2026.11.1\n"))
+    (is (= 13 (count (re-seq #"- goos: " (release {})))))
+    (is (str/includes? (release {}) "          - goos: windows\n            goarch: arm64\n"))
+    (is (not (str/includes? (release {}) "          - goos: windows\n            goarch: arm\n")))
+    (is (not (str/includes? (release {}) "          - goos: darwin\n            goarch: arm\n")))
+    (is (not (str/includes? (release {}) "Send Mail")))
+    (is (str/ends-with? (release {}) "          GH_TOKEN: ${{ github.token }}\n"))
+    (is (str/ends-with? (release {:notify true}) "          server: ${{ secrets.MATRIX_SERVER }}\n"))
+    (testing "platforms, build timeout and notifications when set"
+      (is (= "          - goos: linux\n            goarch: amd64\n    env:"
+             (re-find #"          - goos: .*\n.*\n    env:" (release {:platforms [{:goos "linux" :goarch "amd64"}]}))))
+      (is (str/includes? (release {:build-timeout-minutes 60}) "    timeout-minutes: 60\n    strategy:"))
+      (is (str/includes? (release {:notify true}) "      - name: Send Mail\n"))
+      (is (str/includes? (release {:notify true}) "      - name: Send Matrix Message\n")))
+    (testing "needs the opt-in fact and a slot"
+      (is (empty? (render :terraform-provider-release (dissoc terraform-provider :terraform-provider-release))))
+      (is (empty? (render :terraform-provider-release (dissoc terraform-provider :release)))))))
+
 (deftest maven-verify-passes-inputs-only-when-set
   (let [verify #(get (render :maven-verify (assoc java-library :maven-verify %)) ".github/workflows/verify.yml")]
     (is (str/includes? (verify {}) "maven.yml@abc123 # 2026.11.1\n  github-actions:\n"))

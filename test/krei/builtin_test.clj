@@ -433,3 +433,26 @@
     (write "jobs: [\n")
     (is (= [".github/workflows/verify.yml is no valid YAML (verify-gate)"]
            (map plan/violation (rules/violations rule dir devcontainers))))))
+
+(defn- readme [facts text]
+  (let [dir (support/path "repo")]
+    (fs/create-dirs dir)
+    (spit (str (fs/path dir "README.md")) text)
+    (some-> (first (rules/changes [(rules/load-rule [] :readme-mirrors)] dir facts)) :content (String. "UTF-8"))))
+
+(deftest readme-mirrors-follows-the-mirrors-property
+  (let [two (assoc devcontainers :properties {:mirrors "gitlab.com:metio.wtf/yosql  codeberg.org:metio.wtf/yosql"})
+        section "## Mirrors\n\n- [gitlab.com/metio.wtf/yosql](https://gitlab.com/metio.wtf/yosql)\n- [codeberg.org/metio.wtf/yosql](https://codeberg.org/metio.wtf/yosql)\n"]
+    (testing "the section lists each mirror in order before the License section"
+      (is (= (str "# app\n\n## Usage\n\nRun it.\n\n" section "\n## License\n\n[0BSD](LICENSES/0BSD.txt).\n")
+             (readme two "# app\n\n## Usage\n\nRun it.\n\n## License\n\n[0BSD](LICENSES/0BSD.txt).\n"))))
+    (testing "without a License section, the section goes at the end"
+      (is (= (str "# app\n\n## Usage\n\nRun it.\n\n" section)
+             (readme two "# app\n\n## Usage\n\nRun it.\n"))))
+    (testing "a README that holds the section needs no change"
+      (is (nil? (readme two (str "# app\n\n" section "\n## License\n\nL.\n")))))
+    (testing "a blank or absent property removes the section"
+      (doseq [facts [(assoc devcontainers :properties {:mirrors " "}) (assoc devcontainers :properties {}) devcontainers]]
+        (is (= "# app\n\n## License\n\nL.\n" (readme facts (str "# app\n\n" section "\n## License\n\nL.\n"))))))
+    (testing "without the property or the section, the README stays as it is"
+      (is (nil? (readme devcontainers "# app\n\n## License\n\nL.\n"))))))

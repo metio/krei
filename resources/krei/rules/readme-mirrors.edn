@@ -1,0 +1,7 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "The README lists the mirrors the custom property mirrors names in a Mirrors section before its License section, and holds no such section without them."
+ :files {"README.md" {:markdown {:sections [{:heading "Mirrors"
+                                             :body "{% for mirror in properties.mirrors|words %}- [{{mirror|replace:\":\":\"/\"}}]({{mirror|url}})\n{% endfor %}"
+                                             :place {:before "License"}}]}}}}

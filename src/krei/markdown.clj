@@ -70,12 +70,14 @@
   `body` is :absent. :place puts it at :start, right after the preamble, at
   :end, or {:before h} or {:after h} another section, falling back to the
   end when that section is missing; without :place the section stays where
-  it is."
+  it is. Removing the last section leaves the file ending in one newline."
   [parts {:keys [heading body place]}]
   (let [here (index-of parts heading)
         others (vec (remove #(= heading (:heading %)) parts))]
     (if (= :absent body)
-      others
+      (cond-> others
+        (and here (= here (dec (count parts))) (not (str/blank? (:text (peek others)))))
+        (update-in [(dec (count others)) :text] #(str (str/trimr %) "\n")))
       (let [part {:heading heading :text (section-text heading body) :managed true}
             at (cond
                  (= :start place) 1

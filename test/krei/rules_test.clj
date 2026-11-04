@@ -144,3 +144,10 @@
     (is (= [[:update "README.md" :license]] (summary changes)))
     (is (= "# app\n\n## Usage\n\nRun it.\n\n## License\n\n[0BSD](LICENSES/0BSD.txt).\n" (String. ^bytes (:content (first changes)) "UTF-8")))
     (is (empty? (rules/changes [header license] (repo {"README.md" (String. ^bytes (:content (first changes)) "UTF-8")}) {:title "app" :license "0BSD"})))))
+
+(deftest a-section-whose-body-renders-blank-is-removed
+  (let [notes {:id :notes :files {"README.md" {:markdown {:sections [{:heading "Notes" :body "{% for n in notes %}- {{n}}\n{% endfor %}" :place :end}]}}}}]
+    (is (= "Intro.\n\n## Notes\n\n- a\n"
+           (String. ^bytes (:content (first (rules/changes [notes] (repo {"README.md" "Intro.\n"}) {:notes ["a"]}))) "UTF-8")))
+    (is (= "Intro.\n"
+           (String. ^bytes (:content (first (rules/changes [notes] (repo {"README.md" "Intro.\n\n## Notes\n\n- a\n"}) {:notes []}))) "UTF-8")))))

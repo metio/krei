@@ -40,7 +40,9 @@
 
 (deftest an-absent-section-is-removed
   (is (= "Intro.\n\n## Notes\n\nKept\n"
-         (markdown/edit "Intro.\n\n## License\n\nOld.\n\n## Notes\n\nKept\n" {:sections [{:heading "License" :body :absent}]}))))
+         (markdown/edit "Intro.\n\n## License\n\nOld.\n\n## Notes\n\nKept\n" {:sections [{:heading "License" :body :absent}]})))
+  (is (= "Intro.\n"
+         (markdown/edit "Intro.\n\n## License\n\nOld.\n" {:sections [{:heading "License" :body :absent}]}))))
 
 (deftest a-set-section-is-stable
   (let [once (markdown/edit readme {:sections [{:heading "License" :body "New." :place :end}]})]

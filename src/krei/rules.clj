@@ -121,11 +121,17 @@
           text
           replacements))
 
+(defn- rendered-body
+  "`body` rendered with `facts`, or :absent when it renders blank."
+  [body facts]
+  (let [text (facts/render body facts)]
+    (if (str/blank? text) :absent text)))
+
 (defn- rendered-markdown
   "The :markdown `spec` with its header and section bodies rendered."
   [spec facts]
   (cond-> (update spec :sections (fn [sections]
-                                   (mapv #(cond-> % (string? (:body %)) (update :body facts/render facts)) sections)))
+                                   (mapv #(cond-> % (string? (:body %)) (update :body rendered-body facts)) sections)))
     (:header spec) (update :header facts/render facts)))
 
 (defn- edit?

@@ -163,6 +163,8 @@
         :else x))
 
 (filters/add-filter! :json (fn [x] (json/generate-string (sorted x) {:pretty {:indentation 2 :object-field-value-separator ": " :indent-arrays? true}})))
+(filters/add-filter! :words (fn [x] (vec (remove str/blank? (str/split (str x) #"\s+")))))
+(filters/add-filter! :url (fn [x] (str "https://" (str/replace-first (str x) ":" "/"))))
 
 (defn render
   "`template`, a Selmer template, filled in with `facts`. A {{value}} naming

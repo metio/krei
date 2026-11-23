@@ -258,6 +258,8 @@
       (is (str/includes? (release {:targets [{:target "x86_64-unknown-linux-gnu" :os "ubuntu-latest" :cross true}]})
                          "          - target: x86_64-unknown-linux-gnu\n            os: ubuntu-latest\n            cross: true\n    env:"))
       (is (str/includes? (release {:paths "src Cargo.lock"}) "          PATHS: src Cargo.lock\n"))
+      (is (str/includes? (release {}) "            aarch64-unknown-linux-gnu)\n              echo CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc >> \"$GITHUB_ENV\"\n              echo CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc >> \"$GITHUB_ENV\"\n")
+          "the cross linker the job installs is the one cargo links with")
       (is (str/includes? (release {:crates-io true}) "      - name: Publish to crates.io\n"))
       (is (str/ends-with? (release {:crates-io true}) "          RUSTFLAGS: -A warnings\n"))
       (is (str/ends-with? (release {:notify true}) "          server: ${{ secrets.MATRIX_SERVER }}\n")))

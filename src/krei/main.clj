@@ -40,8 +40,10 @@ The config defaults to $XDG_CONFIG_HOME/krei/config.edn.")
    (for [repository repositories]
      (try
        (f repository)
-       (catch clojure.lang.ExceptionInfo e
-         (error (:id repository) ": " (ex-message e))
+       ;; any failure, a file a contributor of this repository committed or
+       ;; a tool missing on this machine, is this repository's alone
+       (catch Exception e
+         (error (:id repository) ": " (or (ex-message e) (.getName (class e))))
          :error)))))
 
 (defn- plan! [config repositories rules]

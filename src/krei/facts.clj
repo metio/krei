@@ -114,7 +114,9 @@
   [dir]
   (let [p (fs/path dir ".krei.edn")]
     (when (fs/regular-file? p)
-      (let [x (edn/read-string (slurp (str p)))]
+      (let [x (try (edn/read-string (slurp (str p)))
+                   (catch Exception e
+                     (throw (ex-info (str ".krei.edn is no valid EDN: " (ex-message e)) {:krei/problem :fact} e))))]
         (when-not (or (nil? x) (map? x))
           (throw (ex-info ".krei.edn holds no map" {:krei/problem :fact})))
         x))))

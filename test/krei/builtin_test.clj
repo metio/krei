@@ -469,3 +469,24 @@
         (is (= "# app\n\n## License\n\nL.\n" (readme facts (str "# app\n\n" section "\n## License\n\nL.\n"))))))
     (testing "without the property or the section, the README stays as it is"
       (is (nil? (readme devcontainers "# app\n\n## License\n\nL.\n"))))))
+
+(deftest rust-release-sets-the-version-of-the-package-alone
+  (let [workflow (clj-yaml.core/parse-string (get (render :rust-release rust-tool) ".github/workflows/release.yml") :keywords false)
+        script (get (first (filter #(= "Set the release version" (get % "name")) (get-in workflow ["jobs" "build" "steps"]))) "run")
+        set-version (fn [toml]
+                      (let [dir (fs/create-temp-dir)]
+                        (spit (str (fs/path dir "Cargo.toml")) toml)
+                        (let [{:keys [exit]} (babashka.process/shell {:dir (str dir) :continue true :out :string :err :string
+                                                                       :extra-env {"VERSION" "2026.11.23"}}
+                                                                      "bash" "-eo" "pipefail" "-c" script)]
+                          [exit (slurp (str (fs/path dir "Cargo.toml")))])))]
+    (is (= [0 "[package]\nname = \"a\"\nversion = \"2026.11.23\"\n\n[dependencies.serde]\nversion = \"1.0\"\n"]
+           (set-version "[package]\nname = \"a\"\nversion = \"0.1.0\"\n\n[dependencies.serde]\nversion = \"1.0\"\n"))
+        "a dependency table keeps its version")
+    (is (= [0 "[package]\nauthors = [\"x\"]\nversion = \"2026.11.23\"\n"]
+           (set-version "[package]\nauthors = [\"x\"]\nversion = \"0.1.0\"\n"))
+        "authors before version does not stop the edit")
+    (is (= [0 "[workspace.package]\nversion = \"2026.11.23\"\n\n[package]\nversion.workspace = true\n"]
+           (set-version "[workspace.package]\nversion = \"0.1.0\"\n\n[package]\nversion.workspace = true\n")))
+    (is (= 1 (first (set-version "[package]\nversion.workspace = true\n")))
+        "a version that lives elsewhere fails the build instead of shipping a stale one")))

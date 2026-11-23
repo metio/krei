@@ -187,3 +187,13 @@
         changes (rules/changes [verbatim edit] dir {})]
     (is (= [[:update "X" :e]] (summary changes)))
     (is (= "new\n" (String. ^bytes (:content (first changes)) "UTF-8")))))
+
+(deftest an-edit-applies-to-a-file-another-rule-writes-in-the-same-run
+  (let [write {:id :w :files {"README.md" {:text "# T\n\n## License\n\nMIT\n"}}}
+        edit {:id :e :files {"README.md" {:markdown {:sections [{:heading "Mirrors" :body "- m" :place {:before "License"}}]}}}}
+        dir (repo {})
+        changes (rules/changes [write edit] dir {})]
+    (is (= [[:create "README.md" :e]] (summary changes)))
+    (is (= "# T\n\n## Mirrors\n\n- m\n\n## License\n\nMIT\n" (String. ^bytes (:content (first changes)) "UTF-8")))
+    (testing "an edit of a file nobody writes or holds plans nothing"
+      (is (= [] (rules/changes [edit] dir {}))))))

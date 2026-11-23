@@ -196,7 +196,10 @@
 
 (defn- entries
   "Every [path spec facts] that `rule` holds for the facts `facts`, with
-  :each expanded and :absent globs resolved against the checkout at `dir`."
+  :each expanded and :absent and edit globs resolved against the checkout at
+  `dir`. An edit of a single path stays planned whether or not the file
+  exists, since another rule may write it in the same run; `edited` skips it
+  when neither does."
   [rule dir facts]
   (for [scope (if-let [each (:each rule)]
                 (map #(assoc facts :each %) (get facts each))
@@ -205,7 +208,6 @@
         :let [rendered (facts/render path scope)]
         target (cond
                  (and (or (= :absent spec) (edit? spec)) (glob? rendered)) (matching dir rendered)
-                 (edit? spec) (if (current dir (relative-path rendered)) [(relative-path rendered)] [])
                  :else [(relative-path rendered)])]
     [target spec scope]))
 

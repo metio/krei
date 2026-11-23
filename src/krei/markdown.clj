@@ -59,7 +59,14 @@
 (defn- with-header [[preamble & sections] header]
   (cons (update preamble :text #(str header (subs % (count (re-find header-pattern %))))) sections))
 
-(defn- section-text [heading body]
+(defn- section-text
+  "The section `heading` holding `body`. A `## ` line in the body would start
+  a section of its own on the next parse, which the edit leaves standing while
+  writing the body again, so the file would grow on every run."
+  [heading body]
+  (when (next (parse body))
+    (throw (ex-info (str "the section " heading " holds a second-level heading; use ### inside it")
+                    {:krei/problem :rule})))
   (str "## " heading "\n\n" (str/replace body #"\A\n+|\s+\z" "") "\n"))
 
 (defn- index-of [parts heading]

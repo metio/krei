@@ -492,3 +492,12 @@
            (set-version "[workspace.package]\nversion = \"0.1.0\"\n\n[package]\nversion.workspace = true\n")))
     (is (= 1 (first (set-version "[package]\nversion.workspace = true\n")))
         "a version that lives elsewhere fails the build instead of shipping a stale one")))
+
+(deftest mailmap-leaves-out-authors-without-an-email
+  (is (= (str "# SPDX-FileCopyrightText: The devcontainers Authors\n"
+              "# SPDX-License-Identifier: 0BSD\n"
+              "\n"
+              "Sebastian Hoß <seb@hoß.de>\n"
+              "Sebastian Hoß <seb@hoß.de> <sebhoss@pm.me>\n"
+              "Sebastian Hoß <seb@hoß.de> <mail@shoss.de>\n")
+         (get (render :mailmap (update devcontainers :authors conj {:given-names "Ada" :family-names "Lovelace"})) ".mailmap"))))

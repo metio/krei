@@ -151,3 +151,12 @@
            (String. ^bytes (:content (first (rules/changes [notes] (repo {"README.md" "Intro.\n"}) {:notes ["a"]}))) "UTF-8")))
     (is (= "Intro.\n"
            (String. ^bytes (:content (first (rules/changes [notes] (repo {"README.md" "Intro.\n\n## Notes\n\n- a\n"}) {:notes []}))) "UTF-8")))))
+
+(deftest a-fact-set-to-false-is-unset
+  (let [opted {:id :maven-verify :when [:maven-verify]}
+        legacy {:id :no-legacy-java-ci :unless [:maven-verify]}]
+    (is (false? (rules/applies? opted {:maven-verify false})))
+    (is (true? (rules/applies? legacy {:maven-verify false})))
+    (is (true? (rules/applies? opted {:maven-verify true})))
+    (is (false? (rules/applies? legacy {:maven-verify true})))
+    (is (true? (rules/applies? {:id :x :when [:n]} {:n 0})) "0 and other values that are not false count as set")))

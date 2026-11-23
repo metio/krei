@@ -154,7 +154,7 @@ A rule is an EDN file named after the rule. krei looks for it in `:rule-dirs` fi
          ".travis.yml" :absent}}
 ```
 
-A rule applies when every fact in `:when` is set and none in `:unless` is. Each entry of `:files` maps a path to its content:
+A rule applies when every fact in `:when` is set and none in `:unless` is. A fact set to `false` counts as unset, so `{:maven-verify false}` opts a repository out. Each entry of `:files` maps a path to its content:
 
 - `{:copy path}` copies a file of the repository itself;
 - `{:template path}` reads a file next to the rule; `:preserve` lists regexes whose matches keep the text the existing file has for the same first group, so `["uses: ([^@\\s]+)@[0-9a-f]{40}(?: # \\S+)?"]` leaves every pinned action as Renovate last bumped it while the rest follows the template, and only a new file takes the template's pins;

@@ -110,14 +110,26 @@ The config defaults to $XDG_CONFIG_HOME/krei/config.edn.")
         :when (not-any? #(inventory/matches? f %) repositories)]
     (do (error "no managed repository matches " f) :error)))
 
-(defn -main [& argv]
-  (let [{:keys [args opts]} (cli/parse-args argv {:spec {:config {:desc "The config file"}
-                                                         :help {:coerce :boolean :alias :h}}})
-        [command & filters] args
-        [dir filters] (if (= "apply" command) [(first filters) (rest filters)] [nil filters])]
-    (if (or (:help opts) (nil? command))
-      (println usage)
-      (try
+(def ^:private spec
+  {:config {:desc "The config file"}
+   :help {:coerce :boolean :alias :h}})
+
+(defn parse
+  "{:args :opts} of `argv`, refusing an option the spec does not name: an
+  ignored --dry-run would run the real sync, and a mistyped --config the
+  default config."
+  [argv]
+  (cli/parse-args argv {:spec spec :restrict true}))
+
+(defn run
+  "Runs the command `argv` names and returns the process exit code."
+  [argv]
+  (try
+    (let [{:keys [args opts]} (parse argv)
+          [command & filters] args
+          [dir filters] (if (= "apply" command) [(first filters) (rest filters)] [nil filters])]
+      (if (or (:help opts) (nil? command))
+        (do (println usage) 0)
         (let [config (config/load-config (or (:config opts) (config/default-path)))
               rules (delay (rules/load-rules config))
               inventory (delay (inventory/read-inventory (:inventory config)))
@@ -134,7 +146,10 @@ The config defaults to $XDG_CONFIG_HOME/krei/config.edn.")
               results (concat (when (realized? repositories) (unmatched @repositories filters)) results)
               failed? (some #{:error} results)
               drifted? (and (= "check" command) (some #{:drift} results))]
-          (System/exit (if (or failed? drifted?) 1 0)))
-        (catch clojure.lang.ExceptionInfo e
-          (error (ex-message e))
-          (System/exit 1))))))
+          (if (or failed? drifted?) 1 0))))
+    (catch clojure.lang.ExceptionInfo e
+      (error (ex-message e))
+      1)))
+
+(defn -main [& argv]
+  (System/exit (run argv)))

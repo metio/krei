@@ -262,7 +262,8 @@
           "the cross linker the job installs is the one cargo links with")
       (is (str/includes? (release {:crates-io true}) "      - name: Publish to crates.io\n"))
       (is (str/ends-with? (release {:crates-io true}) "          RUSTFLAGS: -A warnings\n"))
-      (is (str/ends-with? (release {:notify true}) "          server: ${{ secrets.MATRIX_SERVER }}\n")))
+      (is (str/ends-with? (release {:notify true}) "          server: ${{ secrets.MATRIX_SERVER }}\n"))
+      (is (str/includes? (release {:notify true}) "subject: pasejo version ${{ needs.prepare.outputs.release_version }} published")))
     (testing "needs the opt-in fact and a slot"
       (is (empty? (render :rust-release (dissoc rust-tool :rust-release))))
       (is (empty? (render :rust-release (dissoc rust-tool :release)))))))
@@ -284,6 +285,10 @@
     (is (str/includes? (release {}) "Prebuilt binaries are attached below:\n"))
     (is (str/includes? (release {}) "metio/ci/container-release@abc123 # 2026.11.1\n"))
     (is (str/ends-with? (release {}) "          NOTES: ${{ steps.notes.outputs.file }}\n"))
+    (testing "the checksums carry the name the archives carry, whatever the event"
+      (is (str/includes? (release {}) "      SUMS: jaas_${{ needs.prepare.outputs.version }}_SHA256SUMS\n"))
+      (is (str/includes? (release {}) "          file: dist/jaas_${{ needs.prepare.outputs.version }}_SHA256SUMS\n"))
+      (is (not (str/includes? (release {}) "github.event.repository"))))
     (testing "binaries, paths and usage when set"
       (let [two (release {:binaries [{:name "ctl" :package "./cmd"} {:name "ctlcli" :package "./cmd/cli"}]})]
         (is (str/includes? two "          pack ctl ./cmd\n          pack ctlcli ./cmd/cli\n        env:"))

@@ -132,7 +132,7 @@ jobs:
       id-token: write # cosign keyless sign-blob
     env:
       VERSION: {% verbatim %}${{ needs.prepare.outputs.version }}{% endverbatim %}
-      SUMS: {% verbatim %}${{ github.event.repository.name }}_${{ needs.prepare.outputs.version }}_SHA256SUMS{% endverbatim %}
+      SUMS: {{name}}{% verbatim %}_${{ needs.prepare.outputs.version }}_SHA256SUMS{% endverbatim %}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -150,7 +150,7 @@ jobs:
           sha256sum ./*.tar.gz ./*.zip > "$SUMS"
       - uses: metio/ci/cosign-sign-blob@{{ci.ref}} # {{ci.version}}
         with:
-          file: dist/{% verbatim %}${{ github.event.repository.name }}_${{ needs.prepare.outputs.version }}_SHA256SUMS{% endverbatim %}
+          file: dist/{{name}}{% verbatim %}_${{ needs.prepare.outputs.version }}_SHA256SUMS{% endverbatim %}
       - id: notes
         uses: metio/ci/release-notes@{{ci.ref}} # {{ci.version}}
         with:

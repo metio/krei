@@ -93,3 +93,12 @@
     (spit (str dir "/LICENSE") "leftover")
     (spit (str dir "/stray.txt") "junk")
     (is (= ["create LICENSE (license)"] (map plan/describe (:changes (plan/inspect config rules repository)))))))
+
+(deftest sync-commits-a-planned-file-the-repository-ignores
+  (let [{:keys [upstream config repository]} (setup {".gitignore" "*.local\n" ".golangci.yml" "x"})
+        rules [{:id :settings :files {"settings.local" {:text "x"}}} (rules/load-rule [] :no-golangci)]]
+    (binding [plan/*forge* {:supported? (constantly false)}]
+      (is (= :pushed (:status (plan/sync! config (plan/inspect config rules repository)))))
+      (is (= "x" (remote-file upstream "krei/sync" "settings.local")))
+      (is (str/blank? (support/git support/*root* "--git-dir" (:url upstream) "ls-tree" "--name-only" "krei/sync" ".golangci.yml"))
+          "a deletion is staged as well"))))

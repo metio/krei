@@ -2,15 +2,15 @@
 # SPDX-License-Identifier: {{license}}
 
 cff-version: 1.2.0
-title: {{title}}
+title: {{title|yaml}}
 message: If you use this software, please cite it as below.
 type: software
 authors:
-{% for a in authors %}- family-names: {{a.family-names}}
-  given-names: {{a.given-names}}
-{% if a.email %}  email: {{a.email}}
-{% endif %}{% endfor %}url: {{homepage}}
+{% for a in authors %}- family-names: {{a.family-names|yaml}}
+  given-names: {{a.given-names|yaml}}
+{% if a.email %}  email: {{a.email|yaml}}
+{% endif %}{% endfor %}url: {{homepage|yaml}}
 license: {{license}}
 {% if keywords|not-empty %}keywords:
-{% for k in keywords %}  - {{k}}
+{% for k in keywords %}  - {{k|yaml}}
 {% endfor %}{% endif %}

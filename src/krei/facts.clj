@@ -13,6 +13,7 @@
             [clojure.edn :as edn]
             [clojure.string :as str]
             [cheshire.core :as json]
+            [clj-yaml.core :as yaml]
             [krei.inventory :as inventory]
             [selmer.filters :as filters]
             [selmer.parser :as selmer]
@@ -168,6 +169,17 @@
         :else x))
 
 (filters/add-filter! :json (fn [x] (json/generate-string (sorted x) {:pretty {:indentation 2 :object-field-value-separator ": " :indent-arrays? true}})))
+(defn yaml-scalar
+  "`x` as a YAML scalar to write after a key on the same line: plain where
+  YAML reads it back as the same string, quoted where it would not, such as
+  a title holding \": \" or a name like yes; a value with a line break
+  becomes a double-quoted string, which stays on one line."
+  [x]
+  (let [s (str x)
+        dumped (str/trimr (yaml/generate-string s))]
+    (if (str/includes? dumped "\n") (json/generate-string s) dumped)))
+
+(filters/add-filter! :yaml yaml-scalar)
 (filters/add-filter! :words (fn [x] (vec (remove str/blank? (str/split (str x) #"\s+")))))
 (filters/add-filter! :url (fn [x] (str "https://" (str/replace-first (str x) ":" "/"))))
 

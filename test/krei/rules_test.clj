@@ -160,3 +160,18 @@
     (is (true? (rules/applies? opted {:maven-verify true})))
     (is (false? (rules/applies? legacy {:maven-verify true})))
     (is (true? (rules/applies? {:id :x :when [:n]} {:n 0})) "0 and other values that are not false count as set")))
+
+(deftest a-copy-never-reads-through-a-symlink
+  (spit (str (fs/create-dirs (support/path "outside")) "/secret.txt") "TOP SECRET")
+  (testing "a symlinked file"
+    (let [dir (repo {})]
+      (fs/create-dirs (fs/path dir "LICENSES"))
+      (fs/create-sym-link (fs/path dir "LICENSES" "MIT.txt") (support/path "outside" "secret.txt"))
+      (is (thrown-with-msg? clojure.lang.ExceptionInfo #"no file LICENSES/MIT.txt"
+                            (rules/changes [license] dir {:license "MIT"})))))
+  (testing "a file under a symlinked directory"
+    (let [dir (repo {})]
+      (fs/delete-tree (fs/path dir "LICENSES"))
+      (fs/create-sym-link (fs/path dir "LICENSES") (support/path "outside"))
+      (is (thrown-with-msg? clojure.lang.ExceptionInfo #"no file LICENSES/secret.txt"
+                            (rules/changes [license] dir {:license "secret"}))))))

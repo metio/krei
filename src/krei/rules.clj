@@ -226,7 +226,9 @@
         resolve (fn [pending {:keys [rule path spec facts order]}]
                   {:rule (:id rule) :path path :order order :content (content rule dir path spec facts pending)})
         written (map #(resolve {} %) (filter #(= :write (kind %)) claims))
-        pending (into {} (map (juxt :path :content)) written)
+        ;; a skipped optional file writes nothing, so it hides nothing the
+        ;; checkout holds at its path from the copies and edits after it
+        pending (into {} (comp (remove #(= :skip (:content %))) (map (juxt :path :content))) written)
         copies (map #(resolve pending %) (filter #(= :copy (kind %)) claims))
         pending (into pending (map (juxt :path :content)) copies)
         [replacements _] (reduce (fn [[done pending] claim]

@@ -175,3 +175,11 @@
       (fs/create-sym-link (fs/path dir "LICENSES") (support/path "outside"))
       (is (thrown-with-msg? clojure.lang.ExceptionInfo #"no file LICENSES/secret.txt"
                             (rules/changes [license] dir {:license "secret"}))))))
+
+(deftest a-skipped-optional-file-leaves-the-edit-of-its-path-alone
+  (let [verbatim (rule-in "rules" :v {:files {"X" {:verbatim "missing.txt" :optional true}}} {})
+        edit {:id :e :files {"X" {:replace [["old" "new"]]}}}
+        dir (repo {"X" "old\n"})
+        changes (rules/changes [verbatim edit] dir {})]
+    (is (= [[:update "X" :e]] (summary changes)))
+    (is (= "new\n" (String. ^bytes (:content (first changes)) "UTF-8")))))

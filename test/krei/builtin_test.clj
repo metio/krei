@@ -273,7 +273,8 @@
     (is (str/includes? (release {}) "          paths: go.mod main.go internal api config Dockerfile\n"))
     (is (str/includes? (release {}) "          pack jaas .\n        env:"))
     (is (str/includes? (release {}) "Pull the container from \\`ghcr.io/metio/jaas:${VERSION}\\`."))
-    (is (str/includes? (release {}) "See **Upgrading** — https://jaas.example/upgrading/ —"))
+    (is (str/includes? (release {}) "See **Upgrading** — ${UPGRADING} —"))
+    (is (str/includes? (release {}) "          UPGRADING: \"https://jaas.example/upgrading/\"\n"))
     (is (str/includes? (release {}) "Prebuilt binaries are attached below:\n"))
     (is (str/includes? (release {}) "metio/ci/container-release@abc123 # 2026.11.1\n"))
     (is (str/ends-with? (release {}) "          NOTES: ${{ steps.notes.outputs.file }}\n"))
@@ -282,7 +283,15 @@
         (is (str/includes? two "          pack ctl ./cmd\n          pack ctlcli ./cmd/cli\n        env:"))
         (is (str/includes? two "attached below for \\`ctl\\` and \\`ctlcli\\`:\n")))
       (is (str/includes? (release {:paths "go.mod cmd"}) "          paths: go.mod cmd\n"))
-      (is (str/includes? (release {:usage "Rename it."}) "\n\n          Rename it.\n\n          ## Verify")))
+      (is (str/includes? (release {:usage "Rename it."}) "\n\n          ${USAGE}\n\n          ## Verify"))
+      (is (str/includes? (release {:usage "Rename it."}) "          USAGE: \"Rename it.\"\n")))
+    (testing "the usage reaches the notes as data, never as YAML or shell"
+      (let [usage "Run `kubectl delete crd old`.\nThen: upgrade."
+            workflow (clj-yaml.core/parse-string (release {:usage usage}) :keywords false)
+            step (first (filter #(= "Append usage and verification footer" (get % "name"))
+                                (get-in workflow ["jobs" "github" "steps"])))]
+        (is (= usage (get-in step ["env" "USAGE"])))
+        (is (not (str/includes? (get step "run") "kubectl")))))
     (testing "needs the opt-in fact"
       (is (empty? (render :controller-release (dissoc controller :controller-release)))))))
 

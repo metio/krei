@@ -159,6 +159,7 @@ jobs:
       - name: Append usage and verification footer
         env:
           NOTES: {% verbatim %}${{ steps.notes.outputs.file }}{% endverbatim %}
+          IMAGE: ghcr.io/{% verbatim %}${{ github.repository }}{% endverbatim %}
           UPGRADING: {{controller-release.upgrading|json}}
           VERIFYING: {{controller-release.verifying|json}}
 {% if controller-release.usage %}          USAGE: {{controller-release.usage|json}}
@@ -167,7 +168,7 @@ jobs:
 
           ## Usage
 
-          Pull the container from \`ghcr.io/metio/{{name}}:${VERSION}\`.
+          Pull the container from \`${IMAGE}:${VERSION}\`.
           See **Upgrading** — ${UPGRADING} — for any required actions on your part.
 
           Prebuilt binaries are attached below{% if controller-release.binaries %} for{% for b in controller-release.binaries %}{% if forloop.last %} and{% elif not forloop.first %},{% endif %} \`{{b.name}}\`{% endfor %}{% endif %}:

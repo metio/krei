@@ -149,3 +149,8 @@
         "a stale file in LICENSES/ does not outrank the configured list")
     (is (nil? (:license (facts/facts {:facts {"*" {:licenses ["0BSD" "MIT"]}}} repository support/*root*)))
         "several configured licenses leave the fact unset")))
+
+(deftest a-krei-edn-that-is-no-edn-names-the-file
+  (let [dir (str (babashka.fs/create-temp-dir))]
+    (spit (str dir "/.krei.edn") "{:a ")
+    (is (thrown-with-msg? clojure.lang.ExceptionInfo #"\.krei\.edn is no valid EDN" (krei.facts/own dir)))))

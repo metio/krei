@@ -100,6 +100,8 @@ jobs:
         run: |
           case "$TARGET" in
             aarch64-unknown-linux-gnu)
+              echo CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc >> "$GITHUB_ENV"
+              echo CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc >> "$GITHUB_ENV"
               echo JEMALLOC_SYS_WITH_LG_PAGE=16 >> "$GITHUB_ENV" ;;
             aarch64-unknown-linux-musl)
               echo CC=aarch64-linux-gnu-gcc >> "$GITHUB_ENV"

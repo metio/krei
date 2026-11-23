@@ -64,6 +64,20 @@
       (throw (ex-info (str "the path " path " leaves the repository") {:krei/problem :rule})))
     path))
 
+(defn- inside?
+  "Whether `p`, with every symlink on its way resolved, lies in `dir`."
+  [dir p]
+  (let [root (str (fs/canonicalize dir))
+        target (str (fs/canonicalize p))]
+    (or (= root target) (str/starts-with? target (str root "/")))))
+
+(defn- checkout-file?
+  "Whether `p` is a regular file of the checkout at `dir`: not a symlink, and
+  not reached through a symlinked directory, so krei never reads, and then
+  commits, a file from outside the repository."
+  [dir p]
+  (and (fs/regular-file? p {:nofollow-links true}) (inside? dir p)))
+
 (defn- template-text
   "The text of the file `template` beside the rule, or nil when there is none."
   [{:keys [dir resource-dir]} template]
@@ -84,7 +98,7 @@
         path (fs/path dir source)]
     (cond
       (bytes? planned) planned
-      (fs/regular-file? path) (fs/read-all-bytes path)
+      (checkout-file? dir path) (fs/read-all-bytes path)
       :else (throw (ex-info (str "no file " source " to copy") {:krei/problem :rule})))))
 
 (defn- preserved
@@ -93,7 +107,7 @@
   as a pinned version stays as the repository has it once the file exists."
   [text dir path patterns]
   (let [p (fs/path dir path)]
-    (if (and (seq patterns) (fs/regular-file? p {:nofollow-links true}))
+    (if (and (seq patterns) (checkout-file? dir p))
       (let [existing (slurp (str p))]
         (reduce (fn [text pattern]
                   (let [re (re-pattern pattern)
@@ -106,7 +120,7 @@
 (defn- current [dir path]
   (let [p (fs/path dir path)]
     (when (fs/exists? p {:nofollow-links true})
-      (if (fs/regular-file? p {:nofollow-links true}) (fs/read-all-bytes p) :other))))
+      (if (checkout-file? dir p) (fs/read-all-bytes p) :other))))
 
 (defn- edited
   "The file `path` as the other rules of the run leave it, or as the
@@ -246,10 +260,8 @@
          vec)))
 
 (defn- inside! [dir p]
-  (let [root (str (fs/canonicalize dir))
-        target (str (fs/canonicalize p))]
-    (when-not (or (= root target) (str/starts-with? target (str root "/")))
-      (throw (ex-info (str "the path " p " leaves the repository") {:krei/problem :rule})))))
+  (when-not (inside? dir p)
+    (throw (ex-info (str "the path " p " leaves the repository") {:krei/problem :rule}))))
 
 (defn apply!
   "Writes `changes` into the checkout at `dir`."

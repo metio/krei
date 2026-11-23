@@ -16,7 +16,7 @@ expected versus actual behavior — to reproduce the problem.
 
 ## Branching model
 
-The `main` branch always holds the latest public stable release. Branch from it
+The `{% if default-branch %}{{default-branch}}{% else %}main{% endif %}` branch always holds the latest public stable release. Branch from it
 for your change and open a pull request back against it.
 
 ## Development environment
@@ -66,7 +66,7 @@ git commit --signoff
 The `DCO` check verifies the trailer on every commit in a pull request, so a
 missing sign-off blocks the merge. To fix the last commit, amend it with
 `git commit --amend --signoff`; for a whole branch, use
-`git rebase --signoff main`.
+`git rebase --signoff {% if default-branch %}{{default-branch}}{% else %}main{% endif %}`.
 
 By signing off you certify that:
 
@@ -93,7 +93,8 @@ By signing off you certify that:
     maintained indefinitely and may be redistributed consistent with
     this project or the open source license(s) involved.
 ```
-
+{% if conduct-email %}
 ## Code of conduct
 
 Participation is governed by our [Code of Conduct](CODE_OF_CONDUCT.md).
+{% endif %}

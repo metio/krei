@@ -137,7 +137,7 @@ jobs:
           server_port: {% verbatim %}${{ secrets.MAIL_PORT }}{% endverbatim %}
           username: {% verbatim %}${{ secrets.MAIL_USERNAME }}{% endverbatim %}
           password: {% verbatim %}${{ secrets.MAIL_PASSWORD }}{% endverbatim %}
-          subject: {% verbatim %}${{ github.event.repository.name }} version ${{ needs.prepare.outputs.release_version }}{% endverbatim %} published
+          subject: {{name}}{% verbatim %} version ${{ needs.prepare.outputs.release_version }}{% endverbatim %} published
           body: See {% verbatim %}${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.prepare.outputs.release_version }}{% endverbatim %} for details.
           to: {% verbatim %}${{ secrets.MAIL_RECIPIENT }}{% endverbatim %}
           from: {% verbatim %}${{ secrets.MAIL_SENDER }}{% endverbatim %}
@@ -146,5 +146,5 @@ jobs:
         with:
           room_id: {% verbatim %}${{ secrets.MATRIX_ROOM_ID }}{% endverbatim %}
           access_token: {% verbatim %}${{ secrets.MATRIX_ACCESS_TOKEN }}{% endverbatim %}
-          message: {% verbatim %}${{ github.event.repository.name }} version [${{ needs.prepare.outputs.release_version }}](${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.prepare.outputs.release_version }}{% endverbatim %}) published
+          message: {{name}}{% verbatim %} version [${{ needs.prepare.outputs.release_version }}](${{ github.server_url }}/${{ github.repository }}/releases/tag/${{ needs.prepare.outputs.release_version }}{% endverbatim %}) published
           server: {% verbatim %}${{ secrets.MATRIX_SERVER }}{% endverbatim %}{% endif %}

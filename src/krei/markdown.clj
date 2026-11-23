@@ -88,10 +88,19 @@
                  :else (count others))]
         (vec (concat (subvec others 0 at) [part] (subvec others at)))))))
 
+(defn- crlf?
+  "Whether every line of `text` ends in CRLF."
+  [text]
+  (and (str/includes? text "\r\n") (not (re-find #"(?<!\r)\n" text))))
+
 (defn edit
   "`text` with the :header that `spec` names in place of the header of its
   preamble and each of its :sections set, one after the other. :header and
-  each section's :body are already rendered."
-  [text {:keys [header sections]}]
-  (let [parts (cond-> (parse text) header (with-header header))]
-    (joined (reduce with-section (vec parts) sections))))
+  each section's :body are already rendered. A file whose lines all end in
+  CRLF is edited as LF and written back with CRLF, so its headings are found
+  and the parts krei writes match the rest of it."
+  [text {:keys [header sections] :as spec}]
+  (if (crlf? text)
+    (str/replace (edit (str/replace text "\r\n" "\n") spec) "\n" "\r\n")
+    (let [parts (cond-> (parse text) header (with-header header))]
+      (joined (reduce with-section (vec parts) sections)))))

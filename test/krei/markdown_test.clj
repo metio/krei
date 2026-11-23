@@ -47,3 +47,10 @@
 (deftest a-set-section-is-stable
   (let [once (markdown/edit readme {:sections [{:heading "License" :body "New." :place :end}]})]
     (is (= once (markdown/edit once {:sections [{:heading "License" :body "New." :place :end}]})))))
+
+(deftest a-crlf-file-keeps-one-section-and-its-line-endings
+  (let [crlf (fn [s] (clojure.string/replace s "\n" "\r\n"))
+        text (crlf "# Title\n\nIntro.\n\n## License\n\nOld.\n\n## Notes\n\nKept.\n")]
+    (is (= (crlf "# Title\n\nIntro.\n\n## License\n\nNew.\n\n## Notes\n\nKept.\n")
+           (markdown/edit text {:sections [{:heading "License" :body "New."}]})))
+    (is (= text (markdown/edit text {})))))

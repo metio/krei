@@ -92,6 +92,19 @@
     (is (str/includes? text "eval \"$(breto env)\""))
     (is (not (str/includes? text "nix develop")))))
 
+(deftest contributing-follows-the-repository
+  (let [text #(get (render :contributing %) "CONTRIBUTING.md")]
+    (is (str/includes? (text devcontainers) "Participation is governed by our [Code of Conduct](CODE_OF_CONDUCT.md).\n"))
+    (is (str/includes? (text devcontainers) "The `main` branch always holds"))
+    (testing "no link to a code of conduct the repository does not get"
+      (let [without (text (dissoc devcontainers :conduct-email))]
+        (is (not (str/includes? without "CODE_OF_CONDUCT.md")))
+        (is (str/ends-with? without "```\n"))))
+    (testing "the default branch the repository has"
+      (let [trunk (text (assoc devcontainers :default-branch "trunk"))]
+        (is (str/includes? trunk "The `trunk` branch always holds"))
+        (is (str/includes? trunk "`git rebase --signoff trunk`."))))))
+
 (deftest static-files-carry-the-repository-header
   (doseq [rule [:editorconfig :gitattributes :contributing]
           [path text] (render rule devcontainers)]

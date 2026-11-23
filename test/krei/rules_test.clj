@@ -197,3 +197,16 @@
     (is (= "# T\n\n## Mirrors\n\n- m\n\n## License\n\nMIT\n" (String. ^bytes (:content (first changes)) "UTF-8")))
     (testing "an edit of a file nobody writes or holds plans nothing"
       (is (= [] (rules/changes [edit] dir {}))))))
+
+(deftest a-copy-reads-the-file-an-edit-leaves
+  (let [edit {:id :e :files {"A" {:replace [["v1" "v2"]]}}}
+        copy {:id :c :files {"B" {:copy "A"}}}
+        dir (repo {"A" "v1\n"})
+        changes (rules/changes [edit copy] dir {})]
+    (is (= [[:update "A" :e] [:create "B" :c]] (summary changes)))
+    (is (= ["v2\n" "v2\n"] (map #(String. ^bytes (:content %) "UTF-8") changes))))
+  (testing "an edit of the copy applies to what the copy wrote"
+    (let [copy {:id :c :files {"B" {:copy "A"}}}
+          edit {:id :e :files {"B" {:replace [["v1" "v3"]]}}}
+          dir (repo {"A" "v1\n"})]
+      (is (= ["v3\n"] (map #(String. ^bytes (:content %) "UTF-8") (rules/changes [copy edit] dir {})))))))

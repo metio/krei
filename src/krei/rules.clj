@@ -215,9 +215,9 @@
   "What the checkout at `dir` needs for `rules` to hold, given `facts`:
   [{:rule :path :action :content}] with :action one of :create, :update or
   :delete. Two rules disagreeing about one file is an error. A copy reads
-  what the other rules write in the same run, so it never lags a run behind,
-  and a replacement edits the file as they leave it, one replacing rule
-  after another."
+  what the other rules write and edit in the same run, so it never lags a
+  run behind, and a replacement edits the file as they leave it, one
+  replacing rule after another."
   [rules dir facts]
   (let [claims (map-indexed #(assoc %2 :order %1)
                             (for [rule rules
@@ -231,15 +231,20 @@
         ;; a skipped optional file writes nothing, so it hides nothing the
         ;; checkout holds at its path from the copies and edits after it
         pending (into {} (comp (remove #(= :skip (:content %))) (map (juxt :path :content))) written)
+        edit (fn [[done pending] claim]
+               (let [change (resolve pending claim)]
+                 (if (= :skip (:content change))
+                   [done pending]
+                   [(assoc done (:path change) change) (assoc pending (:path change) (:content change))])))
+        ;; edits run before the copies, which read the edited files, and
+        ;; edits of a copied file run after it, so neither lags a run behind
+        copied? (set (map :path (filter #(= :copy (kind %)) claims)))
+        edits (filter #(= :replace (kind %)) claims)
+        [edited-first pending] (reduce edit [{} pending] (remove (comp copied? :path) edits))
         copies (map #(resolve pending %) (filter #(= :copy (kind %)) claims))
         pending (into pending (map (juxt :path :content)) copies)
-        [replacements _] (reduce (fn [[done pending] claim]
-                                   (let [change (resolve pending claim)]
-                                     (if (= :skip (:content change))
-                                       [done pending]
-                                       [(assoc done (:path change) change) (assoc pending (:path change) (:content change))])))
-                                 [{} pending]
-                                 (filter #(= :replace (kind %)) claims))
+        [edited-last _] (reduce edit [{} pending] (filter (comp copied? :path) edits))
+        replacements (merge edited-first edited-last)
         first-claim (into {} (map (juxt key (comp :order first val))) (group-by :path claims))
         wanted (->> (concat (remove #(contains? replacements (:path %)) (concat written copies))
                             (map #(assoc % :order (first-claim (:path %))) (vals replacements)))

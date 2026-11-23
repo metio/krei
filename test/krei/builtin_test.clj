@@ -49,6 +49,14 @@
     (let [cff (get (render :citation (assoc devcontainers :keywords [] :authors [(dissoc seb :email)])) "CITATION.cff")]
       (is (str/ends-with? cff "  given-names: Sebastian\nurl: https://github.com/metio/devcontainers/\nlicense: 0BSD\n")))))
 
+(deftest citation-quotes-what-yaml-would-misread
+  (let [facts (assoc devcontainers :title "jaas: Jsonnet as a Service" :keywords ["yes" "1.0"]
+                     :authors [{:given-names "Ada\nB." :family-names "#Lovelace"}])
+        cff (clj-yaml.core/parse-string (get (render :citation facts) "CITATION.cff") :keywords false)]
+    (is (= "jaas: Jsonnet as a Service" (get cff "title")))
+    (is (= ["yes" "1.0"] (get cff "keywords")))
+    (is (= [{"family-names" "#Lovelace" "given-names" "Ada\nB."}] (get cff "authors")))))
+
 (deftest authors-lists-each-role-that-has-someone
   (is (= {"AUTHORS.md"
           (str "<!--\n"

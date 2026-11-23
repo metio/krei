@@ -159,13 +159,16 @@ jobs:
       - name: Append usage and verification footer
         env:
           NOTES: {% verbatim %}${{ steps.notes.outputs.file }}{% endverbatim %}
-        run: |
+          UPGRADING: {{controller-release.upgrading|json}}
+          VERIFYING: {{controller-release.verifying|json}}
+{% if controller-release.usage %}          USAGE: {{controller-release.usage|json}}
+{% endif %}        run: |
           cat >> "$NOTES" <<EOF
 
           ## Usage
 
           Pull the container from \`ghcr.io/metio/{{name}}:${VERSION}\`.
-          See **Upgrading** — {{controller-release.upgrading}} — for any required actions on your part.
+          See **Upgrading** — ${UPGRADING} — for any required actions on your part.
 
           Prebuilt binaries are attached below{% if controller-release.binaries %} for{% for b in controller-release.binaries %}{% if forloop.last %} and{% elif not forloop.first %},{% endif %} \`{{b.name}}\`{% endfor %}{% endif %}:
 
@@ -173,11 +176,11 @@ jobs:
           - \`windows\`: \`amd64\`, \`arm64\` (\`.zip\`)
           - \`darwin\` (macOS): \`amd64\`, \`arm64\`
 {% if controller-release.usage %}
-          {{controller-release.usage}}
+          ${USAGE}
 {% endif %}
           ## Verify
 
-          All release artifacts are signed with cosign keyless. See **Verifying releases** — {{controller-release.verifying}} — for the verification commands.
+          All release artifacts are signed with cosign keyless. See **Verifying releases** — ${VERIFYING} — for the verification commands.
           EOF
       - name: Create Release
         run: gh release create "$VERSION" --target "$GITHUB_SHA" --title "$VERSION" --notes-file "$NOTES" dist/*.tar.gz dist/*.zip "dist/$SUMS" "dist/$SUMS.bundle"

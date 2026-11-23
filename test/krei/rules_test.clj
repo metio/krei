@@ -82,7 +82,11 @@
       (fs/create-sym-link (fs/path dir "docs") (support/path "outside"))
       (is (thrown-with-msg? clojure.lang.ExceptionInfo #"leaves the repository"
                             (rules/apply! dir (rules/changes [{:id :docs :files {"docs/x.md" {:text "x"}}}] dir {}))))
-      (is (not (fs/exists? (support/path "outside" "x.md")))))))
+      (is (not (fs/exists? (support/path "outside" "x.md"))))
+      (testing "nothing is created behind the symlink before the refusal"
+        (is (thrown-with-msg? clojure.lang.ExceptionInfo #"leaves the repository"
+                              (rules/apply! dir [{:path "docs/new/x.md" :action :create :content (.getBytes "x")}])))
+        (is (not (fs/exists? (support/path "outside" "new"))))))))
 
 (deftest unknown-rules-and-file-specs-are-errors
   (is (thrown-with-msg? clojure.lang.ExceptionInfo #"no rule nope" (rules/load-rule [] :nope)))

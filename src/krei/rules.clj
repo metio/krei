@@ -270,6 +270,9 @@
   [dir changes]
   (doseq [{:keys [path action content]} changes
           :let [p (fs/path dir path)]]
+    ;; the nearest existing ancestor decides where create-dirs would write,
+    ;; so it is checked before anything is created
+    (inside! dir (first (filter fs/exists? (iterate fs/parent (fs/parent p)))))
     (fs/create-dirs (fs/parent p))
     (inside! dir (fs/parent p))
     (when (fs/exists? p {:nofollow-links true})

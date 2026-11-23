@@ -17,31 +17,25 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     outputs:
-      commit_count: {% verbatim %}${{ steps.commits.outputs.count }}{% endverbatim %}
+      needed: {% verbatim %}${{ steps.gate.outputs.needed }}{% endverbatim %}
       release_version: {% verbatim %}${{ steps.release.outputs.version }}{% endverbatim %}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
           persist-credentials: false
-      - id: last_release
-        name: Fetch Last Release
-        run: echo "tag=$(gh release view --json tagName --jq '.tagName')" >> "$GITHUB_OUTPUT"
-        env:
-          GH_TOKEN: {% verbatim %}${{ github.token }}{% endverbatim %}
-      - id: commits
-        name: Count Commits
-        run: echo "count=$(git rev-list --count "${LAST_RELEASE}..HEAD")" >> "$GITHUB_OUTPUT"
-        env:
-          LAST_RELEASE: {% verbatim %}${{ steps.last_release.outputs.tag }}{% endverbatim %}
+      - id: gate
+        uses: metio/ci/needs-release@{{ci.ref}} # {{ci.version}}
+        with:
+          paths: .
       - id: release
         name: Create Release Version
-        if: steps.commits.outputs.count > 0
+        if: steps.gate.outputs.needed == 'true'
         run: echo "version=$(date +'%Y.%-m.%-d')" >> "$GITHUB_OUTPUT"
   build:
     name: Build {% verbatim %}${{ matrix.goos }}/${{ matrix.goarch }}{% endverbatim %}
     needs: prepare
-    if: needs.prepare.outputs.commit_count > 0
+    if: needs.prepare.outputs.needed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: {% if terraform-provider-release.build-timeout-minutes %}{{terraform-provider-release.build-timeout-minutes}}{% else %}30{% endif %}
     strategy:

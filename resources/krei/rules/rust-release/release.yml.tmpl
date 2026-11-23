@@ -114,7 +114,10 @@ jobs:
           tool: cross
       - name: Set the release version
         shell: bash
-        run: sed -i -e "0,/authors/s/^version = .*/version = \"$VERSION\"/" Cargo.toml
+        run: |
+          sed -E '/^\[(workspace\.)?package\]/,/^\[/ s/^version = .*/version = "'"$VERSION"'"/' Cargo.toml > Cargo.toml.next
+          mv Cargo.toml.next Cargo.toml
+          grep -q "^version = \"$VERSION\"" Cargo.toml || { echo "::error::Cargo.toml has no version line in [package] or [workspace.package] to set"; exit 1; }
       - name: Build
         shell: bash
         run: |
@@ -168,7 +171,9 @@ jobs:
           GH_TOKEN: {% verbatim %}${{ github.token }}{% endverbatim %}{% if rust-release.crates-io %}
       - name: Publish to crates.io
         run: |
-          sed -i -e "0,/authors/s/^version = .*/version = \"$VERSION\"/" Cargo.toml
+          sed -E '/^\[(workspace\.)?package\]/,/^\[/ s/^version = .*/version = "'"$VERSION"'"/' Cargo.toml > Cargo.toml.next
+          mv Cargo.toml.next Cargo.toml
+          grep -q "^version = \"$VERSION\"" Cargo.toml || { echo "::error::Cargo.toml has no version line in [package] or [workspace.package] to set"; exit 1; }
           cargo publish --allow-dirty --jobs 1 --no-verify
         env:
           CARGO_REGISTRY_TOKEN: {% verbatim %}${{ secrets.CRATES_IO_TOKEN }}{% endverbatim %}

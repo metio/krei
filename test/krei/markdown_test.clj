@@ -54,3 +54,10 @@
     (is (= (crlf "# Title\n\nIntro.\n\n## License\n\nNew.\n\n## Notes\n\nKept.\n")
            (markdown/edit text {:sections [{:heading "License" :body "New."}]})))
     (is (= text (markdown/edit text {})))))
+
+(deftest a-section-body-holds-no-second-level-heading
+  (is (thrown-with-msg? clojure.lang.ExceptionInfo #"second-level heading"
+                        (markdown/edit "# T\n" {:sections [{:heading "H" :body "intro\n\n## Sub\n\ntext"}]})))
+  (let [spec {:sections [{:heading "H" :body "intro\n\n### Sub\n\n```\n## fenced\n```"}]}
+        once (markdown/edit "# T\n" spec)]
+    (is (= once (markdown/edit once spec)) "deeper headings and fenced lines are fine")))

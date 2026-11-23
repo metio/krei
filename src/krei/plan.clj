@@ -56,7 +56,7 @@
   (if (empty? changes)
     {:status :in-sync}
     (do (rules/apply! dir changes)
-        (git/commit! dir branch (str message "\n\n" (body changes)) signoff)
+        (git/commit! dir branch (str message "\n\n" (body changes)) signoff (map :path changes))
         (let [pushed? (git/publish! dir branch)
               {:keys [supported? ensure!]} *forge*]
           (if (supported? repository)

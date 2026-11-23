@@ -57,11 +57,13 @@
     (when (zero? exit) (str/trim out))))
 
 (defn commit!
-  "Commits every change in the checkout at `dir` onto `branch`, started from
-  the commit checked out."
-  [dir branch message signoff]
+  "Commits the files `paths` of the checkout at `dir` onto `branch`, started
+  from the commit checked out. A path the repository's .gitignore ignores is
+  staged all the same, since krei planned it and compares the working tree,
+  ignored files included."
+  [dir branch message signoff paths]
   (git! dir "checkout" "--quiet" "-B" branch)
-  (git! dir "add" "--all")
+  (apply git! dir "add" "--all" "--force" "--" paths)
   (apply git! dir "commit" "--quiet" "--message" message (when signoff ["--signoff"])))
 
 (defn publish!

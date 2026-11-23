@@ -219,6 +219,10 @@
     (is (str/includes? (release {}) "on:\n  schedule:\n    - cron: 7 3 * * 1\n  workflow_dispatch:\n"))
     (is (str/includes? (release {}) "binary=\"terraform-provider-git_v${VERSION}\"\n"))
     (is (str/includes? (release {}) "metio/ci/breto@abc123 # 2026.11.1\n"))
+    (testing "the first release counts as needed, and a failed check fails the run"
+      (is (str/includes? (release {}) "      - id: gate\n        uses: metio/ci/needs-release@abc123 # 2026.11.1\n        with:\n          paths: .\n"))
+      (is (str/includes? (release {}) "    if: needs.prepare.outputs.needed == 'true'\n"))
+      (is (not (str/includes? (release {}) "gh release view"))))
     (is (= 13 (count (re-seq #"- goos: " (release {})))))
     (is (str/includes? (release {}) "          - goos: windows\n            goarch: arm64\n"))
     (is (not (str/includes? (release {}) "          - goos: windows\n            goarch: arm\n")))

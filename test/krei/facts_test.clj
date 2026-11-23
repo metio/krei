@@ -12,7 +12,7 @@
 (deftest detect-reads-the-only-license
   (fs/create-dirs (support/path "LICENSES"))
   (spit (support/path "LICENSES" "0BSD.txt") "text")
-  (is (= {:license "0BSD" :licenses ["0BSD"]} (facts/detect support/*root*)))
+  (is (= {:licenses ["0BSD"]} (facts/detect support/*root*)))
   (testing "several licenses leave the fact unset"
     (spit (support/path "LICENSES" "MIT.txt") "text")
     (is (= {:licenses ["0BSD" "MIT"]} (facts/detect support/*root*)))))
@@ -137,3 +137,15 @@
         facts (facts/facts config {:id "github.com/metio/aro" :name "aro"} support/*root*)]
     (is (= {:words ["edn"] :exclude ["LICENSES/"]} (:typos facts)))
     (is (= "Aro" (:title facts)))))
+
+(deftest the-license-follows-the-configured-licenses
+  (let [repository {:id "github.com/metio/aro" :name "aro"}
+        config {:facts {"*" {:licenses ["0BSD"]}}}]
+    (is (= "0BSD" (:license (facts/facts config repository support/*root*)))
+        "a new repository without LICENSES/ gets its license in the first run")
+    (fs/create-dirs (support/path "LICENSES"))
+    (spit (support/path "LICENSES" "MIT.txt") "text")
+    (is (= "0BSD" (:license (facts/facts config repository support/*root*)))
+        "a stale file in LICENSES/ does not outrank the configured list")
+    (is (nil? (:license (facts/facts {:facts {"*" {:licenses ["0BSD" "MIT"]}}} repository support/*root*)))
+        "several configured licenses leave the fact unset")))

@@ -46,8 +46,13 @@
 (defn load-rules [{:keys [rules rule-dirs]}]
   (mapv #(load-rule rule-dirs %) rules))
 
-(defn applies? [{:keys [id when unless]} facts]
-  (and (every? #(some? (get facts %)) when)
+(defn applies?
+  "Whether the rule holds for `facts`: every fact of :when is set, none of
+  :unless is, and the repository does not skip it. A fact is set when it
+  has a value other than false, so {:maven-verify false} opts out on both
+  sides."
+  [{:keys [id when unless]} facts]
+  (and (every? #(get facts %) when)
        (not-any? #(get facts %) unless)
        (not (contains? (set (:skip facts)) id))))
 

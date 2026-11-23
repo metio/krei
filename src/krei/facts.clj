@@ -43,15 +43,13 @@
 
 (defn detect
   "Facts read from the checkout at `dir`: each of `markers` is true when one
-  of its globs matches a file. :licenses lists the identifiers of the
-  licenses in LICENSES/, and :license is the only one, absent when there are
-  several or none."
+  of its globs matches a file, and :licenses lists the identifiers of the
+  licenses in LICENSES/."
   [dir]
   (let [licenses (when (fs/directory? (fs/path dir "LICENSES"))
                    (sort (map #(str (fs/strip-ext (fs/file-name %))) (fs/glob (fs/path dir "LICENSES") "*.txt"))))]
     (cond-> (into {} (for [[fact patterns] markers :when (some #(holds? dir %) patterns)] [fact true]))
-      (seq licenses) (assoc :licenses (vec licenses))
-      (= 1 (count licenses)) (assoc :license (first licenses)))))
+      (seq licenses) (assoc :licenses (vec licenses)))))
 
 (defn- specificity [pattern]
   (count (str/replace pattern #"[*?\[\]{}]" "")))
@@ -136,9 +134,16 @@
   "Every fact about `repository`, checked out at `dir`, under `config`, whose
   :calendar holds the release slots."
   [config repository dir]
-  (-> (deep-merge (dissoc repository :url) (detect dir) (configured (:facts config) repository) (own dir))
-      (scheduled (:calendar config))
-      derive-facts))
+  ;; :license is the one license the checkout, the config and .krei.edn
+  ;; agree on after merging, so a configured :licenses outranks a stale file
+  ;; in LICENSES/; the inventory's guess stands only when they name none
+  (let [stated (deep-merge (detect dir) (configured (:facts config) repository) (own dir))
+        licenses (:licenses stated)
+        license (or (:license stated) (when (= 1 (count licenses)) (first licenses)))]
+    (-> (deep-merge (dissoc repository :url) stated)
+        (cond-> license (assoc :license license))
+        (scheduled (:calendar config))
+        derive-facts)))
 
 (defn- plain
   "`x` with every keyword value turned into its name, so templates print

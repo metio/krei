@@ -210,3 +210,15 @@
           edit {:id :e :files {"B" {:replace [["v1" "v3"]]}}}
           dir (repo {"A" "v1\n"})]
       (is (= ["v3\n"] (map #(String. ^bytes (:content %) "UTF-8") (rules/changes [copy edit] dir {})))))))
+
+(deftest an-edit-keeps-a-file-that-is-no-utf-8-as-it-is
+  (let [dir (repo {})
+        latin-1 (byte-array (map unchecked-byte [35 32 84 10 99 97 102 0xE9 10]))
+        _ (fs/write-bytes (fs/path dir "README.md") latin-1)
+        unchanged {:id :unchanged :files {"README.md" {:replace [["absent" "x"]]}}}
+        changed {:id :changed :files {"README.md" {:replace [["T" "U"]]}}}]
+    (testing "an edit that changes nothing leaves the bytes alone"
+      (is (= [] (rules/changes [unchanged] dir {}))))
+    (testing "an edit that changes the text refuses to re-encode the file"
+      (is (thrown-with-msg? clojure.lang.ExceptionInfo #"README.md is no valid UTF-8"
+                            (rules/changes [changed] dir {}))))))

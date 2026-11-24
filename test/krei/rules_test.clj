@@ -40,6 +40,15 @@
     (is (not (fs/exists? (fs/path dir ".golangci.yml"))))
     (is (= [] (rules/changes [rule] dir {})))))
 
+(deftest an-update-keeps-the-mode-of-the-file
+  (let [rule {:id :r :files {"run.sh" {:replace [["old" "new"]]}}}
+        dir (repo {"run.sh" "echo old\n"})
+        script (fs/path dir "run.sh")]
+    (fs/set-posix-file-permissions script "rwxr-xr-x")
+    (rules/apply! dir (rules/changes [rule] dir {}))
+    (is (= "echo new\n" (slurp (str script))))
+    (is (= "rwxr-xr-x" (fs/posix->str (fs/posix-file-permissions script))))))
+
 (deftest rule-dirs-take-precedence-and-hold-templates
   (fs/create-dirs (support/path "rules"))
   (spit (support/path "rules" "license.edn") (pr-str {:files {"NOTICE" {:template "notice.txt"}}}))
@@ -238,3 +247,4 @@
     (rules/apply! dir (rules/changes [rule] dir {}))
     (is (= "echo new\n" (slurp (str script))))
     (is (= "rwxr-xr-x" (fs/posix->str (fs/posix-file-permissions script))))))
+

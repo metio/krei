@@ -150,6 +150,13 @@
   (let [rule {:id :moved :files {"action.yml" {:replace [["a" "b"]]}}}]
     (is (empty? (rules/changes [rule] (repo {"README.md" "a"}) {})))))
 
+(deftest a-replacement-writes-facts-literally-and-expands-only-its-own-groups
+  (let [rule {:id :r :files {"run.sh" {:replace [["x (n) y" "x {{v}} $1 \\$1 y"]]}}}
+        content #(String. ^bytes (:content (first (rules/changes [rule] (repo {"run.sh" "x n y\n"}) {:v %}))) "UTF-8")]
+    (is (= "x a$b n $1 y\n" (content "a$b")))
+    (is (= "x $1 n $1 y\n" (content "$1")))
+    (is (= "x a\\b n $1 y\n" (content "a\\b")))))
+
 (deftest replacements-edit-what-other-rules-write-in-the-same-run
   (let [writer {:id :writer :files {"ci.yml" {:text "uses: old\nuses: old\n"}}}
         rule {:id :moved :files {"ci.yml" {:replace [["old" "new"]]}}}
@@ -245,3 +252,4 @@
     (is (= "x a$b n $1 y\n" (content "a$b")))
     (is (= "x $1 n $1 y\n" (content "$1")))
     (is (= "x a\\b n $1 y\n" (content "a\\b")))))
+

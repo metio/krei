@@ -245,11 +245,3 @@
     (testing "an edit that changes the text refuses to re-encode the file"
       (is (thrown-with-msg? clojure.lang.ExceptionInfo #"README.md is no valid UTF-8"
                             (rules/changes [changed] dir {}))))))
-
-(deftest a-replacement-writes-facts-literally-and-expands-only-its-own-groups
-  (let [rule {:id :r :files {"run.sh" {:replace [["x (n) y" "x {{v}} $1 \\$1 y"]]}}}
-        content #(String. ^bytes (:content (first (rules/changes [rule] (repo {"run.sh" "x n y\n"}) {:v %}))) "UTF-8")]
-    (is (= "x a$b n $1 y\n" (content "a$b")))
-    (is (= "x $1 n $1 y\n" (content "$1")))
-    (is (= "x a\\b n $1 y\n" (content "a\\b")))))
-

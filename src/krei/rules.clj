@@ -151,12 +151,46 @@
             (throw (ex-info (str path " is no valid UTF-8, so it cannot be edited") {:krei/problem :rule})))))
       :skip)))
 
+(defn- group-refs
+  "`replacement` with each group reference ($1, ${name}) swapped for a marker
+  that rendering leaves alone, and the references in marker order. As in
+  java.util.regex, a $ takes the most digits that still name a group of
+  `re`, and a backslash makes the next character literal."
+  [replacement re]
+  (let [groups (.groupCount (re-matcher re ""))
+        refs (atom [])
+        mark (fn [ref] (swap! refs conj ref) (str \uE000 (dec (count @refs)) \uE001))
+        marked (str/replace replacement #"\\(.)|\$(\d+)|\$\{([A-Za-z][A-Za-z0-9]*)\}"
+                            (fn [[_ literal digits named]]
+                              (cond
+                                literal literal
+                                named (mark named)
+                                :else (let [n (or (last (filter #(<= (parse-long %) groups)
+                                                                (map #(subs digits 0 %) (range 1 (inc (count digits))))))
+                                                  (subs digits 0 1))]
+                                        (str (mark (parse-long n)) (subs digits (count n)))))))]
+    [marked @refs]))
+
 (defn- replaced
   "`text` with each [pattern replacement] of `replacements` applied to every
-  match; a replacement refers to the groups of its pattern as $1, $2 and so on."
+  match; a replacement refers to the groups of its pattern as $1, $2 and so on.
+  Only the replacement as the rule writes it refers to groups: the facts it
+  renders are written as they are, whatever $ or \\ they hold."
   [text replacements facts]
   (reduce (fn [text [pattern replacement]]
-            (str/replace text (re-pattern pattern) (facts/render replacement facts)))
+            (let [re (re-pattern pattern)
+                  [marked refs] (group-refs replacement re)
+                  rendered (facts/render marked facts)
+                  m (re-matcher re text)
+                  out (StringBuilder.)]
+              (while (.find m)
+                (.appendReplacement m out (java.util.regex.Matcher/quoteReplacement
+                                           (str/replace rendered #"\uE000(\d+)\uE001"
+                                                        (fn [[_ i]]
+                                                          (let [ref (nth refs (parse-long i))]
+                                                            (or (if (string? ref) (.group m ^String ref) (.group m (int ref))) "")))))))
+              (.appendTail m out)
+              (str out)))
           text
           replacements))
 

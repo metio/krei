@@ -122,13 +122,33 @@
     (when (fs/exists? p {:nofollow-links true})
       (if (checkout-file? dir p) (fs/read-all-bytes p) :other))))
 
+(defn- utf-8
+  "The text of `bytes`, or nil when they are no valid UTF-8."
+  [^bytes bytes]
+  (try
+    (str (.decode (-> java.nio.charset.StandardCharsets/UTF_8
+                      .newDecoder
+                      (.onMalformedInput java.nio.charset.CodingErrorAction/REPORT)
+                      (.onUnmappableCharacter java.nio.charset.CodingErrorAction/REPORT))
+                  (java.nio.ByteBuffer/wrap bytes)))
+    (catch java.nio.charset.CharacterCodingException _ nil)))
+
 (defn- edited
   "The file `path` as the other rules of the run leave it, or as the
-  checkout at `dir` holds it, with `f` applied to its text."
+  checkout at `dir` holds it, with `f` applied to its text. A file that is
+  no valid UTF-8 keeps its bytes when `f` changes nothing, and is an error
+  otherwise, since writing the text back would replace every undecodable
+  byte with U+FFFD."
   [dir path f pending]
   (let [before (get pending path (current dir path))]
     (if (bytes? before)
-      (.getBytes ^String (f (String. ^bytes before "UTF-8")) "UTF-8")
+      (if-let [text (utf-8 before)]
+        (let [after (f text)]
+          (if (= text after) before (.getBytes ^String after "UTF-8")))
+        (let [text (String. ^bytes before "UTF-8")]
+          (if (= text (f text))
+            before
+            (throw (ex-info (str path " is no valid UTF-8, so it cannot be edited") {:krei/problem :rule})))))
       :skip)))
 
 (defn- replaced

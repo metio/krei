@@ -305,10 +305,15 @@
     (inside! dir (first (filter fs/exists? (iterate fs/parent (fs/parent p)))))
     (fs/create-dirs (fs/parent p))
     (inside! dir (fs/parent p))
-    (when (fs/exists? p {:nofollow-links true})
-      (fs/delete-tree p))
-    (when-not (= :delete action)
-      (fs/write-bytes p content))))
+    ;; the path is deleted rather than written through, so a symbolic link
+    ;; there is replaced instead of followed; a regular file keeps its mode
+    (let [mode (when (fs/regular-file? p {:nofollow-links true})
+                 (fs/posix-file-permissions p {:nofollow-links true}))]
+      (when (fs/exists? p {:nofollow-links true})
+        (fs/delete-tree p))
+      (when-not (= :delete action)
+        (fs/write-bytes p content)
+        (when mode (fs/set-posix-file-permissions p mode))))))
 
 (defn- first-match
   "The 1-based line of the first match of `pattern` in `text` whose first

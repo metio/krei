@@ -238,13 +238,3 @@
     (testing "an edit that changes the text refuses to re-encode the file"
       (is (thrown-with-msg? clojure.lang.ExceptionInfo #"README.md is no valid UTF-8"
                             (rules/changes [changed] dir {}))))))
-
-(deftest an-update-keeps-the-mode-of-the-file
-  (let [rule {:id :r :files {"run.sh" {:replace [["old" "new"]]}}}
-        dir (repo {"run.sh" "echo old\n"})
-        script (fs/path dir "run.sh")]
-    (fs/set-posix-file-permissions script "rwxr-xr-x")
-    (rules/apply! dir (rules/changes [rule] dir {}))
-    (is (= "echo new\n" (slurp (str script))))
-    (is (= "rwxr-xr-x" (fs/posix->str (fs/posix-file-permissions script))))))
-

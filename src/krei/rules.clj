@@ -262,6 +262,13 @@
         edits (filter #(= :replace (kind %)) claims)
         [edited-first pending] (reduce edit [{} pending] (remove (comp copied? :path) edits))
         copies (map #(resolve pending %) (filter #(= :copy (kind %)) claims))
+        ;; whole-file writes and copies are compared before any edit of
+        ;; their path replaces them, since an edit resolves against only one
+        ;; of them
+        _ (doseq [[path claims] (group-by :path (remove #(= :skip (:content %)) (concat written copies)))
+                  :when (< 1 (count (distinct (map (comp comparable :content) claims))))]
+            (throw (ex-info (str "the rules " (str/join ", " (map (comp name :rule) (sort-by :order claims))) " disagree about " path)
+                            {:krei/problem :rule})))
         pending (into pending (map (juxt :path :content)) copies)
         [edited-last _] (reduce edit [{} pending] (filter (comp copied? :path) edits))
         replacements (merge edited-first edited-last)
@@ -272,10 +279,6 @@
                     (sort-by :order)
                     (map #(dissoc % :order)))
         by-path (group-by :path wanted)]
-    (doseq [[path claims] by-path
-            :when (< 1 (count (distinct (map (comp comparable :content) claims))))]
-      (throw (ex-info (str "the rules " (str/join ", " (map (comp name :rule) claims)) " disagree about " path)
-                      {:krei/problem :rule})))
     (->> (distinct (map :path wanted))
          (map #(first (by-path %)))
          (keep (fn [{:keys [path content] :as change}]

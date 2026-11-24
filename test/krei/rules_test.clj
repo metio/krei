@@ -66,7 +66,14 @@
         dir (repo {})]
     (is (thrown-with-msg? clojure.lang.ExceptionInfo #"disagree about README.md"
                           (rules/changes [a b] dir {})))
-    (is (= [[:create "README.md" :a]] (summary (rules/changes [a same] dir {}))))))
+    (is (= [[:create "README.md" :a]] (summary (rules/changes [a same] dir {}))))
+    (testing "also when a third rule edits the file"
+      (let [edit {:id :edit :files {"README.md" {:replace [["zzz" "q"]]}}}]
+        (is (thrown-with-msg? clojure.lang.ExceptionInfo #"the rules a, b disagree about README.md"
+                              (rules/changes [a b edit] dir {})))
+        (is (thrown-with-msg? clojure.lang.ExceptionInfo #"the rules b, a disagree about README.md"
+                              (rules/changes [b a edit] dir {})))
+        (is (= [[:create "README.md" :edit]] (summary (rules/changes [a same edit] dir {}))))))))
 
 (deftest paths-stay-inside-the-repository
   (let [dir (repo {})]

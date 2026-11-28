@@ -63,6 +63,19 @@
   (is (= "{\n  \"$schema\": \"s\",\n  \"extends\": [\n    \"a\"\n  ]\n}"
          (facts/render "{{r|json}}" {:r {"extends" ["a"] "$schema" "s"}}))))
 
+(deftest json-keeps-non-ascii-and-hidden-code-points-as-they-are
+  (let [zwsp (str (char 0x200b))]
+    (is (= (str "{\n  \"t\": \"\u00e9" zwsp "\",\n  \"u\": [ ]\n}")
+           (facts/render "{{r|json}}" {:r {"u" [] "t" (str "\u00e9" zwsp)}})))))
+
+(deftest yaml-scalar-quotes-a-line-break-as-a-json-string
+  (is (= "plain" (facts/yaml-scalar "plain")))
+  (is (= "'a: b'" (facts/yaml-scalar "a: b")))
+  (is (= "\"a\\nb\"" (facts/yaml-scalar "a\nb")))
+  (testing "a hidden code point stays raw inside the quoted string"
+    (let [zwsp (str (char 0x200b))]
+      (is (= (str "\"a" zwsp "\\nb\"") (facts/yaml-scalar (str "a" zwsp "\nb")))))))
+
 (deftest words-splits-on-whitespace-and-url-turns-an-id-into-its-page
   (is (= "[a][b]" (facts/render "{% for w in s|words %}[{{w}}]{% endfor %}" {:s " a \n b  "})))
   (is (= "" (facts/render "{% for w in s|words %}[{{w}}]{% endfor %}" {:s "  "})))

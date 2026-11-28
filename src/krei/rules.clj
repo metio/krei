@@ -353,24 +353,21 @@
     (inside! dir (first (filter fs/exists? (iterate fs/parent (fs/parent p)))))
     (fs/create-dirs (fs/parent p))
     (inside! dir (fs/parent p))
-    (let [mode (when (fs/regular-file? p {:nofollow-links true})
-                 (fs/posix-file-permissions p {:nofollow-links true}))]
-      (cond
-        (= :delete action)
-        (when (fs/exists? p {:nofollow-links true})
-          (fs/delete-tree p))
+    (cond
+      (= :delete action)
+      (when (fs/exists? p {:nofollow-links true})
+        (fs/delete-tree p))
 
-        :else
-        ;; the rename of atomic-write! replaces a regular file or a symbolic
-        ;; link at the path without following the link, so the path always
-        ;; holds either the old file or the new one; a directory cannot be
-        ;; renamed over and is removed first
-        (do (when (fs/directory? p {:nofollow-links true})
-              (fs/delete-tree p))
-            (bfs/atomic-write! p content)
-            ;; a regular file keeps its mode, which the new file takes once
-            ;; it is in place, since atomic-write! creates it with the umask
-            (when mode (fs/set-posix-file-permissions p mode)))))))
+      :else
+      ;; the rename of atomic-write! replaces a regular file or a symbolic
+      ;; link at the path without following the link, so the path always
+      ;; holds either the old file or the new one; a directory cannot be
+      ;; renamed over and is removed first. A regular file's mode is set on
+      ;; the staged file before the rename, so an executable script never
+      ;; shows without its executable bits.
+      (do (when (fs/directory? p {:nofollow-links true})
+            (fs/delete-tree p))
+          (bfs/atomic-write! p content {:mode :keep})))))
 
 (defn- first-match
   "The 1-based line of the first match of `pattern` in `text` whose first

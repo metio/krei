@@ -53,3 +53,20 @@
       (is (= :forge (:krei/problem (ex-data e))))
       (is (= "gh: not logged in" (:reason (ex-data e))))
       (is (str/includes? (ex-message e) "run gh auth login")))))
+
+(deftest a-gh-that-overruns-its-deadline-is-a-forge-problem
+  (with-redefs [forge/timeout-ms 300]
+    (binding [forge/*program* (stub! "sleep 30")]
+      (let [started (System/nanoTime)
+            e (try (forge/open-pull-request repository "krei/sync") nil
+                   (catch clojure.lang.ExceptionInfo e e))]
+        (is (= :forge (:krei/problem (ex-data e))))
+        (is (= "gh did not finish within 300 ms" (:reason (ex-data e))))
+        (is (< (- (System/nanoTime) started) 10000000000) "the stand-in was killed, not waited for")))))
+
+(deftest a-missing-gh-is-a-forge-problem
+  (binding [forge/*program* (support/path "no-such-gh")]
+    (let [e (try (forge/open-pull-request repository "krei/sync") nil
+                 (catch clojure.lang.ExceptionInfo e e))]
+      (is (= :forge (:krei/problem (ex-data e))))
+      (is (str/starts-with? (:reason (ex-data e)) "could not run the program")))))

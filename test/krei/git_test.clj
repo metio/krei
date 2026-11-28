@@ -30,3 +30,15 @@
 (deftest git-sees-the-environment-krei-adds
   (binding [git/*environment* (assoc git/*environment* "GIT_AUTHOR_NAME" "Ada")]
     (is (str/starts-with? (git/git! support/*root* "var" "GIT_AUTHOR_IDENT") "Ada "))))
+
+(deftest git-reads-a-closed-stdin
+  (is (= "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+         (git/git! support/*root* "hash-object" "--stdin"))
+      "the hash of no bytes: git reads end of file at once instead of waiting"))
+
+(deftest a-git-that-cannot-start-is-a-git-problem
+  (let [missing (support/path "no-such-dir")]
+    (is (= 127 (:exit (git/git missing "status"))))
+    (let [e (try (git/git! missing "status") nil (catch clojure.lang.ExceptionInfo e e))]
+      (is (= :git (:krei/problem (ex-data e))))
+      (is (str/includes? (ex-message e) "could not run the program")))))

@@ -267,9 +267,12 @@
         dir (repo {})
         link (fs/path dir "NOTICE")]
     (spit outside "kept\n")
+    (fs/set-posix-file-permissions outside "rwxr-xr-x")
     (fs/create-sym-link link outside)
     (rules/apply! dir [{:path "NOTICE" :action :update :content (.getBytes "new\n" "UTF-8")}])
     (is (not (fs/sym-link? link)))
+    (is (not (contains? (fs/posix-file-permissions link) java.nio.file.attribute.PosixFilePermission/OWNER_EXECUTE))
+        "the new file takes the umask's mode, not the mode of the link's target")
     (is (= "new\n" (slurp (str link))))
     (is (= "kept\n" (slurp outside)))))
 

@@ -4,7 +4,7 @@
 (ns krei.forge
   "Pull requests for the branch krei pushes, opened with the gh command
   line on GitHub hosts."
-  (:require [babashka.process :as process]
+  (:require [briko.process :as process]
             [clojure.string :as str]))
 
 (defn supported? [{:keys [host]}]
@@ -14,8 +14,17 @@
   "The gh command line krei runs."
   "gh")
 
+(def timeout-ms
+  "How long one gh call may take: two minutes. Each call is one or two
+  requests to the GitHub API; a stalled one becomes a forge problem for that
+  repository, which leaves its branch pushed, instead of holding the whole
+  run."
+  120000)
+
 (defn- gh! [& args]
-  (let [{:keys [exit out err]} (apply process/shell {:out :string :err :string :continue true} *program* args)]
+  (let [{:keys [exit out err timed-out?]}
+        (process/run (into [*program*] args) {:timeout-ms timeout-ms})
+        err (if timed-out? (str "gh did not finish within " timeout-ms " ms\n" err) err)]
     (when-not (zero? exit)
       (throw (ex-info (str "gh " (str/join " " args) ": " (str/trim err))
                       {:krei/problem :forge :reason (first (str/split-lines (str/trim err)))})))

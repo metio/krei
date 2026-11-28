@@ -2,7 +2,8 @@
 ;; SPDX-License-Identifier: CC0-1.0
 
 (ns krei.config-test
-  (:require [clojure.test :refer [deftest is testing use-fixtures]]
+  (:require [babashka.fs :as fs]
+            [clojure.test :refer [deftest is testing use-fixtures]]
             [krei.config :as config]
             [krei.support :as support]))
 
@@ -49,11 +50,24 @@
   (let [opts (environment {"HOME" "/home/ada"})]
     (is (= (config/defaults opts) (config/load-config (support/path "missing.edn") opts)))))
 
+(deftest a-config-without-a-form-means-all-defaults
+  (let [file (support/path "config.edn")
+        opts (environment {"HOME" "/home/ada"})]
+    (doseq [content ["" "  \n\t\n" ";; nothing configured yet\n" "#_{:rules []}\n"]]
+      (spit file content)
+      (is (= (config/defaults opts) (config/load-config file opts)) (pr-str content)))))
+
+(deftest a-config-link-to-nothing-means-all-defaults
+  (let [file (support/path "config.edn")
+        opts (environment {"HOME" "/home/ada"})]
+    (fs/create-sym-link file (support/path "missing.edn"))
+    (is (= (config/defaults opts) (config/load-config file opts)))
+    (spit (support/path "missing.edn") "{:rules []}")
+    (is (= [] (:rules (config/load-config file opts))) "a link to a config is read through")))
+
 (deftest a-config-holds-exactly-one-map-within-the-bounds
   (let [file (support/path "config.edn")
         opts (environment {"HOME" "/home/ada"})]
-    (spit file "")
-    (is (= :briko.edn/no-form (refusal #(config/load-config file opts))) "an empty file holds no form")
     (spit file "[:license]")
     (is (= :briko.edn/unexpected (refusal #(config/load-config file opts))))
     (spit file "{:rules [:license]} {:rules []}")

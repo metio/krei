@@ -5,7 +5,7 @@
   "Cache clones of managed repositories, and the branch krei proposes its
   changes on. Everything goes through the git command line."
   (:require [babashka.fs :as fs]
-            [babashka.process :as process]
+            [briko.process :as process]
             [clojure.string :as str]))
 
 (def ^:dynamic *environment*
@@ -17,11 +17,26 @@
            (str/blank? (System/getenv "GIT_SSH_COMMAND")) (assoc "GIT_SSH_COMMAND" "ssh -o BatchMode=yes"))
          *environment*))
 
+(def run-options
+  "How every git call runs. Clone, fetch and push take as long as the
+  repository and the network need, and checkout and clean as long as the
+  working tree needs, so no deadline fits them all: a fixed one would turn
+  a large repository's first clone into a failure. A prompt cannot hold a
+  call, since stdin is closed, GIT_TERMINAL_PROMPT is 0 and ssh runs in
+  batch mode. The output krei reads is a commit id or a short status line;
+  of the error, its last 64 KiB are kept, where git puts the fatal line."
+  {:timeout-ms :none
+   :max-out-bytes 1048576
+   :max-err-bytes 65536
+   :err-keep :tail})
+
 (defn git
-  "Runs git in `dir` with `args` and returns {:exit :out :err}."
+  "Runs git in `dir` with `args` and returns {:exit :out :err}. A git that
+  cannot be started answers exit 127 with the reason in :err."
   [dir & args]
-  (apply process/shell {:dir (str dir) :out :string :err :string :continue true :extra-env (environment)}
-         "git" (map str args)))
+  (select-keys (process/run (into ["git"] (map str) args)
+                            (assoc run-options :dir (str dir) :extra-env (environment)))
+               [:exit :out :err]))
 
 (defn git!
   "Runs git in `dir` with `args` and returns its trimmed output, throwing on

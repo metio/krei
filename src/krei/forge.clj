@@ -10,8 +10,12 @@
 (defn supported? [{:keys [host]}]
   (= "github.com" host))
 
+(def ^:dynamic *program*
+  "The gh command line krei runs."
+  "gh")
+
 (defn- gh! [& args]
-  (let [{:keys [exit out err]} (apply process/shell {:out :string :err :string :continue true} "gh" args)]
+  (let [{:keys [exit out err]} (apply process/shell {:out :string :err :string :continue true} *program* args)]
     (when-not (zero? exit)
       (throw (ex-info (str "gh " (str/join " " args) ": " (str/trim err))
                       {:krei/problem :forge :reason (first (str/split-lines (str/trim err)))})))

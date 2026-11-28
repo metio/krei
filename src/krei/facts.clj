@@ -10,7 +10,7 @@
   Facts derived from others fill in last, for whatever none of the sources
   set."
   (:require [babashka.fs :as fs]
-            [clojure.edn :as edn]
+            [briko.edn :as edn]
             [clojure.string :as str]
             [cheshire.core :as json]
             [clj-yaml.core :as yaml]
@@ -108,15 +108,25 @@
            (into {} (for [[role fact] roles] [fact (vec (get by-role role))]))
            facts)))
 
+(def max-own-bytes
+  "The largest .krei.edn krei reads, in UTF-8 bytes: 64 KiB. Its facts are a
+  repository's exceptions; a contributor's commit cannot make krei read more."
+  65536)
+
 (defn own
   "The facts the repository checked out at `dir` states about itself in
-  .krei.edn, so its exceptions live next to the files they shape."
+  .krei.edn, so its exceptions live next to the files they shape. A file
+  holding no form, only comments, states nothing."
   [dir]
   (let [p (fs/path dir ".krei.edn")]
     (when (fs/regular-file? p)
-      (let [x (try (edn/read-string (slurp (str p)))
-                   (catch Exception e
-                     (throw (ex-info (str ".krei.edn is no valid EDN: " (ex-message e)) {:krei/problem :fact} e))))]
+      (let [forms (try (edn/read-file (str p) {:max-bytes max-own-bytes :one-form? false})
+                       (catch clojure.lang.ExceptionInfo e
+                         (throw (ex-info (str ".krei.edn is no valid EDN: " (ex-message e)) {:krei/problem :fact} e))))
+            x (case (count forms)
+                0 nil
+                1 (first forms)
+                (throw (ex-info ".krei.edn holds more than one form" {:krei/problem :fact})))]
         (when-not (or (nil? x) (map? x))
           (throw (ex-info ".krei.edn holds no map" {:krei/problem :fact})))
         x))))

@@ -9,10 +9,10 @@
   repositories come and go. A slot another repository of the cadence holds
   passes on to the next free one, and a repository with :after takes the
   first free slot after those of the repositories it names."
-  (:require [clojure.string :as str]
+  (:require [briko.digest :as digest]
+            [clojure.string :as str]
             [krei.facts :as facts])
-  (:import (java.security MessageDigest)
-           (java.util Arrays)))
+  (:import (java.util Arrays)))
 
 (def ^:private periods
   "The slots of each scheduled cadence. Months count 28 days, so that every
@@ -27,7 +27,7 @@
 (defn- hashed
   "A number below `n` from the bytes `from` to `from`+8 of the SHA-256 of `id`."
   [id from n]
-  (let [digest (.digest (MessageDigest/getInstance "SHA-256") (.getBytes ^String id "UTF-8"))]
+  (let [digest (digest/sha256 id)]
     (.intValue (.mod (BigInteger. 1 (Arrays/copyOfRange digest (int from) (int (+ from 8))))
                      (BigInteger/valueOf n)))))
 

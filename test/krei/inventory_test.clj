@@ -9,7 +9,8 @@
 (use-fixtures :each support/with-root)
 
 (defn- record [path & {:as more}]
-  (merge {:host "github.com" :path path :name (last (re-seq #"[^/]+" path)) :default-branch "main" :archived false :fork false}
+  (merge {:host "github.com" :path path :name (last (re-seq #"[^/]+" path)) :namespace (first (re-seq #"[^/]+" path))
+          :default-branch "main" :archived false :fork false :topics []}
          more))
 
 (deftest read-inventory-flattens-the-sources
@@ -23,6 +24,29 @@
 (deftest missing-inventory-is-an-error
   (is (thrown-with-msg? clojure.lang.ExceptionInfo #"aro fetch"
                         (inventory/read-inventory (support/path "missing.edn")))))
+
+(deftest missing-inventory-keeps-the-hint-and-the-cause
+  (let [e (try (inventory/read-inventory (support/path "missing.edn")) (catch clojure.lang.ExceptionInfo e e))]
+    (is (= :config (:krei/problem (ex-data e))))
+    (is (= :briko.inventory/missing (:type (ex-data (ex-cause e)))))))
+
+(deftest a-malformed-record-is-refused-not-dropped
+  (spit (support/path "inventory.edn")
+        (pr-str {"github" [(record "metio/aro") (dissoc (record "metio/krei") :topics)]}))
+  (is (thrown-with-msg? clojure.lang.ExceptionInfo #"lacks the keys \[:topics\]"
+                        (inventory/read-inventory (support/path "inventory.edn")))))
+
+(deftest an-inventory-holds-no-tagged-literal
+  (spit (support/path "inventory.edn") "{\"github\" [#inst \"2026-01-01\"]}")
+  (is (= :briko.edn/tag-refused
+         (:type (ex-data (try (inventory/read-inventory (support/path "inventory.edn"))
+                              (catch clojure.lang.ExceptionInfo e e)))))))
+
+(deftest an-inventory-above-the-byte-limit-is-refused
+  (spit (support/path "inventory.edn") (str "{\"github\" [" (apply str (repeat 8388608 " ")) "]}"))
+  (is (= :briko.inventory/too-large
+         (:type (ex-data (try (inventory/read-inventory (support/path "inventory.edn"))
+                              (catch clojure.lang.ExceptionInfo e e)))))))
 
 (deftest glob-matches-within-and-across-segments
   (is (inventory/glob-matches? "github.com/metio/*" "github.com/metio/aro"))

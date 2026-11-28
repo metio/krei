@@ -154,3 +154,17 @@
   (let [dir (str (babashka.fs/create-temp-dir))]
     (spit (str dir "/.krei.edn") "{:a ")
     (is (thrown-with-msg? clojure.lang.ExceptionInfo #"\.krei\.edn is no valid EDN" (krei.facts/own dir)))))
+
+(deftest a-krei-edn-holds-at-most-one-map-within-the-bounds
+  (let [dir (str (babashka.fs/create-temp-dir))
+        file (str dir "/.krei.edn")]
+    (try
+      (spit file ";; nothing yet\n")
+      (is (nil? (krei.facts/own dir)) "a file of comments states nothing")
+      (spit file "{:a 1} {:b 2}")
+      (is (thrown-with-msg? clojure.lang.ExceptionInfo #"more than one form" (krei.facts/own dir)))
+      (spit file "{:since #inst \"2026-01-01\"}")
+      (is (thrown-with-msg? clojure.lang.ExceptionInfo #"no valid EDN.*tag" (krei.facts/own dir)))
+      (spit file (str "{:doc \"" (apply str (repeat krei.facts/max-own-bytes "x")) "\"}"))
+      (is (thrown-with-msg? clojure.lang.ExceptionInfo #"no valid EDN.*larger" (krei.facts/own dir)))
+      (finally (babashka.fs/delete-tree dir)))))

@@ -245,3 +245,36 @@
     (testing "an edit that changes the text refuses to re-encode the file"
       (is (thrown-with-msg? clojure.lang.ExceptionInfo #"README.md is no valid UTF-8"
                             (rules/changes [changed] dir {}))))))
+
+(deftest a-rule-file-holds-one-map-within-the-bounds
+  (fs/create-dirs (support/path "rules"))
+  (let [refusal (fn [text]
+                  (spit (support/path "rules" "r.edn") text)
+                  (try (rules/load-rule [(support/path "rules")] :r) nil
+                       (catch clojure.lang.ExceptionInfo e (:type (ex-data e)))))]
+    (is (= :briko.edn/unexpected (refusal "[:files]")))
+    (is (= :briko.edn/trailing-form (refusal "{} {}")))
+    (is (= :briko.edn/tag-refused (refusal "{:files {\"a\" {:text #inst \"2026-01-01\"}}}")))
+    (is (= :briko.edn/too-large (refusal (str "{:doc \"" (apply str (repeat rules/max-rule-bytes "x")) "\"}"))))))
+
+(deftest every-shipped-rule-fits-the-bounds
+  (doseq [file (fs/list-dir (clojure.java.io/file (clojure.java.io/resource "krei/rules")))
+          :when (= "edn" (fs/extension file))]
+    (is (map? (rules/load-rule [] (keyword (str (fs/strip-ext (fs/file-name file)))))) (str file))))
+
+(deftest an-update-replaces-a-symlink-without-writing-through-it
+  (let [outside (support/path "outside.txt")
+        dir (repo {})
+        link (fs/path dir "NOTICE")]
+    (spit outside "kept\n")
+    (fs/create-sym-link link outside)
+    (rules/apply! dir [{:path "NOTICE" :action :update :content (.getBytes "new\n" "UTF-8")}])
+    (is (not (fs/sym-link? link)))
+    (is (= "new\n" (slurp (str link))))
+    (is (= "kept\n" (slurp outside)))))
+
+(deftest an-update-replaces-a-directory-and-leaves-no-temporary-file
+  (let [dir (repo {"config/a.edn" "{}\n"})]
+    (rules/apply! dir [{:path "config" :action :update :content (.getBytes "file\n" "UTF-8")}])
+    (is (= "file\n" (slurp (str (fs/path dir "config")))))
+    (is (= ["config"] (map (comp str fs/file-name) (fs/list-dir dir))))))

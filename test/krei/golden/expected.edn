@@ -1,0 +1,453 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:in-process
+ {:config
+  {:archived false,
+   :exclude ["copy"],
+   :signoff true,
+   :include ["forge.invalid/metio/*"],
+   :rules
+   [:license
+    :editorconfig
+    :readme-mirrors
+    :golden-notice
+    :golden-script
+    :golden-dir
+    :golden-expect],
+   :forks false,
+   :facts
+   {"*"
+    {:authors
+     [{:given-names "Ada",
+       :family-names "Lovelace",
+       :email "ada@example.org",
+       :old-emails ["ada@old.example.org"]}],
+     :support "none"},
+    {:lifecycle "maintenance"} {:support "best effort"},
+    "forge.invalid/metio/*" {:release {:cadence :monthly}},
+    "forge.invalid/metio/krei"
+    {:release
+     {:cadence :monthly, :after ["forge.invalid/metio/aro"]}}},
+   :branch "krei/sync",
+   :message "chore: align repository files with krei rules"},
+  :inventory
+  ({:archived false,
+    :path "metio/aro",
+    :properties
+    {:lifecycle "active",
+     :mirrors "codeberg.org:metio/aro mirror.invalid:metio/aro"},
+    :name "aro",
+    :topics ["git" "tmux"],
+    :host "forge.invalid",
+    :default-branch "main",
+    :id "forge.invalid/metio/aro",
+    :fork false,
+    :namespace "metio"}
+   {:archived false,
+    :path "metio/blank",
+    :name "blank",
+    :topics [],
+    :host "forge.invalid",
+    :default-branch "main",
+    :id "forge.invalid/metio/blank",
+    :fork false,
+    :namespace "metio"}
+   {:archived false,
+    :path "metio/copy",
+    :name "copy",
+    :topics [],
+    :host "forge.invalid",
+    :default-branch "main",
+    :id "forge.invalid/metio/copy",
+    :fork true,
+    :namespace "metio"}
+   {:archived false,
+    :path "metio/krei",
+    :properties {:lifecycle ["active" "maintenance"]},
+    :name "krei",
+    :topics ["compliance"],
+    :host "forge.invalid",
+    :default-branch "main",
+    :id "forge.invalid/metio/krei",
+    :fork false,
+    :namespace "metio"}
+   {:archived true,
+    :path "metio/old",
+    :name "old",
+    :topics [],
+    :host "forge.invalid",
+    :default-branch "main",
+    :id "forge.invalid/metio/old",
+    :fork false,
+    :namespace "metio"}
+   {:archived false,
+    :path "group/sub/Äpfel",
+    :name "Äpfel",
+    :topics ["ü \"quoted\""],
+    :host "gitlab.invalid",
+    :default-branch nil,
+    :id "gitlab.invalid/group/sub/Äpfel",
+    :fork false,
+    :namespace "group/sub"}),
+  :selected
+  ["forge.invalid/metio/aro"
+   "forge.invalid/metio/blank"
+   "forge.invalid/metio/krei"],
+  :calendar
+  {"forge.invalid/metio/aro" {:cadence :monthly, :cron "27 14 2 * *"},
+   "forge.invalid/metio/blank"
+   {:cadence :monthly, :cron "32 5 25 * *"},
+   "forge.invalid/metio/krei" {:cadence :monthly, :cron "31 7 3 * *"}},
+  :rules
+  [{:doc
+    "LICENSE holds the text of the repository's only license in LICENSES/.",
+    :when [:license],
+    :files {"LICENSE" {:copy "LICENSES/{{license}}.txt"}},
+    :resource-dir "krei/rules",
+    :id :license}
+   {:doc
+    ".editorconfig sets UTF-8, four spaces, trimmed trailing whitespace and a final newline, with tabs in Makefiles.",
+    :when [:license],
+    :files
+    {".editorconfig" {:template "editorconfig/editorconfig.tmpl"}},
+    :resource-dir "krei/rules",
+    :id :editorconfig}
+   {:doc
+    "The README lists the mirrors the custom property mirrors names in a Mirrors section before its License section, and holds no such section without them.",
+    :files
+    {"README.md"
+     {:markdown
+      {:sections
+       [{:heading "Mirrors",
+         :body
+         "{% for mirror in properties.mirrors|words %}- [{{mirror|replace:\":\":\"/\"}}]({{mirror|url}})\n{% endfor %}",
+         :place {:before "License"}}]}}},
+    :resource-dir "krei/rules",
+    :id :readme-mirrors}
+   {:doc
+    "NOTICE names the copyright holder, the release slot and the home page.",
+    :files {"NOTICE" {:template "notice.txt"}},
+    :dir "<root>/config/krei/rules",
+    :id :golden-notice}
+   {:doc "run.sh calls the new command.",
+    :files {"run.sh" {:replace [["old" "new"]]}},
+    :dir "<root>/config/krei/rules",
+    :id :golden-script}
+   {:doc "config is a file, and .idea is gone.",
+    :files
+    {"config" {:text "replaced {{name}}\n"}, ".idea/**" :absent},
+    :dir "<root>/config/krei/rules",
+    :id :golden-dir}
+   {:doc "The repository is licensed CC0-1.0.",
+    :when [:license],
+    :expect {:license "CC0-1.0"},
+    :dir "<root>/config/krei/rules",
+    :id :golden-expect}],
+  :repositories
+  {"forge.invalid/metio/aro"
+   {:facts
+    {:archived false,
+     :path "metio/aro",
+     :properties
+     {:lifecycle "active",
+      :mirrors "codeberg.org:metio/aro mirror.invalid:metio/aro"},
+     :owners
+     [{:given-names "Ada",
+       :family-names "Lovelace",
+       :email "ada@example.org",
+       :old-emails ["ada@old.example.org"]}],
+     :license "0BSD",
+     :homepage "https://forge.invalid/metio/aro/",
+     :support "community",
+     :name "aro",
+     :release {:cadence :monthly, :cron "27 14 2 * *"},
+     :licenses ["0BSD"],
+     :copyright "The aro Authors",
+     :keywords ["git" "tmux"],
+     :title "aro",
+     :topics ["git" "tmux"],
+     :host "forge.invalid",
+     :default-branch "main",
+     :id "forge.invalid/metio/aro",
+     :contributors [],
+     :translators [],
+     :fork false,
+     :maintainers [],
+     :authors
+     [{:given-names "Ada",
+       :family-names "Lovelace",
+       :email "ada@example.org",
+       :old-emails ["ada@old.example.org"]}],
+     :namespace "metio"},
+    :changes
+    [{:rule :license,
+      :path "LICENSE",
+      :content "Zero-Clause BSD\n",
+      :action :create}
+     {:rule :editorconfig,
+      :path ".editorconfig",
+      :content
+      "# SPDX-FileCopyrightText: The aro Authors\n# SPDX-License-Identifier: 0BSD\n\n# top-most EditorConfig file\nroot = true\n\n# global rules for all files\n[*]\ncharset = utf-8\nindent_style = space\nindent_size = 4\ntrim_trailing_whitespace = true\ninsert_final_newline = true\n\n# Makefiles use tabs by convention\n[Makefile]\nindent_style = tab\n[*.mk]\nindent_style = tab\n",
+      :action :create}
+     {:rule :readme-mirrors,
+      :path "README.md",
+      :content
+      "# aro\n\n## Mirrors\n\n- [codeberg.org/metio/aro](https://codeberg.org/metio/aro)\n- [mirror.invalid/metio/aro](https://mirror.invalid/metio/aro)\n\n## License\n\n0BSD\n",
+      :action :update}
+     {:rule :golden-notice,
+      :path "NOTICE",
+      :content
+      "Copyright The aro Authors\nRelease: 27 14 2 * *\nHome: https://forge.invalid/metio/aro/\nSupport: community\n",
+      :action :update}
+     {:rule :golden-script,
+      :path "run.sh",
+      :content "#!/bin/sh\nnew --flag\n",
+      :action :update}
+     {:rule :golden-dir,
+      :path ".idea/workspace.xml",
+      :content :absent,
+      :action :delete}
+     {:rule :golden-dir,
+      :path "config",
+      :content "replaced aro\n",
+      :action :update}],
+    :violations
+    [{:rule :golden-expect,
+      :message "license is \"0BSD\", expected \"CC0-1.0\""}]},
+   "forge.invalid/metio/blank"
+   {:facts
+    {:archived false,
+     :path "metio/blank",
+     :owners
+     [{:given-names "Ada",
+       :family-names "Lovelace",
+       :email "ada@example.org",
+       :old-emails ["ada@old.example.org"]}],
+     :license "CC0-1.0",
+     :homepage "https://forge.invalid/metio/blank/",
+     :support "none",
+     :name "blank",
+     :release {:cadence :monthly, :cron "32 5 25 * *"},
+     :licenses ["CC0-1.0"],
+     :copyright "The blank Authors",
+     :keywords [],
+     :title "blank",
+     :topics [],
+     :host "forge.invalid",
+     :default-branch "main",
+     :id "forge.invalid/metio/blank",
+     :contributors [],
+     :translators [],
+     :fork false,
+     :maintainers [],
+     :authors
+     [{:given-names "Ada",
+       :family-names "Lovelace",
+       :email "ada@example.org",
+       :old-emails ["ada@old.example.org"]}],
+     :namespace "metio"},
+    :changes
+    [{:rule :license,
+      :path "LICENSE",
+      :content "CC0\n",
+      :action :create}
+     {:rule :editorconfig,
+      :path ".editorconfig",
+      :content
+      "# SPDX-FileCopyrightText: The blank Authors\n# SPDX-License-Identifier: CC0-1.0\n\n# top-most EditorConfig file\nroot = true\n\n# global rules for all files\n[*]\ncharset = utf-8\nindent_style = space\nindent_size = 4\ntrim_trailing_whitespace = true\ninsert_final_newline = true\n\n# Makefiles use tabs by convention\n[Makefile]\nindent_style = tab\n[*.mk]\nindent_style = tab\n",
+      :action :create}
+     {:rule :golden-notice,
+      :path "NOTICE",
+      :content
+      "Copyright The blank Authors\nRelease: 32 5 25 * *\nHome: https://forge.invalid/metio/blank/\nSupport: none\n",
+      :action :create}
+     {:rule :golden-dir,
+      :path "config",
+      :content "replaced blank\n",
+      :action :create}],
+    :violations []},
+   "forge.invalid/metio/krei"
+   {:facts
+    {:archived false,
+     :path "metio/krei",
+     :properties {:lifecycle ["active" "maintenance"]},
+     :owners
+     [{:given-names "Ada",
+       :family-names "Lovelace",
+       :email "ada@example.org",
+       :old-emails ["ada@old.example.org"]}],
+     :license "CC0-1.0",
+     :homepage "https://forge.invalid/metio/krei/",
+     :support "best effort",
+     :name "krei",
+     :release
+     {:cadence :monthly,
+      :after ["forge.invalid/metio/aro"],
+      :cron "31 7 3 * *"},
+     :licenses ["CC0-1.0"],
+     :copyright "The krei Authors",
+     :keywords ["compliance"],
+     :title "krei",
+     :topics ["compliance"],
+     :host "forge.invalid",
+     :default-branch "main",
+     :id "forge.invalid/metio/krei",
+     :contributors [],
+     :translators [],
+     :fork false,
+     :maintainers [],
+     :authors
+     [{:given-names "Ada",
+       :family-names "Lovelace",
+       :email "ada@example.org",
+       :old-emails ["ada@old.example.org"]}],
+     :namespace "metio",
+     :skip
+     [:license
+      :editorconfig
+      :readme-mirrors
+      :golden-notice
+      :golden-script
+      :golden-dir
+      :golden-expect]},
+    :changes [],
+    :violations []}}},
+ :commands
+ {:check
+  {:exit 1,
+   :out
+   ["[DRIFT] forge.invalid/metio/aro: create LICENSE (license)"
+    "[DRIFT] forge.invalid/metio/aro: create .editorconfig (editorconfig)"
+    "[DRIFT] forge.invalid/metio/aro: update README.md (readme-mirrors)"
+    "[DRIFT] forge.invalid/metio/aro: update NOTICE (golden-notice)"
+    "[DRIFT] forge.invalid/metio/aro: update run.sh (golden-script)"
+    "[DRIFT] forge.invalid/metio/aro: delete .idea/workspace.xml (golden-dir)"
+    "[DRIFT] forge.invalid/metio/aro: update config (golden-dir)"
+    "[DRIFT] forge.invalid/metio/aro: license is \"0BSD\", expected \"CC0-1.0\" (golden-expect)"
+    "[DRIFT] forge.invalid/metio/blank: create LICENSE (license)"
+    "[DRIFT] forge.invalid/metio/blank: create .editorconfig (editorconfig)"
+    "[DRIFT] forge.invalid/metio/blank: create NOTICE (golden-notice)"
+    "[DRIFT] forge.invalid/metio/blank: create config (golden-dir)"
+    "[OK] forge.invalid/metio/krei follows its rules"],
+   :err [""]},
+  :list-filtered
+  {:exit 1,
+   :out ["forge.invalid/metio/aro main"],
+   :err ["[ERROR] no managed repository matches nothing"]},
+  :missing-inventory
+  {:exit 1,
+   :out [""],
+   :err
+   ["[ERROR] no inventory at <root>/state/aro/inventory.edn; run aro fetch first"]},
+  :sync
+  {:exit 0,
+   :out
+   ["[DRIFT] forge.invalid/metio/aro: license is \"0BSD\", expected \"CC0-1.0\" (golden-expect); fix it by hand"
+    "[OK] forge.invalid/metio/aro: pushed krei/sync; open a pull request for it by hand"
+    "[OK] forge.invalid/metio/blank: pushed krei/sync; open a pull request for it by hand"
+    "[OK] forge.invalid/metio/krei follows its rules"],
+   :err [""]},
+  :rules
+  {:exit 0,
+   :out
+   ["license  LICENSE holds the text of the repository's only license in LICENSES/."
+    "editorconfig  .editorconfig sets UTF-8, four spaces, trimmed trailing whitespace and a final newline, with tabs in Makefiles."
+    "readme-mirrors  The README lists the mirrors the custom property mirrors names in a Mirrors section before its License section, and holds no such section without them."
+    "golden-notice  NOTICE names the copyright holder, the release slot and the home page."
+    "golden-script  run.sh calls the new command."
+    "golden-dir  config is a file, and .idea is gone."
+    "golden-expect  The repository is licensed CC0-1.0."],
+   :err [""]},
+  :list
+  {:exit 0,
+   :out
+   ["forge.invalid/metio/aro main"
+    "forge.invalid/metio/blank main"
+    "forge.invalid/metio/krei main"],
+   :err [""]},
+  :apply
+  {:exit 0,
+   :out
+   ["[OK] forge.invalid/metio/aro: create LICENSE (license)"
+    "[OK] forge.invalid/metio/aro: create .editorconfig (editorconfig)"
+    "[OK] forge.invalid/metio/aro: update README.md (readme-mirrors)"
+    "[OK] forge.invalid/metio/aro: update NOTICE (golden-notice)"
+    "[OK] forge.invalid/metio/aro: update run.sh (golden-script)"
+    "[OK] forge.invalid/metio/aro: delete .idea/workspace.xml (golden-dir)"
+    "[OK] forge.invalid/metio/aro: update config (golden-dir)"],
+   :err [""]},
+  :plan
+  {:exit 0,
+   :out
+   ["[DRIFT] forge.invalid/metio/aro: create LICENSE (license)"
+    "[DRIFT] forge.invalid/metio/aro: create .editorconfig (editorconfig)"
+    "[DRIFT] forge.invalid/metio/aro: update README.md (readme-mirrors)"
+    "[DRIFT] forge.invalid/metio/aro: update NOTICE (golden-notice)"
+    "[DRIFT] forge.invalid/metio/aro: update run.sh (golden-script)"
+    "[DRIFT] forge.invalid/metio/aro: delete .idea/workspace.xml (golden-dir)"
+    "[DRIFT] forge.invalid/metio/aro: update config (golden-dir)"
+    "[DRIFT] forge.invalid/metio/aro: license is \"0BSD\", expected \"CC0-1.0\" (golden-expect)"
+    "[DRIFT] forge.invalid/metio/blank: create LICENSE (license)"
+    "[DRIFT] forge.invalid/metio/blank: create .editorconfig (editorconfig)"
+    "[DRIFT] forge.invalid/metio/blank: create NOTICE (golden-notice)"
+    "[DRIFT] forge.invalid/metio/blank: create config (golden-dir)"
+    "[OK] forge.invalid/metio/krei follows its rules"],
+   :err [""]},
+  :resync
+  {:exit 0,
+   :out
+   ["[DRIFT] forge.invalid/metio/aro: license is \"0BSD\", expected \"CC0-1.0\" (golden-expect); fix it by hand"
+    "[SKIP] forge.invalid/metio/aro: krei/sync already holds these changes"
+    "[SKIP] forge.invalid/metio/blank: krei/sync already holds these changes"
+    "[OK] forge.invalid/metio/krei follows its rules"],
+   :err [""]}},
+ :applied
+ {".editorconfig"
+  {:type :file,
+   :exec? false,
+   :content
+   "# SPDX-FileCopyrightText: The aro Authors\n# SPDX-License-Identifier: 0BSD\n\n# top-most EditorConfig file\nroot = true\n\n# global rules for all files\n[*]\ncharset = utf-8\nindent_style = space\nindent_size = 4\ntrim_trailing_whitespace = true\ninsert_final_newline = true\n\n# Makefiles use tabs by convention\n[Makefile]\nindent_style = tab\n[*.mk]\nindent_style = tab\n"},
+  ".krei.edn"
+  {:type :file,
+   :exec? false,
+   :content ";; own facts\n{:support \"community\"}\n"},
+  "LICENSE" {:type :file, :exec? false, :content "Zero-Clause BSD\n"},
+  "LICENSES/0BSD.txt"
+  {:type :file, :exec? false, :content "Zero-Clause BSD\n"},
+  "NOTICE"
+  {:type :file,
+   :exec? false,
+   :content
+   "Copyright The aro Authors\nRelease: 27 14 2 * *\nHome: https://forge.invalid/metio/aro/\nSupport: community\n"},
+  "README.md"
+  {:type :file,
+   :exec? false,
+   :content
+   "# aro\n\n## Mirrors\n\n- [codeberg.org/metio/aro](https://codeberg.org/metio/aro)\n- [mirror.invalid/metio/aro](https://mirror.invalid/metio/aro)\n\n## License\n\n0BSD\n"},
+  "config" {:type :file, :exec? false, :content "replaced aro\n"},
+  "run.sh"
+  {:type :file, :exec? true, :content "#!/bin/sh\nnew --flag\n"}},
+ :synced
+ {:aro
+  {:message
+   "chore: align repository files with krei rules\n\n- create LICENSE (license)\n- create .editorconfig (editorconfig)\n- update README.md (readme-mirrors)\n- update NOTICE (golden-notice)\n- update run.sh (golden-script)\n- delete .idea/workspace.xml (golden-dir)\n- update config (golden-dir)\n\nSigned-off-by: krei <krei@example.org>",
+   :files
+   ["100644 blob d17e3e078d9e2833c094dac3504bfddf30ce0644\t.editorconfig"
+    "100644 blob a0ee15a2919eb1f7badb9e2893aa13bc163dff2c\t.krei.edn"
+    "100644 blob 79711242a929b4f5166cbfb46423e424c559c9e4\tLICENSE"
+    "100644 blob 79711242a929b4f5166cbfb46423e424c559c9e4\tLICENSES/0BSD.txt"
+    "100644 blob b3c5e32307ea139a4182d7d296ec942e34dca20a\tNOTICE"
+    "100644 blob eb5dc6a03ee05e2fade6552dd64df3f3663c775c\tREADME.md"
+    "100644 blob aa1ccbdcb3a27ab73e02d21b4acccc9c357abbba\tconfig"
+    "100755 blob 997e0c895c5d0420d2fbd94d43796a378f216edd\trun.sh"]},
+  :blank
+  {:message
+   "chore: align repository files with krei rules\n\n- create LICENSE (license)\n- create .editorconfig (editorconfig)\n- create NOTICE (golden-notice)\n- create config (golden-dir)\n\nSigned-off-by: krei <krei@example.org>",
+   :files
+   ["100644 blob 78d13f8b562bebbaaeb1af8d3a3a5a9771e8587a\t.editorconfig"
+    "100644 blob 8dcebafa718756562db3b35e41e93c37aabf05db\t.krei.edn"
+    "100644 blob d30ca65e994d92fc82031fd8c84d14f3256eecba\tLICENSE"
+    "100644 blob d30ca65e994d92fc82031fd8c84d14f3256eecba\tLICENSES/CC0-1.0.txt"
+    "100644 blob 4b8811cc463572ddb454dcbd31cfbb501bae51e2\tNOTICE"
+    "100644 blob a57dbef0447c2fe3e0a9d119f6b5e51e13ff0a15\tconfig"]}}}

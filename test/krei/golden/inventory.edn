@@ -1,0 +1,12 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{"forge"
+ [{:host "forge.invalid" :path "metio/aro" :name "aro" :namespace "metio" :default-branch "main" :archived false :fork false :topics ["git" "tmux"] :properties {:lifecycle "active", :mirrors "codeberg.org:metio/aro mirror.invalid:metio/aro"}}
+  {:host "forge.invalid" :path "metio/blank" :name "blank" :namespace "metio" :default-branch "main" :archived false :fork false :topics []}
+  {:host "forge.invalid" :path "metio/copy" :name "copy" :namespace "metio" :default-branch "main" :archived false :fork true :topics []}
+  {:host "forge.invalid" :path "metio/krei" :name "krei" :namespace "metio" :default-branch "main" :archived false :fork false :topics ["compliance"] :properties {:lifecycle ["active" "maintenance"]}}
+  {:host "forge.invalid" :path "metio/old" :name "old" :namespace "metio" :default-branch "main" :archived true :fork false :topics []}]
+ "mirror"
+ [{:host "forge.invalid" :path "metio/aro" :name "aro" :namespace "metio" :default-branch "main" :archived false :fork false :topics ["git" "tmux"] :properties {:lifecycle "active", :mirrors "codeberg.org:metio/aro mirror.invalid:metio/aro"}}
+  {:host "gitlab.invalid" :path "group/sub/Äpfel" :name "Äpfel" :namespace "group/sub" :default-branch nil :archived false :fork false :topics ["ü \"quoted\""]}]}

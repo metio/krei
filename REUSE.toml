@@ -14,3 +14,9 @@ path = ["resources/krei/rules/**", "test/krei/builtin_test.clj"]
 precedence = "override"
 SPDX-FileCopyrightText = "The krei Authors"
 SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["test/krei/golden/rules/*.txt"]
+precedence = "override"
+SPDX-FileCopyrightText = "The krei Authors"
+SPDX-License-Identifier = "CC0-1.0"

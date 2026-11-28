@@ -1,0 +1,5 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+{:doc "NOTICE names the copyright holder, the release slot and the home page."
+ :files {"NOTICE" {:template "notice.txt"}}}

@@ -1,0 +1,17 @@
+;; SPDX-FileCopyrightText: The krei Authors
+;; SPDX-License-Identifier: CC0-1.0
+
+;; The configuration of the golden scenario. It names no path, so the
+;; inventory, the rule directory and the cache come from the XDG defaults.
+{:include ["forge.invalid/metio/*"]
+ :exclude ["copy"]
+ :rules [:license :editorconfig :readme-mirrors :golden-notice :golden-script :golden-dir :golden-expect]
+ :facts {"*" {:authors [{:given-names "Ada" :family-names "Lovelace" :email "ada@example.org"
+                         :old-emails ["ada@old.example.org"]}]
+              :support "none"}
+         {:lifecycle "maintenance"} {:support "best effort"}
+         "forge.invalid/metio/*" {:release {:cadence :monthly}}
+         "forge.invalid/metio/krei" {:release {:cadence :monthly :after ["forge.invalid/metio/aro"]}}}
+ :branch "krei/sync"
+ :message "chore: align repository files with krei rules"
+ :signoff true}

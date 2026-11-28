@@ -1,0 +1,4 @@
+Copyright {{copyright}}
+Release: {{release.cron}}
+Home: {{homepage}}
+Support: {{support}}

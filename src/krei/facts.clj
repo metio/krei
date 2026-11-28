@@ -11,8 +11,8 @@
   set."
   (:require [babashka.fs :as fs]
             [briko.edn :as edn]
+            [briko.json :as json]
             [clojure.string :as str]
-            [cheshire.core :as json]
             [clj-yaml.core :as yaml]
             [krei.inventory :as inventory]
             [selmer.filters :as filters]
@@ -180,7 +180,19 @@
         (sequential? x) (mapv sorted x)
         :else x))
 
-(filters/add-filter! :json (fn [x] (json/generate-string (sorted x) {:pretty {:indentation 2 :object-field-value-separator ": " :indent-arrays? true}})))
+(defn- write-json
+  "`x` as JSON text with the given layout. Hidden code points stay raw, so a
+  rule writes the bytes the fact holds. A value briko refuses, such as a map
+  whose keys :ns/a and \"ns/a\" both print as \"ns/a\", is a fact problem."
+  [x opts]
+  (try
+    (json/write-string x (assoc opts :escape-hidden? false))
+    (catch clojure.lang.ExceptionInfo e
+      (if (json/refusal? e)
+        (throw (ex-info (str "cannot write a fact as JSON: " (ex-message e)) {:krei/problem :fact} e))
+        (throw e)))))
+
+(filters/add-filter! :json (fn [x] (write-json (sorted x) {:indent 2 :indent-arrays? true :key-separator ": "})))
 (defn yaml-scalar
   "`x` as a YAML scalar to write after a key on the same line: plain where
   YAML reads it back as the same string, quoted where it would not, such as
@@ -189,7 +201,7 @@
   [x]
   (let [s (str x)
         dumped (str/trimr (yaml/generate-string s))]
-    (if (str/includes? dumped "\n") (json/generate-string s) dumped)))
+    (if (str/includes? dumped "\n") (write-json s {}) dumped)))
 
 (filters/add-filter! :yaml yaml-scalar)
 (filters/add-filter! :words (fn [x] (vec (remove str/blank? (str/split (str x) #"\s+")))))

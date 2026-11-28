@@ -91,3 +91,15 @@
     (is (not= (cheshire/generate-string fact {:pretty true})
               (facts/render "{{r|json}}" {:r fact})))
     (is (= (cheshire-json fact) (facts/render "{{r|json}}" {:r fact})))))
+
+(deftest json-collapses-keys-with-the-same-name
+  ;; `sorted` orders keys by name, so :a and "a" become one key before
+  ;; anything is written.
+  (is (= "{\n  \"a\": 2\n}" (facts/render "{{r|json}}" {:r {:a 1 "a" 2}}))))
+
+(deftest json-refuses-keys-that-print-to-the-same-name-as-a-fact-problem
+  (let [e (try (facts/render "{{r|json}}" {:r {:ns/a 1 "ns/a" 2}}) nil
+               (catch clojure.lang.ExceptionInfo e e))]
+    ;; Selmer wraps what a filter throws and keeps it as the cause.
+    (is (= :fact (:krei/problem (ex-data (ex-cause e)))))
+    (is (str/includes? (ex-message e) "same JSON name"))))

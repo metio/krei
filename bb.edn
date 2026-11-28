@@ -4,7 +4,8 @@
 {:paths ["src" "resources"]
  ;; babashka resolves git deps through tools.deps, which needs a JDK once per
  ;; sha; babashka carries babashka.fs and babashka.process itself.
- :deps {io.github.metio/briko {:git/sha "e1fb8e8495db1a33d805e42f5f7a071eceee037d"}}
+ :deps {io.github.metio/briko {:git/tag "2026.11.28105006"
+                              :git/sha "e1fb8e8495db1a33d805e42f5f7a071eceee037d"}}
  :tasks
  {test {:doc "Runs all unit tests"
         :extra-paths ["test"]

@@ -19,12 +19,26 @@
   files are then rendered once per element, bound to {{each}}. Facts in
   :skip name rules that do not apply to a repository."
   (:require [babashka.fs :as fs]
-            [clojure.edn :as edn]
+            [briko.edn :as edn]
+            [briko.fs :as bfs]
             [clojure.java.io :as io]
             [clj-yaml.core :as yaml]
             [clojure.string :as str]
             [krei.facts :as facts]
             [krei.markdown :as markdown]))
+
+(def max-rule-bytes
+  "The largest rule file krei reads, in UTF-8 bytes: 64 KiB. The largest rule
+  krei ships is under 1 KiB; templates live in files of their own."
+  65536)
+
+(defn- read-rule
+  "The map the rule file at `source`, a path or a resource URL, holds."
+  [source]
+  (let [opts {:max-bytes max-rule-bytes :expect map?}]
+    (if (string? source)
+      (edn/read-file source opts)
+      (edn/read-string (slurp source) opts))))
 
 (defn- rule-file [rule-dirs rule]
   (let [file (str (name rule) ".edn")]
@@ -39,7 +53,7 @@
   (let [{:keys [source] :as location} (rule-file rule-dirs rule)]
     (when-not location
       (throw (ex-info (str "no rule " (name rule)) {:krei/problem :config})))
-    (merge (edn/read-string (slurp source))
+    (merge (read-rule source)
            (dissoc location :source)
            {:id (keyword (name rule))})))
 
@@ -339,15 +353,24 @@
     (inside! dir (first (filter fs/exists? (iterate fs/parent (fs/parent p)))))
     (fs/create-dirs (fs/parent p))
     (inside! dir (fs/parent p))
-    ;; the path is deleted rather than written through, so a symbolic link
-    ;; there is replaced instead of followed; a regular file keeps its mode
     (let [mode (when (fs/regular-file? p {:nofollow-links true})
                  (fs/posix-file-permissions p {:nofollow-links true}))]
-      (when (fs/exists? p {:nofollow-links true})
-        (fs/delete-tree p))
-      (when-not (= :delete action)
-        (fs/write-bytes p content)
-        (when mode (fs/set-posix-file-permissions p mode))))))
+      (cond
+        (= :delete action)
+        (when (fs/exists? p {:nofollow-links true})
+          (fs/delete-tree p))
+
+        :else
+        ;; the rename of atomic-write! replaces a regular file or a symbolic
+        ;; link at the path without following the link, so the path always
+        ;; holds either the old file or the new one; a directory cannot be
+        ;; renamed over and is removed first
+        (do (when (fs/directory? p {:nofollow-links true})
+              (fs/delete-tree p))
+            (bfs/atomic-write! p content)
+            ;; a regular file keeps its mode, which the new file takes once
+            ;; it is in place, since atomic-write! creates it with the umask
+            (when mode (fs/set-posix-file-permissions p mode)))))))
 
 (defn- first-match
   "The 1-based line of the first match of `pattern` in `text` whose first

@@ -5,18 +5,27 @@
   "The repositories krei can manage, read from the inventory aro writes:
   a map from source id to repository records."
   (:require [babashka.fs :as fs]
-            [clojure.edn :as edn])
+            [briko.inventory :as briko])
   (:import (java.nio.file FileSystems)))
 
-(defn id [{:keys [host path]}]
+(defn id
+  "The id krei matches globs and facts against, host/path. aro names a
+  repository host:path; krei keeps its own form because every include,
+  exclude and facts pattern of a configuration is written against it."
+  [{:keys [host path]}]
   (str host "/" path))
 
 (defn read-inventory
-  "Every repository record in the inventory at `path`, each with its :id."
+  "Every repository record in the inventory at `path`, each with its :id.
+  briko.inventory reads the file within its bounds and refuses a malformed
+  record instead of dropping it."
   [path]
-  (when-not (fs/exists? path)
-    (throw (ex-info (str "no inventory at " path "; run aro fetch first") {:krei/problem :config})))
-  (->> (edn/read-string (slurp (str path)))
+  (->> (try
+         (:sources (briko/read-file path))
+         (catch clojure.lang.ExceptionInfo e
+           (if (= ::briko/missing (:type (ex-data e)))
+             (throw (ex-info (str "no inventory at " path "; run aro fetch first") {:krei/problem :config} e))
+             (throw e))))
        vals
        (apply concat)
        (map #(assoc % :id (id %)))

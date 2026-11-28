@@ -22,7 +22,7 @@ krei apply DIR REPO     # write the changes of one repository into the working t
 
 Each command works on a clone below `$XDG_CACHE_HOME/krei/<host>/<path>`, fetched and reset to the default branch on every run, so local clones elsewhere are never touched. `krei sync` commits onto the branch `krei/sync`, started from the default branch, and force-pushes it. When the branch on the remote already holds the same files, nothing is pushed. On `github.com` it then opens a pull request from that branch unless one is open already; on other hosts, or when `gh` fails, for example because it is not logged in, it pushes the branch and leaves the pull request to you, naming the reason `gh` gave. Commits are signed off and follow your git config, including commit signing.
 
-`krei apply` writes into a working tree of your own instead, reading the facts from it, and leaves everything else in it as it is. Use it when a change needs edits of its own beside the rule output, such as a `pom.xml` moving to a new parent in the same commit that replaces the workflows depending on the old one.
+`krei apply` writes into a working tree of your own instead, reading the facts from it, and leaves everything else in it as it is. Every file it writes, there and in the cache, is written to a temporary file beside it and renamed into place, so the path holds either the old or the new file at any moment; a symbolic link at the path is replaced, never written through, and a regular file keeps its mode. Use it when a change needs edits of its own beside the rule output, such as a `pom.xml` moving to a new parent in the same commit that replaces the workflows depending on the old one.
 
 ## Configuration
 
@@ -50,6 +50,10 @@ Each command works on a clone below `$XDG_CACHE_HOME/krei/<host>/<path>`, fetche
 ```
 
 Every key is optional. Without them krei manages every repository of the inventory at `$XDG_STATE_HOME/aro/inventory.edn` with the `license` rule, reads rules from `$XDG_CONFIG_HOME/krei/rules`, and uses the branch, message and sign-off shown above. `:include` and `:exclude` take the same globs as `REPO`. Archived repositories and forks are left alone unless `:archived` or `:forks` is true.
+
+The XDG variables follow the XDG Base Directory Specification: one that is unset, empty or a relative path is ignored, and its default below the home directory applies. The home directory is `$HOME` when that is an absolute path, else the one the password database names; `~` and `~/…` at the start of `:inventory`, `:cache` and each of `:rule-dirs` expand to it.
+
+The config file holds one EDN map of at most 1 MiB, nesting at most 64 levels, without tagged literals such as `#inst`; anything else, an empty file included, is an error. A rule file holds one map of at most 64 KiB, and a repository's `.krei.edn` at most one map of at most 64 KiB, or only comments. krei reads the inventory through [briko](https://github.com/metio/briko), which shares its format with aro: at most 8 MiB, and a record that lacks a key aro writes or holds a value of the wrong type is an error that names it rather than a repository silently left out.
 
 ## Facts
 

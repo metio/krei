@@ -2,6 +2,9 @@
 ;; SPDX-License-Identifier: CC0-1.0
 
 {:paths ["src" "resources"]
+ ;; babashka resolves git deps through tools.deps, which needs a JDK once per
+ ;; sha; babashka carries babashka.fs and babashka.process itself.
+ :deps {io.github.metio/briko {:git/sha "cf5d256fc4e7069a68cd23fb778351f9d2d43e24"}}
  :tasks
  {test {:doc "Runs all unit tests"
         :extra-paths ["test"]
